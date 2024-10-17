@@ -1,17 +1,13 @@
-import dotenv from 'dotenv';
+const dotenv = require('dotenv');
 dotenv.config();
 
+const dbName = process.env.DB_NAME || 'default_database_name';
+console.log('Database name being used:', dbName);
+
 export default {
-  HOST: process.env.DB_HOST || 'localhost',
-  USER: process.env.DB_USER || 'postgres',
-  PASSWORD: process.env.DB_PASSWORD || '',
-  DB: process.env.DB_NAME || 'my_database',
-  dialect: process.env.DB_DIALECT as any || 'postgres',
-  logging: console.log,
-  pool: {
-    max: Number(process.env.DB_POOL_MAX) || 5,
-    min: Number(process.env.DB_POOL_MIN) || 0,
-    acquire: Number(process.env.DB_POOL_ACQUIRE) || 30000,
-    idle: Number(process.env.DB_POOL_IDLE) || 10000,
-  },
+  development: {
+    url: `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:5432/${process.env.DB_NAME}`,
+    dialect: process.env.DB_DIALECT as any || 'postgres',
+    logging: console.log,
+  }
 };

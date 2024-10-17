@@ -1,11 +1,11 @@
+import { UserModelInit } from './user.model';
+import { ClassModelInit } from './class.model';
+import { ClassInstructorModelInit } from './class_instructor.model';
+import { ClassRegistrationModelInit } from './class_registration.model';
+import { NoteModelInit } from './note.model';
 import { Sequelize } from 'sequelize';
-import { UserModelInit, User } from './user.model';
-import { ClassModelInit, Class } from './class.model';
-import { ClassInstructorModelInit, ClassInstructor } from './class_instructor.model';
-import { ClassRegistrationModelInit, ClassRegistration } from './class_registration.model';
-import { NoteModelInit, Note } from './note.model';
 
-const initModels = (sequelize: Sequelize) => {
+export const initModels = (sequelize: Sequelize) => {
   const User = UserModelInit(sequelize);
   const Class = ClassModelInit(sequelize);
   const ClassInstructor = ClassInstructorModelInit(sequelize);
@@ -25,5 +25,3 @@ const initModels = (sequelize: Sequelize) => {
 
   return { User, Class, ClassInstructor, ClassRegistration, Note };
 };
-
-export { initModels };

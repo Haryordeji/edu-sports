@@ -4,13 +4,9 @@ import { sequelize, models } from './db';
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// Test database connection and sync models
 sequelize.authenticate()
   .then(() => {
     console.log('Database connected.');
-    return sequelize.sync({ alter: true }); // Sync models with DB schema
-  })
-  .then(() => {
     app.listen(PORT, () => {
       console.log(`Server running on http://localhost:${PORT}`);
     });
@@ -27,5 +23,5 @@ app.get('/users', async (req, res) => {
 
 // test api
 app.get('/api/test', (req, res) => {
-  res.json({ message: 'Hello from Expresso!' });
+  res.json({ message: 'Hello from Expreso!' });
 });

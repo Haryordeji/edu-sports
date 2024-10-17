@@ -5,14 +5,14 @@
   "scripts": {
     "start": "node dist/index.js",
     "build": "tsc",
-    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts"
+    "dev": "ts-node --project tsconfig.json src/index.ts",
+    "sequelize": "node -r dotenv/config -r ts-node/register ./node_modules/.bin/sequelize-cli"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@types/sequelize": "^4.28.20",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
@@ -22,11 +22,15 @@
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
+    "@types/dotenv": "^6.1.1",
     "@types/express": "^5.0.0",
-    "@types/node": "^22.7.5",
+    "@types/node": "^22.7.6",
     "@types/pg": "^8.11.10",
+    "@types/sequelize": "^4.28.20",
     "nodemon": "^3.1.7",
+    "sequelize-cli": "^6.6.2",
     "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^5.6.3"
   }
 }
