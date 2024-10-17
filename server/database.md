@@ -51,5 +51,3 @@
 2. **Instructors** and **classes** have a **many-to-many relationship** (managed by the **`class_instructors`** table).
 3. **Golfers** can register for **classes**, creating a **many-to-many relationship** (managed by the **`class_registrations`** table).
 4. **Notes** capture insights from **instructors** about **golfers** within the context of specific **classes**.
-
-This schema effectively handles multiple user roles and captures the dynamic relationships between classes, users, and their activities.
