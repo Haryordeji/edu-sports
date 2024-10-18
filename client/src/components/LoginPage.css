@@ -1,0 +1,149 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    background-color: #B4E5AF;
+  }
+  
+  .login-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+  }
+  
+  .login-form {
+    flex: 1;
+    padding-left: 4rem;
+    padding-right: 2rem;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .login-header {
+    margin-bottom: 2rem;
+  }
+  
+  .login-header h1 {
+    color: #4a4a4a;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .login-header p {
+    color: #888;
+    font-size: 0.9rem;
+  }
+  
+  h2 {
+    color: #333;
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+  }
+  
+  .input-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+  
+  input {
+    width: 88%;
+    padding: 0.8rem;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    font-size: 1rem;
+    background-color: transparent;
+  }
+  
+  input:focus {
+    outline: none;
+    border-bottom-color: #4caf50;
+  }
+  
+  .toggle-password {
+    position: absolute;
+    right: 12%;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #888;
+  }
+  
+  .sign-in-button {
+    width: 88%;
+    height: 88px;
+    border-radius: 50px;
+    padding: 1.8rem;
+    background-color: #B4E5AF;
+    color: #000000;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  
+  .sign-in-button:hover {
+    background-color: #45a049;
+  }
+  
+  .new-user-section {
+    flex: 0 0 40%;
+    background-color: #B4E5AF;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .new-user-section h3 {
+    color: #333;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .new-user-section p {
+    color: #666;
+    margin-bottom: 1.5rem;
+  }
+  
+  .sign-up-button {
+    width: 88%;
+    height: 88px;
+    border-radius: 50px;
+    padding: 0.8rem 2rem;
+    background-color: #ffffff;
+    color: #000000;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .sign-up-button:hover {
+    background-color: #4caf50;
+    color: white;
+  }
+  
+  @media (max-width: 768px) {
+    .login-container {
+      flex-direction: column;
+    }
+  
+    .login-form,
+    .new-user-section {
+      flex: none;
+      width: 100%;
+      height: auto;
+      padding: 4rem;
+    }
+  
+    .new-user-section {
+      order: +1;
+    }
+  }

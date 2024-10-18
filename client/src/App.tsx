@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import LoginPage from './components/LoginPage';
 
 function App() {
   const [message, setMessage] = useState<string>('');
@@ -11,10 +12,7 @@ function App() {
   }, []);
 
   return (
-    <div>
-      <h1>React with TypeScript</h1>
-      <p>{message}</p>
-    </div>
+    <LoginPage />
   );
 }
 
