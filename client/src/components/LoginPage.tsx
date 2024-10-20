@@ -6,6 +6,13 @@ https://www.figma.com/design/3GaHf9kOXKmxS60tpwqi6T/COS-333
 import React, { useState } from 'react';
 import './LoginPage.css';
 
+const styles = {
+  logo: {
+    width: '200px',
+    height: 'auto',
+  },
+};
+
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,8 +27,7 @@ const LoginPage: React.FC = () => {
     <div className="login-container">
       <div className="login-form">
         <div className="login-header">
-          <h1>EDU SPORTS</h1>
-          <p>The Sporting Chance to be More</p>
+        <img src="https://static.wixstatic.com/media/09e86e_318df3ef05b647329554c64770b3fd61~mv2.jpg/v1/fill/w_658,h_226,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/Edu%20Sports%20Logo_04-01.jpg" alt="Company Logo" style={styles.logo} />
         </div>
         <h2>Login into Your Swing 2. Tee Golf Account</h2>
         <form onSubmit={handleSubmit}>
