@@ -53,6 +53,7 @@ const LoginPage: React.FC = () => {
       }
 
       if (data.success) {
+        console.log("successful login")
         // user data in local storage
         localStorage.setItem('user', JSON.stringify(data.user));
         

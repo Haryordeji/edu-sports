@@ -159,4 +159,13 @@ Only create migrations after group discussion.
 6. Push your changes.
 7. Other teammates pull changes and run migrations.
 
+npm run sequelize db:seed:all
+All users have the password "password123".
+
+admin@example.com
+jane.instructor@example.com
+bob.instructor@example.com
+alice.golfer@example.com
+charlie.golfer@example.com
 ---
+
