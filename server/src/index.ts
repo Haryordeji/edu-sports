@@ -1,9 +1,25 @@
-import express from 'express';
+import express, { Express, Request, Response } from 'express';
+import cors from 'cors';
 import { sequelize, models } from './db';
+import * as authController from './controllers/auth.controller';
 
-const app = express();
+const app: Express = express();
 const PORT = process.env.PORT || 5001;
 
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Test route
+app.get('/api/test', (req: Request, res: Response) => {
+  res.json({ message: 'Server is running!' });
+});
+
+// Auth routes
+app.post('/api/login', (req: Request, res: Response) => {authController.login(req, res)});
+app.get('/api/register',(req: Request, res: Response) => {authController.register(req, res)});
+
+// Database connection and server start
 sequelize.authenticate()
   .then(() => {
     console.log('Database connected.');
@@ -15,13 +31,4 @@ sequelize.authenticate()
     console.error('Unable to connect to the database:', err);
   });
 
-// Define routes here, e.g.,
-app.get('/users', async (req, res) => {
-  const users = await models.User.findAll();
-  res.json(users);
-});
-
-// test api
-app.get('/api/test', (req, res) => {
-  res.json({ message: 'Hello from Expreso!' });
-});
+export default app;
