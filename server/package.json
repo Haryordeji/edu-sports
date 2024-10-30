@@ -5,9 +5,8 @@
   "scripts": {
     "start": "node dist/index.js",
     "build": "tsc",
-    "dev": "ts-node --project tsconfig.json src/index.ts",
-    "sequelize": "node -r dotenv/config -r ts-node/register ./node_modules/.bin/sequelize-cli"
-  },
+    "sequelize": "node -r dotenv/config -r ts-node/register ./node_modules/.bin/sequelize-cli",
+    "dev": "npm run build && npm run start"  },
   "keywords": [],
   "author": "",
   "license": "ISC",
