@@ -4,6 +4,7 @@ should look like. The design is at
 https://www.figma.com/design/3GaHf9kOXKmxS60tpwqi6T/COS-333
 */
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
 
 interface LoginResponse {
@@ -30,6 +31,7 @@ const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -79,6 +81,10 @@ const LoginPage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSignUp = () => {
+    navigate('/register');
   };
 
   return (
@@ -131,15 +137,10 @@ const LoginPage: React.FC = () => {
       <div className="new-user-section">
         <h3>New Here?</h3>
         <p>Sign up and discover and have a sporting chance to be more</p>
-        <button className="sign-up-button"
-          onClick={() => window.location.href = '/register'}
-          disabled={isLoading}
-        >
-          Sign Up
-        </button>
+        <button onClick={handleSignUp} className="sign-up-button" disabled={isLoading}>Sign Up</button>
       </div>
     </div>
   );
 };
 
-export { LoginPage };
+export default LoginPage;
