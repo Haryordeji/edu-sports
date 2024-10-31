@@ -1,19 +1,7 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-  }
 .registration-container {
     display: flex;
-    max-width: 800px;
+    min-height: 100vh;
     width: 100%;
-    background-color: white;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
   
   .registration-form {
@@ -59,18 +47,17 @@ body {
   }
   
   .input-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: auto;
   }
-  
   .input-group label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
     color: #4a4a4a;
   }
   
   input, textarea {
     width: 100%;
-    padding: 0.8rem;
+    padding: 0.3rem;
     border: 1px solid #ddd;
     border-radius: 4px;
     background-color: #e8f5e9;
@@ -167,30 +154,59 @@ body {
       gap: 1rem;
     }
   }
-  
-.back-button {
-    position: absolute;
-    top: 2rem;
-    left: 2rem;
-    padding: 0.5rem 1rem;
-    background: none;
-    border: none;
-    color: #4a4a4a;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 1rem;
-    transition: color 0.3s;
+
+.emergency-section {
+    margin-top: 2rem;
+    border-top: 2px solid #e8f5e9;
+    padding-top: 2rem;
   }
   
-  .back-button:hover {
-    color: #4caf50;
+  .emergency-section h3 {
+    color: #333;
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .emergency-contact-group,
+  .physician-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .phone-parts {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  
+  .phone-parts input {
+    width: 4rem;
+    text-align: center;
+  }
+  
+  .phone-parts input:last-child {
+    width: 5rem;
+  }
+  
+  .medical-info-group textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #e8f5e9;
+    resize: vertical;
   }
   
   @media (max-width: 768px) {
-    .back-button {
-      top: 1rem;
-      left: 1rem;
+    .emergency-contact-group,
+    .physician-group {
+      grid-template-columns: 1fr;
+    }
+    
+    .phone-parts {
+      justify-content: flex-start;
     }
   }
