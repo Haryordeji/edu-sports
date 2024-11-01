@@ -6,7 +6,8 @@
     "start": "node dist/index.js",
     "build": "tsc",
     "sequelize": "node -r dotenv/config -r ts-node/register ./node_modules/.bin/sequelize-cli",
-    "dev": "npm run build && npm run start"  },
+    "dev": "npm run build && npm run start"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
