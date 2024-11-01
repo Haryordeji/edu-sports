@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import { sequelize, models } from './db';
 import * as authController from './controllers/auth.controller';
+import * as userController from './controllers/user.controller';
 
 const app: Express = express();
 const PORT = process.env.PORT || 5001;
@@ -17,7 +18,7 @@ app.get('/api/test', (req: Request, res: Response) => {
 
 // Auth routes
 app.post('/api/login', (req: Request, res: Response) => {authController.login(req, res)});
-app.get('/api/register',(req: Request, res: Response) => {authController.register(req, res)});
+app.get('/api/register',(req: Request, res: Response) => {userController.register(req, res)});
 
 // Database connection and server start
 sequelize.authenticate()

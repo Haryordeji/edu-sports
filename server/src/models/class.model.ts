@@ -1,7 +1,8 @@
+import { UUID } from 'crypto';
 import { DataTypes, Model, Optional, Sequelize } from 'sequelize';
 
 interface ClassAttributes {
-  class_id: number;
+  class_id: UUID;
   name: string;
   skill_level: string;
   start_time: Date;
@@ -12,7 +13,7 @@ interface ClassAttributes {
 interface ClassCreationAttributes extends Optional<ClassAttributes, 'class_id'> {}
 
 export class Class extends Model<ClassAttributes, ClassCreationAttributes> implements ClassAttributes {
-  public class_id!: number;
+  public class_id!: UUID;
   public name!: string;
   public skill_level!: string;
   public start_time!: Date;
@@ -23,7 +24,7 @@ export class Class extends Model<ClassAttributes, ClassCreationAttributes> imple
 export const ClassModelInit = (sequelize: Sequelize) => {
   Class.init(
     {
-      class_id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+      class_id: { type: DataTypes.UUID, primaryKey: true },
       name: { type: DataTypes.STRING, allowNull: false },
       skill_level: { type: DataTypes.STRING },
       start_time: { type: DataTypes.DATE, allowNull: false },

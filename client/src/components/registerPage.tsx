@@ -24,6 +24,8 @@ interface PhoneNumber {
     name?: string;
   }
   
+
+  // ! ADD dropdown selectors for state, height, DOB
   interface RegistrationFormData {
     firstName: string;
     middleInitial: string;
