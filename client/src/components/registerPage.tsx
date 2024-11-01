@@ -216,6 +216,29 @@ const RegistrationPage: React.FC = () => {
               />
             </div>
           </div>
+          <div className="two-column">
+            <div className="input-group">
+              <label>Email</label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            
+            <div className="input-group">
+              <label>Password</label>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+          </div>
 
           {/* Address Fields */}
           <div className="address-group">
@@ -492,13 +515,6 @@ const RegistrationPage: React.FC = () => {
                     type="text"
                     value={formData.emergencyContact.phone.areaCode}
                     onChange={(e) => handlePhoneChange('emergencyContact.phone', 'areaCode', e.target.value)}
-                    maxLength={3}
-                    required
-                  />
-                  <input
-                    type="text"
-                    value={formData.emergencyContact.phone.prefix}
-                    onChange={(e) => handlePhoneChange('emergencyContact.phone', 'prefix', e.target.value)}
                     maxLength={3}
                     required
                   />
