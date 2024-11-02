@@ -50,6 +50,8 @@ interface PhoneNumber {
     physician: Physician;
     medicalInformation: string;
     agreeToTerms: boolean;
+
+    // ayo
   }
 
   const styles = {
@@ -169,11 +171,27 @@ const RegistrationPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Implement API call to register user
-      console.log('Form submitted:', formData);
+      const response = await fetch('http://localhost:5001/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Registration failed');
+      }
+
+      const data = await response.json();
+      console.log('Registration successful:', data);
+      
+      // Redirect to success page or login
+      navigate('/registration-success');
     } catch (error) {
       console.error('Registration failed:', error);
-    }
+    } 
   };
 
   return (
@@ -215,6 +233,29 @@ const RegistrationPage: React.FC = () => {
                 value={formData.middleInitial}
                 onChange={handleInputChange}
                 maxLength={1}
+              />
+            </div>
+          </div>
+          <div className="two-column">
+            <div className="input-group">
+              <label>Email</label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            
+            <div className="input-group">
+              <label>Password</label>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                required
               />
             </div>
           </div>
@@ -494,13 +535,6 @@ const RegistrationPage: React.FC = () => {
                     type="text"
                     value={formData.emergencyContact.phone.areaCode}
                     onChange={(e) => handlePhoneChange('emergencyContact.phone', 'areaCode', e.target.value)}
-                    maxLength={3}
-                    required
-                  />
-                  <input
-                    type="text"
-                    value={formData.emergencyContact.phone.prefix}
-                    onChange={(e) => handlePhoneChange('emergencyContact.phone', 'prefix', e.target.value)}
                     maxLength={3}
                     required
                   />

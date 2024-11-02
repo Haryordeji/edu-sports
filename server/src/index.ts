@@ -18,7 +18,7 @@ app.get('/api/test', (req: Request, res: Response) => {
 
 // Auth routes
 app.post('/api/login', (req: Request, res: Response) => {authController.login(req, res)});
-app.get('/api/register',(req: Request, res: Response) => {userController.register(req, res)});
+app.post('/api/register',(req: Request, res: Response) => {userController.register(req, res)});
 
 // Database connection and server start
 sequelize.authenticate()

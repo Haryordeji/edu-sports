@@ -2,9 +2,6 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import { models } from '../db';
 
-const uuid = require('uuid/v4');
-
-
 interface RegisterRequest {
   firstName: string;
   middleInitial: string;
@@ -84,7 +81,7 @@ export const register = async (req: Request<{}, {}, RegisterRequest>, res: Respo
     } = req.body;
 
     // required fields
-    if (!firstName || !lastName || !email || !password || !user_type || !agreeToTerms) {
+    if (!firstName || !lastName || !email || !password || !agreeToTerms) {
       return res.status(400).json({
         message: 'Missing required fields'
       });
@@ -104,7 +101,7 @@ export const register = async (req: Request<{}, {}, RegisterRequest>, res: Respo
     };
 
     const user = await models.User.create({
-      user_id: uuid(), // Let Sequelize generate UUID
+      user_id: crypto.randomUUID(),
       profile_created_at: new Date(),
       password_hash,
       first_name: firstName,
@@ -131,7 +128,9 @@ export const register = async (req: Request<{}, {}, RegisterRequest>, res: Respo
       physician_name: physician.name,
       physician_phone: formatPhoneNumber(physician.phone),
       medical_information: medicalInformation,
-      user_type
+      user_type: user_type,
+      createdAt: new Date(),
+      updatedAt: new Date()
     });
 
     // Return minimal user data
