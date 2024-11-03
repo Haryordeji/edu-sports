@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import { models } from '../db';
+import { UUID } from 'crypto';
 
 interface RegisterRequest {
   firstName: string;
@@ -95,7 +96,7 @@ export const register = async (req: Request<{}, {}, RegisterRequest>, res: Respo
 
     const password_hash = await bcrypt.hash(password, 10);
 
-    // Format phone numbers as strings
+    // format phone numbers as strings
     const formatPhoneNumber = (phone: { areaCode: string; prefix: string; lineNumber: string }) => {
       return `${phone.areaCode}${phone.prefix}${phone.lineNumber}`;
     };
@@ -125,6 +126,7 @@ export const register = async (req: Request<{}, {}, RegisterRequest>, res: Respo
       previous_instructor: previousInstructor,
       emergency_contact_name: emergencyContact.name,
       emergency_contact_phone: formatPhoneNumber(emergencyContact.phone),
+      emergency_contact_relationship: emergencyContact.relationship,
       physician_name: physician.name,
       physician_phone: formatPhoneNumber(physician.phone),
       medical_information: medicalInformation,
@@ -133,7 +135,7 @@ export const register = async (req: Request<{}, {}, RegisterRequest>, res: Respo
       updatedAt: new Date()
     });
 
-    // Return minimal user data
+    // return data
     const userData = {
       user_id: user.user_id,
       first_name: user.first_name,
@@ -150,5 +152,244 @@ export const register = async (req: Request<{}, {}, RegisterRequest>, res: Respo
   } catch (error) {
     console.error('Registration error:', error);
     res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// Update controller
+export const updateProfile = async (req: Request<{ userId: string }, {}, Partial<RegisterRequest>>, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const updates = req.body;
+
+    const user = await models.User.findOne({ where: { user_id: userId }});
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (updates.email && updates.email !== user.email) {
+      const existingUser = await models.User.findOne({ where: { email: updates.email }});
+      if (existingUser) {
+        return res.status(400).json({ message: 'Email already registered' });
+      }
+    }
+
+    let password_hash;
+    if (updates.password) {
+      password_hash = await bcrypt.hash(updates.password, 10);
+    }
+
+    const formatPhoneNumber = (phone: { areaCode: string; prefix: string; lineNumber: string }) => {
+      return `${phone.areaCode}${phone.prefix}${phone.lineNumber}`;
+    };
+
+    const updateData: any = {
+      ...(updates.firstName && { first_name: updates.firstName }),
+      ...(updates.middleInitial && { middle_initial: updates.middleInitial }),
+      ...(updates.lastName && { last_name: updates.lastName }),
+      ...(updates.address && { street: updates.address }),
+      ...(updates.city && { city: updates.city }),
+      ...(updates.state && { state: updates.state }),
+      ...(updates.zipCode && { zip_code: updates.zipCode }),
+      ...(updates.Phone && { phone: formatPhoneNumber(updates.Phone) }),
+      ...(updates.email && { email: updates.email }),
+      ...(updates.gender && { gender: updates.gender }),
+      ...(updates.dateOfBirth && { dob: updates.dateOfBirth }),
+      ...(updates.height && { height: updates.height }),
+      ...(updates.handedness && { handedness: updates.handedness }),
+      ...(updates.heardFrom && { 
+        referral_source: updates.heardFrom.source,
+        referral_name: updates.heardFrom.name || ""
+      }),
+      ...(updates.golfExperience && { golf_experience: updates.golfExperience }),
+      ...(updates.previousLessons !== undefined && { previous_lessons: updates.previousLessons ? 'yes' : 'no' }),
+      ...(updates.lessonDuration && { lesson_duration: updates.lessonDuration }),
+      ...(updates.previousInstructor && { previous_instructor: updates.previousInstructor }),
+      ...(password_hash && { password_hash }),
+      ...(updates.emergencyContact && {
+        emergency_contact_name: updates.emergencyContact.name,
+        emergency_contact_phone: formatPhoneNumber(updates.emergencyContact.phone)
+      }),
+      ...(updates.physician && {
+        physician_name: updates.physician.name,
+        physician_phone: formatPhoneNumber(updates.physician.phone)
+      }),
+      ...(updates.medicalInformation && { medical_information: updates.medicalInformation }),
+      updated_at: new Date()
+    };
+
+    // update user
+    await models.User.update(updateData, {
+      where: { user_id: userId }
+    });
+
+    // get updated user
+    const updatedUser = await models.User.findOne({ where: { user_id: userId }});
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    const userData = {
+      user_id: updatedUser.user_id,
+      first_name: updatedUser.first_name,
+      last_name: updatedUser.last_name,
+      email: updatedUser.email,
+      user_type: updatedUser.user_type
+    };
+
+    res.json({
+      success: true,
+      user: userData,
+      message: 'Profile updated successfully'
+    });
+
+  } catch (error) {
+    console.error('Update error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// Delete controller
+export const deleteProfile = async (req: Request<{ userId: string }>, res: Response) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await models.User.findOne({ where: { user_id: userId }});
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    await models.User.destroy({
+      where: { user_id: userId }
+    });
+
+    res.json({
+      success: true,
+      message: 'Profile deleted successfully'
+    });
+
+  } catch (error) {
+    console.error('Delete error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// Get profile controller
+export const getProfile = async (req: Request<{ userId: string }>, res: Response) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await models.User.findOne({ 
+      where: { user_id: userId },
+      attributes: { 
+        exclude: ['password_hash'] 
+      }
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const formatPhoneForResponse = (phoneStr: string) => {
+      if (phoneStr && phoneStr.length === 10) {
+        return {
+          areaCode: phoneStr.substring(0, 3),
+          prefix: phoneStr.substring(3, 6),
+          lineNumber: phoneStr.substring(6)
+        };
+      }
+      return null;
+    };
+
+    // format in same interface paradigm
+    const userResponse = {
+      userId: user.user_id,
+      firstName: user.first_name,
+      middleInitial: user.middle_initial,
+      lastName: user.last_name,
+      address: user.street,
+      city: user.city,
+      state: user.state,
+      zipCode: user.zip_code,
+      Phone: formatPhoneForResponse(user.phone),
+      email: user.email,
+      gender: user.gender,
+      dateOfBirth: user.dob,
+      height: user.height,
+      handedness: user.handedness,
+      heardFrom: {
+        source: user.referral_source,
+        name: user.referral_name
+      },
+      golfExperience: user.golf_experience,
+      previousLessons: user.previous_lessons === 'yes',
+      lessonDuration: user.lesson_duration,
+      previousInstructor: user.previous_instructor,
+      emergencyContact: {
+        name: user.emergency_contact_name,
+        phone: formatPhoneForResponse(user.emergency_contact_phone),
+        relationship: user.emergency_contact_relationship
+      },
+      physician: {
+        name: user.physician_name,
+        phone: formatPhoneForResponse(user.physician_phone)
+      },
+      medicalInformation: user.medical_information,
+      user_type: user.user_type,
+      profileCreatedAt: user.profile_created_at,
+      updatedAt: user.updatedAt
+    };
+
+    res.json({
+      success: true,
+      user: userResponse
+    });
+
+  } catch (error) {
+    console.error('Get profile error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+interface User {
+  user_id: UUID;
+  first_name: string;
+  last_name: string;
+  email: string;
+  user_type: string;
+}
+
+export const getUsers = async (req: Request, res: Response) => {
+  try {
+    const user_type = req.query.user_type as string | undefined;
+    const where: { user_type?: string } = {};
+    
+    if (user_type) {
+      where.user_type = user_type;
+    }
+
+    const users = await models.User.findAll({ 
+      where,
+      attributes: ['user_id', 'first_name', 'last_name', 'email', 'user_type']
+    });
+
+    const formattedUsers: User[] = users.map(user => ({
+      user_id: user.user_id,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+      user_type: user.user_type
+    }));
+
+    return res.status(200).json({
+      success: true,
+      users: formattedUsers
+    });
+
+  } catch (error) {
+    console.error('Get users error:', error);
+    return res.status(500).json({ 
+      success: false,
+      message: 'Internal server error' 
+    });
   }
 };

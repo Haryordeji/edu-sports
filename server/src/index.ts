@@ -16,9 +16,32 @@ app.get('/api/test', (req: Request, res: Response) => {
   res.json({ message: 'Server is running!' });
 });
 
-// Auth routes
+// Auth routes for User
+
+interface UserParams {
+  userId: string;
+}
+
 app.post('/api/login', (req: Request, res: Response) => {authController.login(req, res)});
-app.post('/api/register',(req: Request, res: Response) => {userController.register(req, res)});
+app.post('/api/register', (req: Request, res: Response) => {
+  userController.register(req, res);
+});
+
+app.get('/api/users', (req: Request, res: Response) => {
+  userController.getUsers(req, res);
+});
+
+app.get('/api/users/:userId', (req: Request<UserParams>, res: Response) => {
+  userController.getProfile(req, res);
+});
+
+app.put('/api/users/:userId', (req: Request<UserParams>, res: Response) => {
+  userController.updateProfile(req, res);
+});
+
+app.delete('/api/users/:userId', (req: Request<UserParams>, res: Response) => {
+  userController.deleteProfile(req, res);
+});
 
 // Database connection and server start
 sequelize.authenticate()

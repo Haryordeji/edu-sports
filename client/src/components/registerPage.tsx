@@ -1,58 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './registerPage.css';
-
-interface PhoneNumber {
-    areaCode: string;
-    prefix: string;
-    lineNumber: string;
-  }
-  
-  interface EmergencyContact {
-    name: string;
-    phone: PhoneNumber;
-    relationship: string;
-  }
-  
-  interface Physician {
-    name: string;
-    phone: PhoneNumber;
-  }
-  
-  interface HeardFrom {
-    source: 'event' | 'media' | 'school' | 'internet' | 'friend' | '';
-    name?: string;
-  }
-  
-
-  // ! ADD dropdown selectors for state, height, DOB
-  interface RegistrationFormData {
-    firstName: string;
-    middleInitial: string;
-    lastName: string;
-    address: string;
-    city: string;
-    state: string;
-    zipCode: string;
-    Phone: PhoneNumber;
-    email: string;
-    gender: 'male' | 'female' | 'other' | '';
-    dateOfBirth: string;
-    height: string;
-    handedness: 'right' | 'left' | '';
-    heardFrom: HeardFrom;
-    golfExperience: 'none' | 'veryLittle' | 'moderate' | 'aLot' | '';
-    previousLessons: boolean;
-    lessonDuration: string;
-    previousInstructor: string;
-    password: string;
-    emergencyContact: EmergencyContact;
-    physician: Physician;
-    medicalInformation: string;
-    agreeToTerms: boolean;
-
-    // ayo
-  }
+import { RegistrationFormData } from '../interfaces';
 
   const styles = {
     logo: {
@@ -93,7 +42,8 @@ const RegistrationPage: React.FC = () => {
       phone: { areaCode: '', prefix: '', lineNumber: '' }
     },
     medicalInformation: '',
-    agreeToTerms: false
+    agreeToTerms: false,
+    user_type: 'golfer'
   });
 
   const handleInputChange = (

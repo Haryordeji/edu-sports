@@ -11,7 +11,8 @@ interface LoginResponse {
   success: boolean;
   user: {
     user_id: number;
-    username: string;
+    first_name: string;
+    last_name: string;
     email: string;
     user_type: string;
   };

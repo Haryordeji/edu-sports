@@ -10,7 +10,6 @@ interface LoginRequest {
 
 
 export const login = async (req: Request<{}, {}, LoginRequest>, res: Response) => {
-  console.log("hitttt")
   try {
     const { email, password } = req.body;
 

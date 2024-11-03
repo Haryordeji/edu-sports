@@ -32,6 +32,7 @@ interface UserAttributes {
   previous_instructor?: string;
   emergency_contact_phone: string;
   emergency_contact_name: string;
+  emergency_contact_relationship: string;
   physician_name: string;
   physician_phone: string;
   medical_information: string;
@@ -70,6 +71,7 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
   public previous_instructor?: string;
   public emergency_contact_name!: string;
   public emergency_contact_phone!: string;
+  public emergency_contact_relationship!: string;
   public physician_name!: string;
   public physician_phone!: string;
   public medical_information!: string;
@@ -107,6 +109,7 @@ export const UserModelInit = (sequelize: Sequelize) => {
       previous_instructor: { type: DataTypes.STRING },
       emergency_contact_name: { type: DataTypes.STRING },
       emergency_contact_phone: { type: DataTypes.STRING },
+      emergency_contact_relationship: { type: DataTypes.STRING },
       physician_name: { type: DataTypes.STRING },
       physician_phone: { type: DataTypes.STRING },
       medical_information: { type: DataTypes.STRING },
