@@ -6,6 +6,7 @@ import AdminDashboard from './components/AdminDashboards';
 import { UserProfile } from './components/UserProfile';
 import GolferDashboard from './components/GolferDashboard';
 import InstructorDashboard from './components/InstructorDashboard';
+import ScheduleEditor from './components/ScheduleEditor';
 
 const App: React.FC = () => {
   return (
@@ -14,6 +15,7 @@ const App: React.FC = () => {
         <Route path="/" element={<LoginPage />} />
         <Route path="/register" element={<RegistrationPage />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/schedule" element={<ScheduleEditor />} />
         <Route path="/golfer/dashboard" element={<GolferDashboard/>} />
         <Route path="/instructor/dashboard" element={<InstructorDashboard/>} />
         <Route path="/profile/:id" element={<UserProfile />} />

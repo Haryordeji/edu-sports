@@ -1,4 +1,5 @@
-/*  This CSS is imported to more than one component */
+ /*
+ This CSS is imported to more than one component
 .dashboard-container {
     width: 100vw;
     min-height: 90vh;
@@ -58,7 +59,6 @@
     color: #000000;
   }
   
-  /* The following are styles for the calendar */
   .calendar-container {
     background: #FFFFFF;
     border: 1px solid #B4E5AF;
@@ -150,7 +150,6 @@
     margin: 0 0 5px 0;
   }
   
-  /* for responsive purposes */
   @media (max-width: 1200px) {
     .calendar-grid {
       min-width: 1000px;
@@ -160,3 +159,5 @@
       overflow-x: auto;
     }
   }
+
+  */
