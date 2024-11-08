@@ -1,101 +1,120 @@
-import React, { useState } from 'react';
-import { format, addDays, startOfWeek } from 'date-fns';
+import React, { useState, useEffect } from 'react';
+import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
+import moment from 'moment';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import Modal from 'react-modal';
 
-interface CalendarEvent {
-  id: string;
+const localizer = momentLocalizer(moment);
+
+export interface Event {
+  class_id: string;
   title: string;
   instructor: string;
-  startTime: string;
-  endTime: string;
+  start: Date;
+  end: Date;
   location: string;
-  day: number; 
   level: number;
 }
 
 const WeeklyCalendar: React.FC = () => {
-  const [currentWeek] = useState(startOfWeek(new Date()));
-  
-  // Some Mock data
-  const [events] = useState<CalendarEvent[]>([
-    {
-      id: '1',
-      title: 'Practice your Swing',
-      instructor: 'Daniel Jerome',
-      startTime: '3:00 pm',
-      endTime: '5:30 pm',
-      location: '429 John F. Kennedy Way',
-      day: 1,
-      level: 1,
-    },
-    {
-      id: '2',
-      title: 'On the Golf Course',
-      instructor: 'Sharon Camper',
-      startTime: '3:00 pm',
-      endTime: '5:30 pm',
-      location: '429 John F. Kennedy Way',
-      day: 5,
-      level: 2,
-    }
-  ]);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const timeSlots = Array.from({ length: 12 }, (_, i) => i + 7);
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch('YOUR_API_ENDPOINT_HERE');
+        if (!response.ok) throw new Error('Failed to fetch events');
+        
+        const data = await response.json();
+        const parsedEvents = data.map((event: any) => ({
+          ...event,
+          start: new Date(event.start),
+          end: new Date(event.end),
+        }));
+        setEvents(parsedEvents);
+        setError(null);
+      } catch (error) {
+        console.error('Error fetching events:', error);
+        setError('There was an issue fetching events. Contact Admin');
+      }
+    };
 
-  const days = Array.from({ length: 7 }, (_, i) => addDays(currentWeek, i));
+    fetchEvents();
+  }, []);
 
-  const getEventsForDayAndTime = (day: number, hour: number) => {
-    return events.filter(event => {
-      const eventHour = parseInt(event.startTime.split(':')[0]) + 
-        (event.startTime.includes('pm') ? 12 : 0);
-      return event.day === day && eventHour === hour;
-    });
+  const handleEventSelect = (event: Event) => {
+    setSelectedEvent(event);
+    setIsModalOpen(true);
   };
 
-  return (
-    <div className="calendar-container">
-      <div className="calendar-header">
-        {days.map((day, index) => (
-          <div key={index} className="calendar-day-header">
-            {format(day, 'EEE').toUpperCase()}
-          </div>
-        ))}
-      </div>
-      
-      <div className="calendar-grid">
-        <div className="time-column">
-          {timeSlots.map(hour => (
-            <div key={hour} className="time-slot">
-              {hour === 12 ? '12 PM' : hour > 12 ? `${hour-12} PM` : `${hour} AM`}
-            </div>
-          ))}
-        </div>
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedEvent(null);
+  };
 
-        {days.map((_, dayIndex) => (
-          <div key={dayIndex} className="day-column">
-            {timeSlots.map(hour => {
-              const dayEvents = getEventsForDayAndTime(dayIndex, hour);
-              return (
-                <div key={`${dayIndex}-${hour}`} className="calendar-cell">
-                  {dayEvents.map(event => (
-                    <div 
-                      key={event.id} 
-                      className={`event-card ${event.level}`}
-                      style={{ height: '170px' }}
-                    >
-                      <div className="event-content">
-                        <h4>{event.title}</h4>
-                        <p>with - {event.instructor}</p>
-                        <p>{event.startTime} - {event.endTime}</p>
-                        <p>{event.location}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              );
-            })}
+  const EventComponent: React.FC<{ event: Event }> = ({ event }) => (
+    <div>
+      <strong>{event.title}</strong>
+      <div>Instructor: {event.instructor}</div>
+      <div>Time: {moment(event.start).format('h:mm a')} - {moment(event.end).format('h:mm a')}</div>
+    </div>
+  );
+
+  return (
+    <div style={{ height: '500px' }}>
+      {error && (
+        <div style={{ color: 'red', marginBottom: '10px', textAlign: 'center' }}>
+          {error}
+        </div>
+      )}
+      <Calendar
+        localizer={localizer}
+        events={events}
+        startAccessor="start"
+        endAccessor="end"
+        style={{ height: '100%' }}
+        components={{
+          event: EventComponent,
+        }}
+        views={[Views.WEEK, Views.AGENDA]}
+        defaultView={Views.WEEK}
+        min={new Date(2024, 10, 8, 12, 0)}
+        max={new Date(2024, 10, 8, 18, 0)}
+        onSelectEvent={handleEventSelect} 
+      />
+
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={closeModal}
+        contentLabel="Event Details"
+        ariaHideApp={false}
+        style={{
+          content: {
+            width: '400px',
+            height: '300px',
+            margin: 'auto',
+            padding: '20px',
+            borderRadius: '10px',
+          },
+          overlay: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          },
+        }}
+      >
+        {selectedEvent && (
+          <div>
+            <h2>{selectedEvent.title}</h2>
+            <p><strong>Instructor:</strong> {selectedEvent.instructor}</p>
+            <p><strong>Time:</strong> {moment(selectedEvent.start).format('h:mm a')} - {moment(selectedEvent.end).format('h:mm a')}</p>
+            <p><strong>Location:</strong> {selectedEvent.location}</p>
+            <p><strong>Level:</strong> {selectedEvent.level}</p>
+            <button onClick={closeModal}>Close</button>
           </div>
-        ))}
-      </div>
+        )}
+      </Modal>
     </div>
   );
 };
