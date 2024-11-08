@@ -25,10 +25,13 @@ const WeeklyCalendar: React.FC = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch('YOUR_API_ENDPOINT_HERE');
+        const response = await fetch('http://localhost:5001/api/classes', {
+          method: 'GET',
+        });
         if (!response.ok) throw new Error('Failed to fetch events');
         
-        const data = await response.json();
+        const dataT = await response.json();
+        const data = dataT.classes;
         const parsedEvents = data.map((event: any) => ({
           ...event,
           start: new Date(event.start),

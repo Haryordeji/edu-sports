@@ -9,6 +9,9 @@ interface ClassAttributes {
   location: string;
   instructor: string;
   level: number;
+
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 interface ClassCreationAttributes extends Optional<ClassAttributes, 'class_id'> {}
@@ -21,6 +24,9 @@ export class Class extends Model<ClassAttributes, ClassCreationAttributes> imple
   public location!: string;
   public instructor!: string;
   public level!: number;
+
+  public createdAt!: Date;
+  public updatedAt!: Date;
 }
 
 export const ClassModelInit = (sequelize: Sequelize) => {
@@ -32,7 +38,9 @@ export const ClassModelInit = (sequelize: Sequelize) => {
       end: { type: DataTypes.DATE, allowNull: false },
       location: { type: DataTypes.STRING },
       instructor: {type: DataTypes.STRING},
-      level: {type: DataTypes.INTEGER}
+      level: {type: DataTypes.INTEGER},
+      createdAt: { type: DataTypes.DATE },
+      updatedAt: { type: DataTypes.DATE },
     },
     { sequelize, tableName: 'classes' }
   );

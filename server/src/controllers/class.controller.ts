@@ -48,7 +48,9 @@ export const createClass = async (req: Request<{}, {}, CreateClassRequest>, res:
       end: new Date(end),
       location,
       instructor,
-      level
+      level,
+      updatedAt: new Date(),
+      createdAt: new Date()
     });
 
     const classData = {
@@ -96,7 +98,8 @@ export const updateClass = async (req: Request<{ classId: string }, {}, Partial<
       ...(updates.end && { end: new Date(updates.end) }),
       ...(updates.location && { location: updates.location }),
       ...(updates.instructor && { instructor: updates.instructor }),
-      ...(updates.level !== undefined && { level: updates.level })
+      ...(updates.level !== undefined && { level: updates.level }),
+      updated_at: new Date()
     };
 
     // Update class

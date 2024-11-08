@@ -4,6 +4,7 @@ import { sequelize, models } from './db';
 import * as authController from './controllers/auth.controller';
 import * as userController from './controllers/user.controller';
 import * as noteController from './controllers/note.controller';
+import * as classController from './controllers/class.controller';
 
 const app: Express = express();
 const PORT = process.env.PORT || 5001;
@@ -65,6 +66,32 @@ app.get('/api/notes', (req: Request, res: Response) => {
 });
 
 
+
+// Class routes
+
+interface ClassParams {
+  classId: string;
+}
+
+app.post('/api/classes', (req: Request, res: Response) => {
+  classController.createClass(req, res);
+});
+
+app.get('/api/classes', (req: Request, res: Response) => {
+  classController.getClasses(req, res);
+});
+
+app.get('/api/classes/:classId', (req: Request<ClassParams>, res: Response) => {
+  classController.getClass(req, res);
+});
+
+app.put('/api/classes/:classId', (req: Request<ClassParams>, res: Response) => {
+  classController.updateClass(req, res);
+});
+
+app.delete('/api/classes/:classId', (req: Request<ClassParams>, res: Response) => {
+  classController.deleteClass(req, res);
+});
 
 // Database connection and server start
 sequelize.authenticate()
