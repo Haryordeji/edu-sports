@@ -3,6 +3,7 @@ import cors from 'cors';
 import { sequelize, models } from './db';
 import * as authController from './controllers/auth.controller';
 import * as userController from './controllers/user.controller';
+import * as noteController from './controllers/note.controller';
 
 const app: Express = express();
 const PORT = process.env.PORT || 5001;
@@ -42,6 +43,28 @@ app.put('/api/users/:userId', (req: Request<UserParams>, res: Response) => {
 app.delete('/api/users/:userId', (req: Request<UserParams>, res: Response) => {
   userController.deleteProfile(req, res);
 });
+
+// Note routes
+app.post('/api/notes', (req: Request, res: Response) => {
+  noteController.createNote(req, res);
+});
+app.get('/api/notes/:noteId', (req: Request<{ noteId: string }>, res: Response) => {
+  noteController.getNoteById(req, res);
+});
+
+app.put('/api/notes/:noteId', (req: Request<{ noteId: string }>, res: Response) => {
+  noteController.updateNote(req, res);
+});
+
+app.delete('/api/notes/:noteId', (req: Request<{ noteId: string }>, res: Response) => {
+  noteController.deleteNote(req, res);
+});
+
+app.get('/api/notes', (req: Request, res: Response) => {
+  noteController.listNotes(req, res);
+});
+
+
 
 // Database connection and server start
 sequelize.authenticate()
