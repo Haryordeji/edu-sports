@@ -1,9 +1,11 @@
-import { UUID } from 'crypto';
 import React, { useState, useEffect } from 'react';
+import { User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import WeeklyCalendar from './WeeklyCalendar';
+import './Dashboard.css';
 
 interface User {
-  user_id: UUID;
+  user_id: string;
   first_name: string;
   last_name: string;
   email: string;
@@ -13,13 +15,14 @@ interface User {
 const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('schedule');
   const [users, setUsers] = useState<User[]>([]);
-
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchUsers();
-  }, []); 
+    if (activeTab === 'academy') {
+      fetchUsers();
+    }
+  }, [activeTab]); 
 
   const fetchUsers = async () => {
     try {
@@ -27,17 +30,17 @@ const AdminDashboard: React.FC = () => {
       if (!response.ok) throw new Error('Failed to fetch users');
       const data = await response.json();
 
-        if (data.success) {
+      if (data.success) {
         setUsers(data.users);
-        } 
+      } 
     } catch (err) {
-      setError('Error loading students');
+      setError('Error loading users');
       console.error(err);
     }
   };
 
   const handleDeleteUser = async (userId: string) => {
-    if (window.confirm(`Are you sure you delete this account?`)) {
+    if (window.confirm('Are you sure you want to delete this account?')) {
       try {
         const response = await fetch(`http://localhost:5001/api/users/${userId}`, {
           method: 'DELETE',
@@ -50,6 +53,7 @@ const AdminDashboard: React.FC = () => {
       }
     }
   };
+
   const handleViewUser = (userId: string) => {
     navigate(`/profile/${userId}`);
   };
@@ -93,79 +97,50 @@ const AdminDashboard: React.FC = () => {
     </div>
   );
 
-
-  const weekDays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-  const hours = Array.from({ length: 12 }, (_, i) => i + 7); // 7 AM to 6 PM
-
   return (
-    <div >
-      {/* Header */}
-      <header>
-        <div>
+    <div className="dashboard-container">
+      <header className="dashboard-header">
+        <div className="logo">
           <img 
             src="https://static.wixstatic.com/media/09e86e_318df3ef05b647329554c64770b3fd61~mv2.jpg/v1/fill/w_658,h_226,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/Edu%20Sports%20Logo_04-01.jpg" 
-            alt="Edu Sports Logo" 
+            alt="Company Logo"
           />
-          <div>
+        </div>
+        <nav className="main-nav">
+          <div className="nav-links">
             <button 
               onClick={() => setActiveTab('schedule')}
+              className={`nav-link ${activeTab === 'schedule' ? 'text-black' : 'text-gray-600'}`}
             >
               Schedule
             </button>
             <button 
               onClick={() => setActiveTab('feedback')}
-              className={`px-4 py-2 rounded ${activeTab === 'feedback' ? 'bg-green-100 text-green-800' : 'text-gray-600'}`}
+              className={`nav-link ${activeTab === 'feedback' ? 'text-black' : 'text-gray-600'}`}
             >
               Feedback
             </button>
             <button 
-              onClick={() => setActiveTab('users')}
+              onClick={() => setActiveTab('academy')}
+              className={`nav-link ${activeTab === 'academy' ? 'text-black' : 'text-gray-600'}`}
             >
-              Users
+              Academy
             </button>
           </div>
-          <button 
-            onClick={() => {
-              localStorage.removeItem('user');
-              navigate('/');
-            }}
-          >
-            Logout
-          </button>
-        </div>
+          <div className="profile" onClick={() => navigate('/profile')}>
+            <User size={36} strokeWidth={3.5} />
+            <span>Profile</span>
+          </div>
+        </nav>
       </header>
 
-      {/* Main Content */}
-      <main className="p-6">
+      <main className="dashboard-main">
         {activeTab === 'schedule' && (
-          <div>
-            <div>
-              {weekDays.map(day => (
-                <div key={day} >
-                  {day}
-                </div>
-              ))}
-            </div>
-            <div>
-              {hours.map(hour => (
-                <div key={hour} >
-                  {weekDays.map((day, index) => (
-                    <div 
-                      key={`${day}-${hour}`} 
-                    >
-                      <div>
-                        {`${hour % 12 || 12}:00 ${hour >= 12 ? 'PM' : 'AM'}`}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </div>
+          <WeeklyCalendar />
         )}
 
-        {activeTab === 'users' && (
-          <div className="space-y-8">
+        {activeTab === 'academy' && (
+          <div className="p-6 bg-white">
             <UserList userType="Instructor" users={users} />
             <UserList userType="Golfer" users={users} />
             {error && (
@@ -177,9 +152,9 @@ const AdminDashboard: React.FC = () => {
         )}
 
         {activeTab === 'feedback' && (
-          <div>
+          <div className="p-6 bg-white">
             <h2>Feedback</h2>
-            <p >Feedback section coming soon...</p>
+            <p>Feedback section coming soon...</p>
           </div>
         )}
       </main>
