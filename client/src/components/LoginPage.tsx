@@ -66,10 +66,10 @@ const LoginPage: React.FC = () => {
             window.location.href = '/admin/dashboard';
             break;
           case 'instructor':
-            window.location.href = '/instructor/dashboard';
+            window.location.href = `/instructor/dashboard/${data.user.user_id}`;
             break;
           case 'golfer':
-            window.location.href = '/golfer/dashboard';
+            window.location.href = `/golfer/dashboard/${data.user.user_id}`;
             break;
           default:
             window.location.href = '/dashboard';

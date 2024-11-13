@@ -12,6 +12,7 @@ interface User {
   user_type: string;
 }
 
+
 const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('schedule');
   const [users, setUsers] = useState<User[]>([]);
@@ -126,10 +127,6 @@ const AdminDashboard: React.FC = () => {
             >
               Academy
             </button>
-          </div>
-          <div className="profile" onClick={() => navigate('/profile')}>
-            <User size={36} strokeWidth={3.5} />
-            <span>Profile</span>
           </div>
         </nav>
       </header>

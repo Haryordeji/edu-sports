@@ -2,8 +2,11 @@ import React from 'react';
 import { User } from 'lucide-react';
 import WeeklyCalendar from './WeeklyCalendar';
 import './Dashboard.css';
+import { useParams } from 'react-router-dom';
 
 const GolferDashboard: React.FC = () => {
+  const { id } = useParams();
+
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
@@ -15,8 +18,10 @@ const GolferDashboard: React.FC = () => {
             <a href="/feedback" className="nav-link">Feedback</a>
           </div>
           <div className="profile">
+            <a href={`/profile/${id}`} className="profile">
             <User size={36} strokeWidth={3.5} />
             <span>Profile</span>
+            </a>
           </div>
         </nav>
       </header>
