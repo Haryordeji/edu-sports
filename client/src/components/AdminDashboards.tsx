@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import WeeklyCalendar from './WeeklyCalendar';
 import './global.css';
 
@@ -20,7 +19,9 @@ const styles = {
 };
 
 const AdminDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('schedule');
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const [activeTab, setActiveTab] = useState(queryParams.get('tab') || 'schedule');
   const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -104,6 +105,11 @@ const AdminDashboard: React.FC = () => {
     </div>
   );
 
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    navigate(`?tab=${tab}`, { replace: true });
+  };
+
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
@@ -116,19 +122,19 @@ const AdminDashboard: React.FC = () => {
         <nav className="main-nav">
           <div className="nav-links">
             <button 
-              onClick={() => setActiveTab('schedule')}
+              onClick={() => handleTabChange('schedule')}
               className={`nav-link ${activeTab === 'schedule' ? 'text-black' : 'text-gray-600'}`}
             >
               Schedule
             </button>
             <button 
-              onClick={() => setActiveTab('feedback')}
+              onClick={() => handleTabChange('feedback')}
               className={`nav-link ${activeTab === 'feedback' ? 'text-black' : 'text-gray-600'}`}
             >
               Feedback
             </button>
             <button 
-              onClick={() => setActiveTab('academy')}
+              onClick={() => handleTabChange('academy')}
               className={`nav-link ${activeTab === 'academy' ? 'text-black' : 'text-gray-600'}`}
             >
               Academy
