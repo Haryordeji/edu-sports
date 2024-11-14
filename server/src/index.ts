@@ -1,97 +1,223 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Express, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import { sequelize, models } from './db';
+import cookieParser from 'cookie-parser';
+import { sequelize } from './db';
 import * as authController from './controllers/auth.controller';
 import * as userController from './controllers/user.controller';
 import * as noteController from './controllers/note.controller';
 import * as classController from './controllers/class.controller';
+import { authenticate, optionalAuthenticate, authorize } from './middleware/auth';
+import { AuthenticatedRequest, AuthRequestWithParams, UserParams, ClassParams, NoteParams } from './types';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app: Express = express();
 const PORT = process.env.PORT || 5001;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+  credentials: true
+}));
 app.use(express.json());
+app.use(cookieParser());
 
 // Test route
-app.get('/api/test', (req: Request, res: Response) => {
+app.get('/api/test', (_req: Request, res: Response) => {
   res.json({ message: 'Server is running!' });
 });
 
-// Auth routes for User
-
-interface UserParams {
-  userId: string;
-}
-
-app.post('/api/login', (req: Request, res: Response) => {authController.login(req, res)});
-app.post('/api/register', (req: Request, res: Response) => {
-  userController.register(req, res);
+// Auth routes (public)
+app.post('/api/login', async (req: Request, res: Response) => {
+  await authController.login(req, res);
 });
 
-app.get('/api/users', (req: Request, res: Response) => {
-  userController.getUsers(req, res);
+app.post('/api/register', async (req: Request, res: Response) => {
+  await userController.register(req, res);
 });
 
-app.get('/api/users/:userId', (req: Request<UserParams>, res: Response) => {
-  userController.getProfile(req, res);
-});
+// User routes
+app.get('/api/users', 
+  optionalAuthenticate,
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+      await userController.getUsers(req, res);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
-app.put('/api/users/:userId', (req: Request<UserParams>, res: Response) => {
-  userController.updateProfile(req, res);
-});
+app.get('/api/users/:userId', 
+  optionalAuthenticate,
+  async (req: Request<UserParams>, res: Response, next: NextFunction) => {
+    try {
+      await userController.getProfile(req, res);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
-app.delete('/api/users/:userId', (req: Request<UserParams>, res: Response) => {
-  userController.deleteProfile(req, res);
-});
+app.put('/api/users/:userId', 
+  authenticate,
+  async (req: AuthRequestWithParams<UserParams>, res: Response, next: NextFunction) => {
+    try {
+      if (req.user?.user_type !== 'admin' && req.user?.user_id !== req.params.userId) {
+        res.status(403).json({ success: false, message: 'Access denied' });
+        return;
+      }
+      await userController.updateProfile(req, res);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+app.delete('/api/users/:userId', 
+  authenticate,
+  authorize('admin'),
+  async (req: Request<UserParams>, res: Response, next: NextFunction) => {
+    try {
+      await userController.deleteProfile(req, res);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 // Note routes
-app.post('/api/notes', (req: Request, res: Response) => {
-  noteController.createNote(req, res);
-});
-app.get('/api/notes/:noteId', (req: Request<{ noteId: string }>, res: Response) => {
-  noteController.getNoteById(req, res);
-});
+app.post('/api/notes', 
+  authenticate,
+  authorize('instructor'),
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+      await noteController.createNote(req, res);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
-app.put('/api/notes/:noteId', (req: Request<{ noteId: string }>, res: Response) => {
-  noteController.updateNote(req, res);
-});
+app.get('/api/notes/:noteId', 
+  authenticate,
+  async (req: AuthRequestWithParams<NoteParams>, res: Response, next: NextFunction) => {
+    try {
+      if (!['instructor', 'golfer'].includes(req.user?.user_type || '')) {
+        res.status(403).json({ success: false, message: 'Access denied' });
+        return;
+      }
+      await noteController.getNoteById(req, res);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
-app.delete('/api/notes/:noteId', (req: Request<{ noteId: string }>, res: Response) => {
-  noteController.deleteNote(req, res);
-});
+app.put('/api/notes/:noteId', 
+  authenticate,
+  authorize('instructor'),
+  async (req: Request<NoteParams>, res: Response, next: NextFunction) => {
+    try {
+      await noteController.updateNote(req, res);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
-app.get('/api/notes', (req: Request, res: Response) => {
-  noteController.listNotes(req, res);
-});
+app.delete('/api/notes/:noteId', 
+  authenticate,
+  authorize('instructor'),
+  async (req: Request<NoteParams>, res: Response, next: NextFunction) => {
+    try {
+      await noteController.deleteNote(req, res);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
-
+app.get('/api/notes', 
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+      if (!['instructor', 'golfer'].includes(req.user?.user_type || '')) {
+        res.status(403).json({ success: false, message: 'Access denied' });
+        return;
+      }
+      await noteController.listNotes(req, res);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 // Class routes
+app.get('/api/classes', 
+  optionalAuthenticate,
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+      await classController.getClasses(req, res);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
-interface ClassParams {
-  classId: string;
-}
+app.get('/api/classes/:classId', 
+  optionalAuthenticate,
+  async (req: Request<ClassParams>, res: Response, next: NextFunction) => {
+    try {
+      await classController.getClass(req, res);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
-app.post('/api/classes', (req: Request, res: Response) => {
-  classController.createClass(req, res);
-});
+app.post('/api/classes', 
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+      if (!['admin', 'instructor'].includes(req.user?.user_type || '')) {
+        res.status(403).json({ success: false, message: 'Access denied' });
+        return;
+      }
+      await classController.createClass(req, res);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
-app.get('/api/classes', (req: Request, res: Response) => {
-  classController.getClasses(req, res);
-});
+app.put('/api/classes/:classId', 
+  authenticate,
+  async (req: AuthRequestWithParams<ClassParams>, res: Response, next: NextFunction) => {
+    try {
+      if (!['admin', 'instructor'].includes(req.user?.user_type || '')) {
+        res.status(403).json({ success: false, message: 'Access denied' });
+        return;
+      }
+      await classController.updateClass(req, res);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
-app.get('/api/classes/:classId', (req: Request<ClassParams>, res: Response) => {
-  classController.getClass(req, res);
-});
-
-app.put('/api/classes/:classId', (req: Request<ClassParams>, res: Response) => {
-  classController.updateClass(req, res);
-});
-
-app.delete('/api/classes/:classId', (req: Request<ClassParams>, res: Response) => {
-  classController.deleteClass(req, res);
-});
+app.delete('/api/classes/:classId', 
+  authenticate,
+  authorize('admin'),
+  async (req: Request<ClassParams>, res: Response, next: NextFunction) => {
+    try {
+      await classController.deleteClass(req, res);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 // Database connection and server start
 sequelize.authenticate()

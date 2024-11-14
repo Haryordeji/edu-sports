@@ -6,6 +6,7 @@ https://www.figma.com/design/3GaHf9kOXKmxS60tpwqi6T/COS-333
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
+import axios from 'axios';
 
 interface LoginResponse {
   success: boolean;
@@ -17,6 +18,7 @@ interface LoginResponse {
     user_type: string;
   };
   message: string;
+  token: string;
 }
 
 const styles = {
@@ -46,6 +48,7 @@ const LoginPage: React.FC = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
+        credentials: 'include',
       });
 
       const data: LoginResponse = await response.json();
@@ -58,21 +61,26 @@ const LoginPage: React.FC = () => {
       if (data.success) {
         console.log("successful login")
         // user data in local storage
+        localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
+
+        // let's talk some authorization here 
+        axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+
         
         // we will define various components here
         switch (data.user.user_type) {
           case 'admin':
-            window.location.href = '/admin/dashboard';
+            navigate('/admin/dashboard');
             break;
           case 'instructor':
-            window.location.href = `/instructor/dashboard/${data.user.user_id}`;
+            navigate(`/instructor/dashboard/${data.user.user_id}`);
             break;
           case 'golfer':
-            window.location.href = `/golfer/dashboard/${data.user.user_id}`;
+            navigate(`/golfer/dashboard/${data.user.user_id}`);
             break;
           default:
-            window.location.href = '/dashboard';
+            navigate('/dashboard');
         }
       } else {
         setError(data.message || 'Login failed');

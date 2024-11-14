@@ -1,9 +1,10 @@
  /*
- This CSS is imported to more than one component
+ This CSS is imported to more than one component */
+
 .dashboard-container {
     width: 100vw;
-    min-height: 90vh;
-    background-color: #B4E5AF;
+    min-height: 100vh;
+    background-color: #FFFFFF;
   }
   
   .dashboard-header {
@@ -159,5 +160,3 @@
       overflow-x: auto;
     }
   }
-
-  */

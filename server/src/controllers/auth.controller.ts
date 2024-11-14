@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { models } from '../db';
 import bcrypt from 'bcrypt';
+import { generateToken } from '../middleware/auth';
 
 // Define interface for login request body
 interface LoginRequest {
@@ -33,9 +34,20 @@ export const login = async (req: Request<{}, {}, LoginRequest>, res: Response) =
       user_type: user.user_type,
     };
 
+    // let's protect them routes! get that token bro
+    const token = generateToken(userData);
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000
+    });
+
     res.json({
       success: true,
       user: userData,
+      token,
       message: 'Login successful'
     });
   } catch (error) {
