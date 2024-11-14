@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import WeeklyCalendar from './WeeklyCalendar';
+import FeedbackSection from './FeedbackSection';
 import './Dashboard.css';
 
 interface User {
@@ -11,7 +12,6 @@ interface User {
   email: string;
   user_type: string;
 }
-
 
 const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('schedule');
@@ -132,10 +132,8 @@ const AdminDashboard: React.FC = () => {
       </header>
 
       <main className="dashboard-main">
-        {activeTab === 'schedule' && (
-          <WeeklyCalendar />
-        )}
-
+        {activeTab === 'schedule' && <WeeklyCalendar />}
+        
         {activeTab === 'academy' && (
           <div className="p-6 bg-white">
             <UserList userType="Instructor" users={users} />
@@ -147,13 +145,8 @@ const AdminDashboard: React.FC = () => {
             )}
           </div>
         )}
-
-        {activeTab === 'feedback' && (
-          <div className="p-6 bg-white">
-            <h2>Feedback</h2>
-            <p>Feedback section coming soon...</p>
-          </div>
-        )}
+        
+        {activeTab === 'feedback' && <FeedbackSection />}
       </main>
     </div>
   );
