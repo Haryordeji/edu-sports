@@ -16,6 +16,7 @@ interface UsersResponse {
   success: boolean;
   users: User[];
 }
+
 const styles = {
   logo: {
     width: '200px',
@@ -111,6 +112,10 @@ const AdminDashboard: React.FC = () => {
   );
 
   const handleTabChange = (tab: string) => {
+    if (tab === 'schedule-editor') {
+      navigate('/admin/schedule');
+      return;
+    }
     setActiveTab(tab);
     navigate(`?tab=${tab}`, { replace: true });
   };
@@ -131,6 +136,12 @@ const AdminDashboard: React.FC = () => {
               className={`nav-link ${activeTab === 'schedule' ? 'text-black' : 'text-gray-600'}`}
             >
               Schedule
+            </button>
+            <button 
+              onClick={() => handleTabChange('schedule-editor')}
+              className="nav-link text-gray-600 hover:text-black"
+            >
+              Edit Schedule
             </button>
             <button 
               onClick={() => handleTabChange('feedback')}
