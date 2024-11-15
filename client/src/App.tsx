@@ -7,7 +7,7 @@ import { UserProfile } from './components/UserProfile';
 import GolferDashboard from './components/GolferDashboard';
 import InstructorDashboard from './components/InstructorDashboard';
 import ScheduleEditor from './components/ScheduleEditor';
-import { FeedbackDashboard } from './components/FeedbackDashboard';
+import GolferFeedback from "./components/FeedbackDashboard";
 
 const App: React.FC = () => {
   return (
@@ -15,12 +15,12 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/register" element={<RegistrationPage />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/dashboard/:id" element={<AdminDashboard />} />
         <Route path="/admin/schedule" element={<ScheduleEditor />} />
         <Route path="/golfer/dashboard/:id" element={<GolferDashboard/>} />
         <Route path="/instructor/dashboard/:id" element={<InstructorDashboard/>} />
         <Route path="/profile/:id" element={<UserProfile />} />
-        <Route path="/instructor/:id/feedback" element={<FeedbackDashboard/>}/>
+        <Route path="/feedback/:instructorid/:golferid" element={<GolferFeedback/>}/>
 
       </Routes>
     </Router>

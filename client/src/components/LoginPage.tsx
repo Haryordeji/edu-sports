@@ -57,7 +57,7 @@ const LoginPage: React.FC = () => {
         // Navigate based on user type
         switch (data.user.user_type) {
           case 'admin':
-            navigate('/admin/dashboard');
+            navigate(`/admin/dashboard/${data.user.user_id}`);
             break;
           case 'instructor':
             navigate(`/instructor/dashboard/${data.user.user_id}`);
