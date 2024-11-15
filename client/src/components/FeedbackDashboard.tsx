@@ -1,204 +1,149 @@
-import { useState, useEffect } from "react";
-import Modal from 'react-modal';
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import instance from '../utils/axios';
+import { Event } from './WeeklyCalendar';
 
-interface User {
-  user_id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  user_type: string;
-}
 
-interface Note {
-  note_id: string;
-  instructor_id: string;
-  golfer_id: string;
-  note_content: string;
-  created_at: Date;
-}
+const GolferFeedback = () => {
+    const { instructorid, golferid } = useParams<{ instructorid: string; golferid: string }>();
 
-Modal.setAppElement('#root');
+    const [notes, setNotes] = useState([]);
+    const [newNoteContent, setNewNoteContent] = useState('');
+    const [editNoteId, setEditNoteId] = useState<string | null>(null);
+    const [editNoteContent, setEditNoteContent] = useState('');
+    const [classes, setClasses] = useState<Event[]>([]);
+    const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
+    const navigate = useNavigate();
 
-export const FeedbackDashboard: React.FC = () => {
-    const { instructorId } = useParams()
-  const [users, setUsers] = useState<User[]>([]);
-  const [error, setError] = useState('');
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [newNote, setNewNote] = useState('');
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+    // Fetch notes for the golfer
+    useEffect(() => {
+        const fetchNotes = async () => {
+            try {
+                const response = await instance.get(`/golfers/${golferid}/notes`);
+                setNotes(response.data.notes);
+            } catch (error) {
+                console.error('Error fetching notes:', error);
+            }
+        };
 
-  const fetchUsers = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch('http://localhost:5001/api/users/?user_type=golfer');
-      if (!response.ok) throw new Error('Failed to fetch users');
-      const data = await response.json();
+        fetchNotes();
+    }, [golferid]);
 
-      if (data.success) {
-        setUsers(data.users);
-      } 
-    } catch (err) {
-      setError('Error loading users');
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    // Fetch available classes
+    useEffect(() => {
+        const fetchClasses = async () => {
+            try {
+                const response = await instance.get('/classes', { withCredentials: true });
+                const { data } = response;
+                if (data.success) {
+                    setClasses(data.classes);
+                }
+            } catch (error) {
+                console.error('Error fetching classes:', error);
+            }
+        };
 
-  const handleViewNotes = async (user: User) => {
-    setSelectedUser(user);
-    setIsModalOpen(true);
-    try {
-      const response = await fetch(`/api/golfers/${user.user_id}/notes`, {method: "GET"});
-      if (!response.ok) throw new Error('Failed to fetch notes');
-      const data = await response.json();
-      
-      if (data.success) {
-        setNotes(data.notes);
-      }
-    } catch (err) {
-      console.error('Error fetching notes:', err);
-      setError('Error loading notes');
-    }
-  };
+        fetchClasses();
+    }, []);
 
-  const handleSubmitNote = async () => {
-    if (!selectedUser || !newNote.trim()) return;
+    // Handle creating a new note
+    const handleCreateNote = async () => {
+        if (!newNoteContent.trim()) return alert('Note content cannot be empty.');
+        if (!selectedClassId) return alert('Please select a class.');
 
-    try {
-      const newNoteData = {
-        instructor_id: instructorId,
-        golfer_id: selectedUser.user_id,
-        note_content: newNote
-      };
+        try {
+            await instance.post('/notes', {
+                instructor_id: instructorid,
+                golfer_id: golferid,
+                class_id: selectedClassId,
+                note_content: newNoteContent,
+            });
+            setNewNoteContent('');
+            const updatedNotes = await instance.get(`/golfers/${golferid}/notes`);
+            setNotes(updatedNotes.data.notes);
+        } catch (error) {
+            console.error('Error creating note:', error);
+        }
+    };
 
-      const response = await fetch('http://localhost:5001/api/notes', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newNoteData),
-      });
+    const handleEditNote = async (noteId: string) => {
+        if (!editNoteContent.trim()) return alert('Edited note content cannot be empty.');
 
-      if (!response.ok) throw new Error('Failed to submit note');
-      const data = await response.json();
+        try {
+            await instance.put(`/notes/${noteId}`, { note_content: editNoteContent });
+            setEditNoteId(null);
+            setEditNoteContent('');
+            const updatedNotes = await instance.get(`/golfers/${golferid}/notes`);
+            setNotes(updatedNotes.data.notes);
+        } catch (error) {
+            console.error('Error editing note:', error);
+        }
+    };
 
-      if (data.success) {
-        setNotes([
-          {
-            ...newNoteData,
-            note_id: data.note_id,
-            created_at: new Date(),
-          } as Note,
-          ...notes
-        ]);
-        setNewNote('');
-      }
-    } catch (err) {
-      console.error('Error submitting note:', err);
-      setError('Error submitting note');
-    }
-  };
-
-  if (isLoading) {
-    return <div className="p-6">Loading users...</div>;
-  }
-
-  return (
-    <div className="p-6">
-      {error && <div className="text-red-500 mb-4">{error}</div>}
-      
-      <div className="space-y-4">
-        {users.map((user) => (
-          <div key={user.user_id} className="flex items-center justify-between p-4 border rounded-lg bg-white shadow-sm">
-            <div>
-              <span className="font-medium">
-                {user.first_name} {user.last_name}
-              </span>
-            </div>
-            
-            <button
-              onClick={() => handleViewNotes(user)}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-            >
-              Add/View Notes
+    return (
+        <div>
+          <div>
+            <button onClick={() => navigate(-1)}>
+            ← Back
             </button>
           </div>
-        ))}
-      </div>
+            <h1>Golfer Feedback</h1>
+            <h2>Instructor ID: {instructorid}</h2>
+            <h2>Golfer ID: {golferid}</h2>
 
-      <Modal
-        isOpen={isModalOpen}
-        onRequestClose={() => {
-          setIsModalOpen(false);
-          setSelectedUser(null);
-          setNewNote('');
-        }}
-        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl"
-        overlayClassName="fixed inset-0 bg-black bg-opacity-50"
-      >
-        {selectedUser && (
-          <div>
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">
-                Notes for {selectedUser.first_name} {selectedUser.last_name}
-              </h2>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <textarea
-                  placeholder="Enter new note..."
-                  value={newNote}
-                  onChange={(e) => setNewNote(e.target.value)}
-                  className="w-full min-h-[100px] p-2 border rounded resize-y"
-                />
-                <button
-                  onClick={handleSubmitNote}
-                  className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+            <div>
+                <h3>Create New Note</h3>
+                <select
+                    value={selectedClassId || ''}
+                    onChange={(e) => setSelectedClassId(e.target.value)}
                 >
-                  Add Note
-                </button>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-medium mb-2">Previous Notes</h3>
-                <div className="border rounded-md p-4 max-h-[200px] overflow-y-auto">
-                  {notes.length === 0 ? (
-                    <p className="text-gray-500">No notes yet</p>
-                  ) : (
-                    <div className="space-y-4">
-                      {notes.map((note) => (
-                        <div key={note.note_id} className="border-b pb-2">
-                          <p className="text-sm text-gray-600">
-                            {new Date(note.created_at).toLocaleString()}
-                          </p>
-                          <p className="mt-1">{note.note_content}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
+                    <option value="" disabled>Select a class</option>
+                    {classes.map((cls) => (
+                        <option key={cls.class_id} value={cls.class_id}>
+                            {cls.title} ({cls.instructor})
+                        </option>
+                    ))}
+                </select>
+                <textarea
+                    value={newNoteContent}
+                    onChange={(e) => setNewNoteContent(e.target.value)}
+                    placeholder="Write your note here..."
+                />
+                <button onClick={handleCreateNote}>Submit Note</button>
             </div>
-          </div>
-        )}
-      </Modal>
-    </div>
-  );
+
+            <div>
+                <h3>Existing Notes</h3>
+                {notes.length === 0 ? (
+                    <p>No notes available.</p>
+                ) : (
+                    notes.map((note: any) => (
+                        <div key={note.note_id} style={{ marginBottom: '1rem', border: '1px solid #ccc', padding: '1rem' }}>
+                            {editNoteId === note.note_id ? (
+                                <>
+                                    <textarea
+                                        value={editNoteContent}
+                                        onChange={(e) => setEditNoteContent(e.target.value)}
+                                    />
+                                    <button onClick={() => handleEditNote(note.note_id)}>Save</button>
+                                    <button onClick={() => setEditNoteId(null)}>Cancel</button>
+                                </>
+                            ) : (
+                                <>
+                                    <p>{note.note_content}</p>
+                                    <button onClick={() => {
+                                        setEditNoteId(note.note_id);
+                                        setEditNoteContent(note.note_content);
+                                    }}>Edit</button>
+                                </>
+                            )}
+                        </div>
+                    ))
+                )}
+            </div>
+        </div>
+    );
 };
 
-export default FeedbackDashboard;
+export default GolferFeedback;

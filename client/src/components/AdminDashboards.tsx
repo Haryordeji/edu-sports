@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import WeeklyCalendar from './WeeklyCalendar';
 import './global.css';
 import instance from '../utils/axios';
@@ -31,6 +31,7 @@ const AdminDashboard: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { id } = useParams();
 
   useEffect(() => {
     if (activeTab === 'academy') {
@@ -72,45 +73,149 @@ const AdminDashboard: React.FC = () => {
     navigate(`/profile/${userId}`);
   };
 
-  const UserList = ({ userType, users }: { userType: string, users: User[] }) => (
-    <div className="space-y-4">
-      <h2 className="text-xl font-semibold mb-4">{userType}s</h2>
-      <div className="space-y-2">
-        {users
-          .filter(user => user.user_type.toLowerCase() === userType.toLowerCase())
-          .map(user => (
-            <div 
-              key={user.user_id} 
-              className="flex items-center justify-between p-3 bg-white rounded shadow"
-            >
-              <div>
-                <span className="font-medium">
-                  {user.first_name} {user.last_name}
-                </span>
-                <span className="ml-4 text-gray-600">
-                  {user.email}
-                </span>
-              </div>
-              <div className="space-x-2">
-                <button
-                  onClick={() => handleViewUser(user.user_id)}
-                  className="p-2 text-blue-600 hover:bg-blue-50 rounded"
+  const UserList = ({ userType, users }: { userType: string; users: User[] }) => {
+    const [isCollapsed, setIsCollapsed] = useState(false);
+  
+    const toggleCollapse = () => {
+      setIsCollapsed((prev) => !prev);
+    };
+  
+    const sortedUsers = [
+      ...users.filter((user) => user.user_type.toLowerCase() === "golfer"),
+      ...users.filter((user) => user.user_type.toLowerCase() !== "golfer"),
+    ];
+  
+    return (
+      <div style={{ marginBottom: "1rem", padding: "20px" }}>
+        <h2
+          style={{
+            fontSize: "1.25rem",
+            fontWeight: 600,
+            marginBottom: "1rem",
+            color: "#1F2937",
+            cursor: "pointer",
+          }}
+          onClick={toggleCollapse}
+        >
+          {userType}s
+          <span style={{ marginLeft: "10px", fontSize: "1rem", color: "#6B7280" }}>
+            {isCollapsed ? "▼" : "▲"}
+          </span>
+        </h2>
+        {!isCollapsed && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            {sortedUsers
+              .filter((user) => user.user_type.toLowerCase() === userType.toLowerCase())
+              .map((user) => (
+                <div
+                  key={user.user_id}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    padding: "1rem",
+                    backgroundColor: "#ffffff",
+                    borderRadius: "0.5rem",
+                    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+                    border: "1px solid #E5E7EB",
+                    transition: "box-shadow 0.2s",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.boxShadow = "0 2px 6px rgba(0, 0, 0, 0.15)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.boxShadow = "0 1px 3px rgba(0, 0, 0, 0.1)")
+                  }
                 >
-                  View
-                </button>
-                <button
-                  onClick={() => handleDeleteUser(user.user_id)}
-                  className="p-2 text-red-600 hover:bg-red-50 rounded"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
+                  <div>
+                    <span style={{ fontWeight: 500, color: "#111827" }}>
+                      {user.first_name} {user.last_name}
+                    </span>
+                    <span
+                      style={{
+                        marginLeft: "1rem",
+                        fontSize: "0.875rem",
+                        color: "#6B7280",
+                      }}
+                    >
+                      {user.email}
+                    </span>
+                  </div>
+                  <div style={{ display: "flex", gap: "0.5rem" }}>
+                    <button
+                      onClick={() => handleViewUser(user.user_id)}
+                      style={{
+                        padding: "0.5rem 1rem",
+                        fontSize: "0.875rem",
+                        color: "#2563EB",
+                        border: "1px solid #2563EB",
+                        borderRadius: "0.375rem",
+                        backgroundColor: "transparent",
+                        cursor: "pointer",
+                        transition: "background-color 0.2s",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#EFF6FF")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "transparent")
+                      }
+                    >
+                      View Profile
+                    </button>
+                    {user.user_type.toLowerCase() === "golfer" && (
+                      <button
+                      onClick={() => navigate(`/feedback/${id}/${user.user_id}`)}
+                        style={{
+                          padding: "0.5rem 1rem",
+                          fontSize: "0.875rem",
+                          color: "#2563EB",
+                          border: "1px solid #2563EB",
+                          borderRadius: "0.375rem",
+                          backgroundColor: "transparent",
+                          cursor: "pointer",
+                          transition: "background-color 0.2s",
+                        }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#EFF6FF")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor = "transparent")
+                        }
+                      >
+                        View Feedback
+                      </button>
+                    )}
+                    <button
+                      onClick={() => handleDeleteUser(user.user_id)}
+                      style={{
+                        padding: "0.5rem 1rem",
+                        fontSize: "0.875rem",
+                        color: "#DC2626",
+                        border: "1px solid #DC2626",
+                        borderRadius: "0.375rem",
+                        backgroundColor: "transparent",
+                        cursor: "pointer",
+                        transition: "background-color 0.2s",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#FEE2E2")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "transparent")
+                      }
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+          </div>
+        )}
       </div>
-    </div>
-  );
-
+    );
+  };
+  
   const handleTabChange = (tab: string) => {
     if (tab === 'schedule-editor') {
       navigate('/admin/schedule');
@@ -144,12 +249,6 @@ const AdminDashboard: React.FC = () => {
               Edit Schedule
             </button>
             <button 
-              onClick={() => handleTabChange('feedback')}
-              className={`nav-link ${activeTab === 'feedback' ? 'text-black' : 'text-gray-600'}`}
-            >
-              Feedback
-            </button>
-            <button 
               onClick={() => handleTabChange('academy')}
               className={`nav-link ${activeTab === 'academy' ? 'text-black' : 'text-gray-600'}`}
             >
@@ -165,7 +264,7 @@ const AdminDashboard: React.FC = () => {
         )}
 
         {activeTab === 'academy' && (
-          <div className="p-6 bg-white">
+          <div className="dashboard-container">
             <UserList userType="Instructor" users={users} />
             <UserList userType="Golfer" users={users} />
             {error && (

@@ -155,10 +155,10 @@ app.get('/api/golfers/:golferId/notes',
   authenticate,
   async (req: AuthRequestWithParams<{golferId: string}>, res: Response, next: NextFunction) => {
     try {
-      if (!['instructor', 'golfer'].includes(req.user?.user_type || '')) {
-        res.status(403).json({ success: false, message: 'Access denied' });
-        return;
-      }
+      // if (!['instructor', 'golfer'].includes(req.user?.user_type || '')) {
+      //   res.status(403).json({ success: false, message: 'Access denied' });
+      //   return;
+      // }
       
       // If user is a golfer, they can only access their own notes
       if (req.user?.user_type === 'golfer' && req.user?.user_id !== req.params.golferId) {
