@@ -6,14 +6,13 @@ https://www.figma.com/design/3GaHf9kOXKmxS60tpwqi6T/COS-333
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
-import axios from 'axios';
+import instance from '../utils/axios';
+import { AxiosError } from 'axios';
 
 interface LoginResponse {
   success: boolean;
   user: {
-    user_id: number;
-    first_name: string;
-    last_name: string;
+    user_id: string;
     email: string;
     user_type: string;
   };
@@ -42,33 +41,20 @@ const LoginPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5001/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-        credentials: 'include',
-      });
+      const response = await instance.post<LoginResponse>('/login', 
+        { email, password },
+        { 
+          withCredentials: true
+        }
+      );
 
-      const data: LoginResponse = await response.json();
-
-      if (!response.ok) {
-        console.log(data.message)
-        throw new Error('Login failed');
-      }
+      const { data } = response;
 
       if (data.success) {
-        console.log("successful login")
-        // user data in local storage
-        localStorage.setItem('token', data.token);
+        // Store only user data in localStorage
         localStorage.setItem('user', JSON.stringify(data.user));
-
-        // let's talk some authorization here 
-        axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
-
         
-        // we will define various components here
+        // Navigate based on user type
         switch (data.user.user_type) {
           case 'admin':
             navigate('/admin/dashboard');
@@ -85,8 +71,13 @@ const LoginPage: React.FC = () => {
       } else {
         setError(data.message || 'Login failed');
       }
-    } catch (err) {
-      setError('An error occurred during login');
+    } catch (error) {
+      console.error('Login error:', error);
+      if (error instanceof AxiosError) {
+        setError(error.response?.data?.message || 'Login failed');
+      } else {
+        setError('An error occurred during login');
+      }
     } finally {
       setIsLoading(false);
     }

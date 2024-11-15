@@ -6,8 +6,8 @@ import * as authController from './controllers/auth.controller';
 import * as userController from './controllers/user.controller';
 import * as noteController from './controllers/note.controller';
 import * as classController from './controllers/class.controller';
-import { authenticate, optionalAuthenticate, authorize } from './middleware/auth';
-import { AuthenticatedRequest, AuthRequestWithParams, UserParams, ClassParams, NoteParams } from './types';
+import { authenticate } from './middleware/auth';
+import { AuthenticatedRequest, AuthRequestWithParams, UserParams, ClassParams, NoteParams } from "./types/types"
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -38,8 +38,8 @@ app.post('/api/register', async (req: Request, res: Response) => {
 });
 
 // User routes
-app.get('/api/users', 
-  optionalAuthenticate,
+app.get('/api/users',
+  authenticate,
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
       await userController.getUsers(req, res);
@@ -49,8 +49,8 @@ app.get('/api/users',
   }
 );
 
-app.get('/api/users/:userId', 
-  optionalAuthenticate,
+app.get('/api/users/:userId',
+  authenticate, 
   async (req: Request<UserParams>, res: Response, next: NextFunction) => {
     try {
       await userController.getProfile(req, res);
@@ -77,7 +77,6 @@ app.put('/api/users/:userId',
 
 app.delete('/api/users/:userId', 
   authenticate,
-  authorize('admin'),
   async (req: Request<UserParams>, res: Response, next: NextFunction) => {
     try {
       await userController.deleteProfile(req, res);
@@ -90,7 +89,6 @@ app.delete('/api/users/:userId',
 // Note routes
 app.post('/api/notes', 
   authenticate,
-  authorize('instructor'),
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
       await noteController.createNote(req, res);
@@ -117,7 +115,6 @@ app.get('/api/notes/:noteId',
 
 app.put('/api/notes/:noteId', 
   authenticate,
-  authorize('instructor'),
   async (req: Request<NoteParams>, res: Response, next: NextFunction) => {
     try {
       await noteController.updateNote(req, res);
@@ -129,7 +126,6 @@ app.put('/api/notes/:noteId',
 
 app.delete('/api/notes/:noteId', 
   authenticate,
-  authorize('instructor'),
   async (req: Request<NoteParams>, res: Response, next: NextFunction) => {
     try {
       await noteController.deleteNote(req, res);
@@ -154,9 +150,32 @@ app.get('/api/notes',
   }
 );
 
+// Get notes for specific golfer
+app.get('/api/golfers/:golferId/notes',
+  authenticate,
+  async (req: AuthRequestWithParams<{golferId: string}>, res: Response, next: NextFunction) => {
+    try {
+      if (!['instructor', 'golfer'].includes(req.user?.user_type || '')) {
+        res.status(403).json({ success: false, message: 'Access denied' });
+        return;
+      }
+      
+      // If user is a golfer, they can only access their own notes
+      if (req.user?.user_type === 'golfer' && req.user?.user_id !== req.params.golferId) {
+        res.status(403).json({ success: false, message: 'Access denied' });
+        return;
+      }
+      
+      await noteController.getGolferNotes(req, res);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 // Class routes
-app.get('/api/classes', 
-  optionalAuthenticate,
+app.get('/api/classes',
+  authenticate,
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
       await classController.getClasses(req, res);
@@ -166,8 +185,8 @@ app.get('/api/classes',
   }
 );
 
-app.get('/api/classes/:classId', 
-  optionalAuthenticate,
+app.get('/api/classes/:classId',
+  authenticate,
   async (req: Request<ClassParams>, res: Response, next: NextFunction) => {
     try {
       await classController.getClass(req, res);
@@ -209,7 +228,6 @@ app.put('/api/classes/:classId',
 
 app.delete('/api/classes/:classId', 
   authenticate,
-  authorize('admin'),
   async (req: Request<ClassParams>, res: Response, next: NextFunction) => {
     try {
       await classController.deleteClass(req, res);

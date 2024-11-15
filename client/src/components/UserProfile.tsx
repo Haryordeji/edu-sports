@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import instance from '../utils/axios';
+import { RegistrationFormData } from '../interfaces';
 
+interface ProfileResponse {
+  success: boolean;
+  user: RegistrationFormData
+}
 const UserProfile: React.FC = () => {
   const { id } = useParams();
   const [profile, setProfile] = useState<any>(null);
@@ -12,11 +18,9 @@ const UserProfile: React.FC = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch(`/api/users/${id}`, {method: 'GET'});
-        if (!response.ok) {
-          throw new Error('Failed to fetch profile');
-        }
-        const data = await response.json();
+        const response = await instance.get<ProfileResponse>(`/users/${id}`, {withCredentials: true});
+
+        const {data} = response;
         setProfile(data.user);
       } catch (err) {
         setError("Failed to load profile");

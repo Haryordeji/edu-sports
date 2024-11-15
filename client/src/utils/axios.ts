@@ -5,7 +5,8 @@ const instance = axios.create({
   timeout: 5000,
   headers: {
     'Content-Type': 'application/json'
-  }
+  },
+  withCredentials: true
 });
 
 instance.interceptors.request.use(
@@ -27,8 +28,6 @@ instance.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      
-
       window.location.href = '/';
     }
     return Promise.reject(error);

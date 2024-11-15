@@ -141,3 +141,28 @@ export const listNotes = async (req: Request, res: Response) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
+
+// get notes for specified golfer
+export const getGolferNotes = async (req: Request<{ golferId: string }>, res: Response) => {
+    try {
+        const golferId = req.params.golferId as UUID;
+
+        const notes = await models.Note.findAll({ 
+            where: { golfer_id: golferId },
+            order: [['created_at', 'DESC']]
+        });
+
+        res.status(200).json({
+            success: true,
+            notes
+        });
+    } catch (error) {
+        console.error('Get golfer notes error:', error);
+        res.status(500).json({ 
+            message: 'Internal server error',
+            error: error instanceof Error ? error.message : 'Unknown error'
+        });
+    }
+};
+

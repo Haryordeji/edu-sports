@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from 'react';
-
-interface Class {
-  class_id: string;
-  title: string;
-  start: string;
-  end: string;
-  location: string;
-  instructor: string;
-  level: number;
-}
+import instance from '../utils/axios';
+import { EventResponse, Event } from './WeeklyCalendar';
 
 interface ClassFormData {
   title: string;
@@ -20,7 +12,7 @@ interface ClassFormData {
 }
 
 const ScheduleEditor = () => {
-  const [classes, setClasses] = useState<Class[]>([]);
+  const [classes, setClasses] = useState<Event[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState<ClassFormData>({
     title: '',
@@ -37,8 +29,8 @@ const ScheduleEditor = () => {
 
   const fetchClasses = async () => {
     try {
-      const response = await fetch('/api/classes');
-      const data = await response.json();
+      const response = await instance.get<EventResponse>('/classes', {withCredentials: true});
+      const {data} = response;
       if (data.success) {
         setClasses(data.classes);
       }
@@ -49,10 +41,9 @@ const ScheduleEditor = () => {
 
   const handleDelete = async (classId: string) => {
     try {
-      const response = await fetch(`/api/classes/${classId}`, {
-        method: 'DELETE'
-      });
-      if (response.ok) {
+      const response = await instance.delete(`/classes/${classId}`, {withCredentials: true});
+      const {data} = response;
+      if (data.success) {
         fetchClasses();
       }
     } catch (error) {
@@ -64,15 +55,13 @@ const ScheduleEditor = () => {
     e.preventDefault();
     
     try {
-      const response = await fetch('/api/classes', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
+      const response = await instance.post('classes', formData, {
+        withCredentials: true,
       });
+
+      const {data} = response;
       
-      if (response.ok) {
+      if (data.success) {
         fetchClasses();
         setShowForm(false);
         setFormData({

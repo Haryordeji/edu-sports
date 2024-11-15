@@ -3,6 +3,8 @@ import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import Modal from 'react-modal';
+import instance from '../utils/axios';
+import { AxiosError } from 'axios';
 
 const localizer = momentLocalizer(moment);
 
@@ -16,6 +18,11 @@ export interface Event {
   level: number;
 }
 
+export interface EventResponse {
+  success: boolean;
+  classes: Event[];
+}
+
 const WeeklyCalendar: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -25,14 +32,11 @@ const WeeklyCalendar: React.FC = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch('http://localhost:5001/api/classes', {
-          method: 'GET',
-        });
-        if (!response.ok) throw new Error('Failed to fetch events');
-        
-        const dataT = await response.json();
-        const data = dataT.classes;
-        const parsedEvents = data.map((event: any) => ({
+        const response = await instance.get<EventResponse>('/classes', 
+          {withCredentials: true}
+        );
+        const {data} = response;
+        const parsedEvents = data.classes.map((event: any) => ({
           ...event,
           start: new Date(event.start),
           end: new Date(event.end),
@@ -84,7 +88,7 @@ const WeeklyCalendar: React.FC = () => {
         }}
         views={[Views.WEEK, Views.AGENDA]}
         defaultView={Views.WEEK}
-        min={new Date(2024, 10, 8, 12, 0)}
+        min={new Date(2024, 10, 8, 9, 0)}
         max={new Date(2024, 10, 8, 18, 0)}
         onSelectEvent={handleEventSelect} 
       />

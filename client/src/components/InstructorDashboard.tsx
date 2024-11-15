@@ -22,7 +22,7 @@ const InstructorDashboard: React.FC = () => {
         </div>
         <nav className="main-nav">
           <div className="nav-links">
-            <a href="/feedback" className="nav-link">Feedback</a>
+            <a href={`/instructor/${id}/feedback`} className="nav-link">Feedback</a>
           </div>
           <div className="profile">
             <a href={`/profile/${id}`} className="profile">

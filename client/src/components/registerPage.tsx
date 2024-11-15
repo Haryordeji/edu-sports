@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './registerPage.css';
 import { RegistrationFormData } from '../interfaces';
+import instance from '../utils/axios';
 
   const styles = {
     logo: {
@@ -121,24 +122,15 @@ const RegistrationPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:5001/api/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+      const response = await instance.post('/register', formData, {
+        withCredentials: true,
       });
+      const {data} = response;
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Registration failed');
-      }
-
-      const data = await response.json();
       console.log('Registration successful:', data);
       
       // Redirect to success page or login
-      navigate('/registration-success');
+      navigate('/');
     } catch (error) {
       console.error('Registration failed:', error);
     } 

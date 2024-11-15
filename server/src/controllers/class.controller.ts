@@ -221,16 +221,6 @@ export const getClasses = async (req: Request, res: Response) => {
     if (instructor) {
       where.instructor = instructor;
     }
-    
-    // not sure how to do this correctly
-    // if (startDate && endDate) {
-    //   where.start = {
-    //     [models.Sequelize.Op.between]: [
-    //       new Date(startDate as string),
-    //       new Date(endDate as string)
-    //     ]
-    //   };
-    // }
 
     const classes = await models.Class.findAll({ 
       where,

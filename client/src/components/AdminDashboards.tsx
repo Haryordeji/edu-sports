@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import WeeklyCalendar from './WeeklyCalendar';
 import './global.css';
+import instance from '../utils/axios';
 
 interface User {
   user_id: string;
@@ -11,6 +12,10 @@ interface User {
   user_type: string;
 }
 
+interface UsersResponse {
+  success: boolean;
+  users: User[];
+}
 const styles = {
   logo: {
     width: '200px',
@@ -34,9 +39,10 @@ const AdminDashboard: React.FC = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/users');
-      if (!response.ok) throw new Error('Failed to fetch users');
-      const data = await response.json();
+      const response = await instance.get<UsersResponse>('/users', 
+        {withCredentials: true}
+      );
+      const {data} = response;
 
       if (data.success) {
         setUsers(data.users);
@@ -50,10 +56,9 @@ const AdminDashboard: React.FC = () => {
   const handleDeleteUser = async (userId: string) => {
     if (window.confirm('Are you sure you want to delete this account?')) {
       try {
-        const response = await fetch(`http://localhost:5001/api/users/${userId}`, {
-          method: 'DELETE',
+        const response = await instance.delete(`/users/${userId}`, {
+          withCredentials: true
         });
-        if (!response.ok) throw new Error(`Failed to delete user ${userId}`);
         setUsers(users.filter(user => user.user_id !== userId));
       } catch (err) {
         setError('Error deleting user');
