@@ -264,7 +264,7 @@ const AdminDashboard: React.FC = () => {
         )}
 
         {activeTab === 'academy' && (
-          <div className="p-6 bg-white">
+          <div className="dashboard-container">
             <UserList userType="Instructor" users={users} />
             <UserList userType="Golfer" users={users} />
             {error && (
