@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import instance from '../utils/axios';
 import { EventResponse, Event } from './WeeklyCalendar';
+import { useNavigate } from 'react-router-dom';
 
 interface ClassFormData {
   title: string;
@@ -12,6 +13,7 @@ interface ClassFormData {
 }
 
 const ScheduleEditor = () => {
+  const navigate = useNavigate(); 
   const [classes, setClasses] = useState<Event[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingClassId, setEditingClassId] = useState<string | null>(null);
@@ -27,6 +29,10 @@ const ScheduleEditor = () => {
   useEffect(() => {
     fetchClasses();
   }, []);
+
+  const handleBack = () => {
+    navigate(-1); // Goes back one step in history
+  };
 
   const fetchClasses = async () => {
     try {
@@ -120,7 +126,13 @@ const ScheduleEditor = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="relative">
+      <button 
+        onClick={handleBack}
+        className="absolute top-0 left-0 p-4 text-gray-600 hover:text-gray-800 flex items-center gap-2"
+      >
+        ← Back
+      </button>
       <div className="mb-6 flex justify-between items-center">
         <h1 className="text-2xl font-bold">Class Schedule Management</h1>
         <button 
