@@ -1,8 +1,10 @@
 import axios from 'axios';
 
+const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
+
 const instance = axios.create({
-  baseURL: 'https://edu-sports01.onrender.com/api',
-  timeout: 5000,
+  baseURL: BASE_URL,
+  timeout: 15000,
   headers: {
     'Content-Type': 'application/json'
   },
@@ -28,8 +30,14 @@ instance.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      window.location.href = '/';
+      window.location.href = '/login';
     }
+    
+    if (!error.response) {
+      console.error('Network error:', error);
+      throw new Error('Network error - please check your connection');
+    }
+    
     return Promise.reject(error);
   }
 );
