@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/index.js",
-    "build": "npm install --save-dev @types/cookie-parser @types/express @types/jsonwebtoken && tsc",
+    "build": "npm install --save-dev @types/cookie-parser @types/express @types/express-serve-static-core @types/jsonwebtoken @types/node @types/cors @types/bcrypt && tsc",
     "dev": "nodemon src/index.ts",
     "sequelize": "node -r dotenv/config -r ts-node/register ./node_modules/.bin/sequelize-cli"
   },
@@ -28,6 +28,28 @@
     "@types/cookie-parser": "^1.4.7",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/express-serve-static-core": "^4.17.41",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/node": "^20.11.0",
+    "nodemon": "^3.0.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
+
+{
+  "scripts": {
+    "start": "node dist/index.js",
+    "build": "npm install --save-dev @types/cookie-parser @types/express @types/express-serve-static-core @types/jsonwebtoken @types/node @types/cors @types/bcrypt && tsc",
+    "dev": "nodemon src/index.ts",
+    "sequelize": "node -r dotenv/config -r ts-node/register ./node_modules/.bin/sequelize-cli"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.7",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/express-serve-static-core": "^4.17.41",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^20.11.0",
     "nodemon": "^3.0.2",
