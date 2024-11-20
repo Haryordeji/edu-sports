@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import WeeklyCalendar from './WeeklyCalendar';
 import './global.css';
 import instance from '../utils/axios';
+import Logout from './ProfileDropdown';
+import ProfileDropdown from './ProfileDropdown';
 
 interface User {
   user_id: string;
@@ -32,6 +34,15 @@ const AdminDashboard: React.FC = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { id } = useParams();
+
+  const storedUserJson = localStorage.getItem('user');
+  let storedUserId = ''
+  let storedUserType = ''
+  if (storedUserJson) {
+    const storedUser = JSON.parse(storedUserJson);
+    storedUserId = storedUser.user_id;
+    storedUserType = storedUser.user_type
+  }
 
   useEffect(() => {
     if (activeTab === 'academy') {
@@ -228,12 +239,28 @@ const AdminDashboard: React.FC = () => {
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
-        <div className="logo">
-          <img 
-            src="https://static.wixstatic.com/media/09e86e_318df3ef05b647329554c64770b3fd61~mv2.jpg/v1/fill/w_658,h_226,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/Edu%20Sports%20Logo_04-01.jpg " 
-            alt="Company Logo" style={styles.logo}
-          />
+      <div 
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "1rem", // optional: adjust padding for spacing
+        }}
+      >
+        <div className="logo" onClick={() => handleTabChange("schedule")}>
+          <Link to={`/admin/dashboard/${storedUserId}/?tab=schedule`}>
+            <img 
+              src="https://static.wixstatic.com/media/09e86e_318df3ef05b647329554c64770b3fd61~mv2.jpg/v1/fill/w_658,h_226,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/Edu%20Sports%20Logo_04-01.jpg" 
+              alt="Company Logo" 
+              style={styles.logo}
+            />
+          </Link>
         </div>
+        <div>
+          <ProfileDropdown user_id={storedUserId} user_type={storedUserType}  />
+        </div>
+      </div>
+
         <nav className="main-nav">
           <div className="nav-links">
             <button 
@@ -257,31 +284,32 @@ const AdminDashboard: React.FC = () => {
           </div>
         </nav>
       </header>
+      <div style={{paddingTop: "2rem"}}>
+        <main className="dashboard-main">
+          {activeTab === 'schedule' && (
+            <WeeklyCalendar />
+          )}
 
-      <main className="dashboard-main">
-        {activeTab === 'schedule' && (
-          <WeeklyCalendar />
-        )}
+          {activeTab === 'academy' && (
+            <div className="dashboard-container">
+              <UserList userType="Instructor" users={users} />
+              <UserList userType="Golfer" users={users} />
+              {error && (
+                <div className="text-red-600 mt-4">
+                  {error}
+                </div>
+              )}
+            </div>
+          )}
 
-        {activeTab === 'academy' && (
-          <div className="dashboard-container">
-            <UserList userType="Instructor" users={users} />
-            <UserList userType="Golfer" users={users} />
-            {error && (
-              <div className="text-red-600 mt-4">
-                {error}
-              </div>
-            )}
-          </div>
-        )}
-
-        {activeTab === 'feedback' && (
-          <div className="p-6 bg-white">
-            <h2>Feedback</h2>
-            <p>Feedback section coming soon...</p>
-          </div>
-        )}
-      </main>
+          {activeTab === 'feedback' && (
+            <div className="p-6 bg-white">
+              <h2>Feedback</h2>
+              <p>Feedback section coming soon...</p>
+            </div>
+          )}
+        </main>
+      </div>
     </div>
   );
 };
