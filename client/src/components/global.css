@@ -1,0 +1,163 @@
+ /*
+ This CSS is imported to more than one component */
+
+.dashboard-container {
+    width: 100vw;
+    min-height: 100vh;
+    background-color: #FFFFFF;
+    padding: 20px;
+  }
+  
+  .dashboard-header {
+    background: #FFFFFF;
+    border-bottom: 1px solid #B4E5AF;
+    height: 149px;
+  }
+  
+  .logo {
+    padding: 12px 0;
+    border-bottom: 1px solid #B4E5AF;
+    height: 60px;
+  }
+  
+  .logo img {
+    height: 68px;
+    width: 260px;
+    object-fit: contain;
+  }
+  
+  .main-nav {
+    height: 59px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+  
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    margin-right: 40px;
+  }
+  
+  .nav-link {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: #000000;
+    text-decoration: none;
+  }
+  
+  .profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 118px;
+  }
+  
+  .profile span {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: #000000;
+  }
+  
+  .calendar-container {
+    background: #FFFFFF;
+    border: 1px solid #B4E5AF;
+    margin-top: 0;
+    overflow-x: auto;
+  }
+  
+  .calendar-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-bottom: 1px solid #B4E5AF;
+    height: 56px;
+  }
+  
+  .calendar-day-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 20px;
+    color: #473C3C;
+    border-right: 1px solid #B4E5AF;
+  }
+  
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: 78px repeat(7, 1fr);
+    min-height: 798px;
+  }
+  
+  .time-column {
+    border-right: 1px solid #B4E5AF;
+  }
+  
+  .time-slot {
+    height: 66px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: #000000;
+  }
+  
+  .day-column {
+    border-right: 1px solid #B4E5AF;
+  }
+  
+  .calendar-cell {
+    height: 66px;
+    border-bottom: 1px solid #B4E5AF;
+    background: #F1F1F1;
+    position: relative;
+  }
+  
+  .event-card {
+    position: absolute;
+    width: 186px;
+    height: 170px;
+    background: #68C368;
+    border-radius: 5px;
+    padding: 17px;
+    color: #FFFFFF;
+    z-index: 1;
+  }
+  
+  .event-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 6px;
+    height: 100%;
+    background: #D74141;
+    border-radius: 5px 0 0 5px;
+  }
+  
+  .event-card h4 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    margin: 0 0 5px 0;
+  }
+  
+  .event-card p {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    margin: 0 0 5px 0;
+  }
+  
+  @media (max-width: 1200px) {
+    .calendar-grid {
+      min-width: 1000px;
+    }
+    
+    .dashboard-main {
+      overflow-x: auto;
+    }
+  }

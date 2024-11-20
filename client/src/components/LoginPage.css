@@ -1,0 +1,167 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  
+  .login-container {
+    display: flex;
+    max-width: 800px;
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .login-form {
+    flex: 1;
+    padding: 2rem;
+  }
+  
+  .login-header {
+    margin-bottom: 2rem;
+  }
+  
+  .login-header h1 {
+    color: #4a4a4a;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .login-header p {
+    color: #888;
+    font-size: 0.9rem;
+  }
+  
+  h2 {
+    color: #333;
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+  }
+  
+  .input-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+  
+  input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  input:focus {
+    outline: none;
+    border-color: #4caf50;
+  }
+  
+  .toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+  }
+  
+  .sign-in-button {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .sign-in-button:hover {
+    background-color: #B4E5AF;
+  }
+  
+  .new-user-section {
+    flex: 1;
+    background-color: #B4E5AF;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .new-user-section h3 {
+    color: #333;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .new-user-section p {
+    color: #666;
+    margin-bottom: 1.5rem;
+  }
+  
+  .sign-up-button {
+    padding: 0.8rem 2rem;
+    background-color: white;
+    color: #4caf50;
+    border: 2px solid #4caf50;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .sign-up-button:hover {
+    background-color: #4caf50;
+    color: white;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .login-container {
+      flex-direction: column;
+      max-width: 100%;
+      height: 100vh;
+    }
+  
+    .login-form,
+    .new-user-section {
+      width: 100%;
+      padding: 1.5rem;
+    }
+  
+    h2 {
+      font-size: 1.5rem;
+    }
+  
+    .new-user-section {
+      order: +1;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .login-form,
+    .new-user-section {
+      padding: 1rem;
+    }
+  
+    h2 {
+      font-size: 1.2rem;
+    }
+  
+    input,
+    .sign-in-button,
+    .sign-up-button {
+      font-size: 0.9rem;
+    }
+  }
