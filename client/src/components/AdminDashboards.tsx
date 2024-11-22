@@ -301,13 +301,6 @@ const AdminDashboard: React.FC = () => {
               )}
             </div>
           )}
-
-          {activeTab === 'feedback' && (
-            <div className="p-6 bg-white">
-              <h2>Feedback</h2>
-              <p>Feedback section coming soon...</p>
-            </div>
-          )}
         </main>
       </div>
     </div>
