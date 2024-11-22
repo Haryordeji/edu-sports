@@ -81,6 +81,7 @@ const LoginPage: React.FC = () => {
   };
 
   return (
+    <div className="login-page-wrapper">
     <div className="login-container">
       <div className="login-form">
         <div className="login-header">
@@ -132,6 +133,7 @@ const LoginPage: React.FC = () => {
         <p>Sign up and discover and have a sporting chance to be more</p>
         <button onClick={handleSignUp} className="sign-up-button" disabled={isLoading}>Sign Up</button>
       </div>
+    </div>
     </div>
   );
 };

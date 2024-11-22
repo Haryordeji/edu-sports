@@ -148,7 +148,7 @@ const RegistrationPage: React.FC = () => {
           {/* Name Fields */}
           <div className="name-group">
             <div className="input-group">
-              <label>Last Name</label>
+              <h4>Last Name</h4>
               <input
                 type="text"
                 name="lastName"
@@ -158,7 +158,7 @@ const RegistrationPage: React.FC = () => {
               />
             </div>
             <div className="input-group">
-              <label>First Name</label>
+              <h4>First Name</h4>
               <input
                 type="text"
                 name="firstName"
@@ -168,7 +168,7 @@ const RegistrationPage: React.FC = () => {
               />
             </div>
             <div className="input-group small">
-              <label>Middle Name Initial</label>
+              <h4>Middle Name Initial</h4>
               <input
                 type="text"
                 name="middleInitial"
@@ -180,7 +180,7 @@ const RegistrationPage: React.FC = () => {
           </div>
           <div className="two-column">
             <div className="input-group">
-              <label>Email</label>
+              <h4>Email</h4>
               <input
                 type="email"
                 name="email"
@@ -191,7 +191,7 @@ const RegistrationPage: React.FC = () => {
             </div>
             
             <div className="input-group">
-              <label>Password</label>
+              <h4>Password</h4>
               <input
                 type="password"
                 name="password"
@@ -205,7 +205,7 @@ const RegistrationPage: React.FC = () => {
           {/* Address Fields */}
           <div className="address-group">
             <div className="input-group">
-              <label>Address</label>
+              <h4>Address</h4>
               <input
                 type="text"
                 name="address"
@@ -216,7 +216,7 @@ const RegistrationPage: React.FC = () => {
             </div>
             <div className="city-state-zip">
               <div className="input-group">
-                <label>City</label>
+                <h4>City</h4>
                 <input
                   type="text"
                   name="city"
@@ -226,7 +226,7 @@ const RegistrationPage: React.FC = () => {
                 />
               </div>
               <div className="input-group small">
-                <label>State</label>
+                <h4>State</h4>
                 <input
                   type="text"
                   name="state"
@@ -237,7 +237,7 @@ const RegistrationPage: React.FC = () => {
                 />
               </div>
               <div className="input-group">
-                <label>Zip Code</label>
+                <h4>Zip Code</h4>
                 <input
                   type="text"
                   name="zipCode"
@@ -253,7 +253,7 @@ const RegistrationPage: React.FC = () => {
           {/* Contact Information */}
           <div className="contact-group">
             <div className="phone-input">
-              <label>Phone</label>
+              <h4>Phone</h4>
               <div className="phone-parts">
                 <input
                   type="text"
@@ -283,7 +283,7 @@ const RegistrationPage: React.FC = () => {
           {/* Personal Information */}
           <div className="personal-info-group">
             <div className="gender-group">
-              <label>Gender</label>
+              <h4>Gender</h4>
               <div className="radio-options">
                 <label>
                   <input
@@ -320,7 +320,7 @@ const RegistrationPage: React.FC = () => {
 
             <div className="age-dob-group">
               <div className="input-group">
-                <label>Date of Birth</label>
+                <h4>Date of Birth</h4>
                 <input
                   type="date"
                   name="dateOfBirth"
@@ -330,7 +330,7 @@ const RegistrationPage: React.FC = () => {
                 />
               </div>
               <div className="input-group">
-                <label>Height</label>
+                <h4>Height</h4>
                 <input
                   type="text"
                   name="height"
@@ -342,7 +342,7 @@ const RegistrationPage: React.FC = () => {
             </div>
 
             <div className="handedness-group">
-              <label>Handedness</label>
+              <h4>Handedness</h4>
               <div className="radio-options">
                 <label>
                   <input
@@ -370,7 +370,7 @@ const RegistrationPage: React.FC = () => {
 
           {/* How did you hear about us */}
           <div className="heard-from-group">
-            <label>How did you hear about our program?</label>
+            <h4>How did you hear about our program?</h4>
             <div className="source-options">
               {['Event', 'Media', 'School', 'Internet', 'Friend'].map((source) => (
                 <label key={source}>
@@ -396,7 +396,7 @@ const RegistrationPage: React.FC = () => {
 
           {/* Golf Experience */}
           <div className="golf-experience-group">
-            <label>Golf Experience</label>
+            <h4>Golf Experience</h4>
             <div className="experience-options">
               {[
                 { value: 'none', label: 'None' },
@@ -420,7 +420,7 @@ const RegistrationPage: React.FC = () => {
 
           {/* Previous Lessons */}
           <div className="previous-lessons-group">
-            <label>Any previous golf lessons?</label>
+            <h4>Any previous golf lessons?</h4>
             <div className="lessons-details">
               <label>
                 <input
@@ -460,7 +460,7 @@ const RegistrationPage: React.FC = () => {
             <h3>EMERGENCY CONTACT - (Other than Participant/Parent/Legal Guardian)</h3>
             <div className="emergency-contact-group">
               <div className="input-group">
-                <label>Name</label>
+                <h4>Name</h4>
                 <input
                   type="text"
                   name="name"
@@ -471,7 +471,7 @@ const RegistrationPage: React.FC = () => {
               </div>
               
               <div className="phone-input">
-                <label>Phone </label>
+                <h4>Phone </h4>
                 <div className="phone-parts">
                   <input
                     type="text"
@@ -498,7 +498,7 @@ const RegistrationPage: React.FC = () => {
               </div>
 
               <div className="input-group">
-                <label>Relationship</label>
+                <h4>Relationship</h4>
                 <input
                   type="text"
                   name="relationship"
@@ -512,7 +512,7 @@ const RegistrationPage: React.FC = () => {
             {/* Physician Information */}
             <div className="physician-group">
               <div className="input-group">
-                <label>Physician's Name</label>
+                <h4>Physician's Name</h4>
                 <input
                   type="text"
                   name="name"
@@ -523,7 +523,7 @@ const RegistrationPage: React.FC = () => {
               </div>
 
               <div className="phone-input">
-                <label>Phone</label>
+                <h4>Phone</h4>
                 <div className="phone-parts">
                   <input
                     type="text"
@@ -552,7 +552,7 @@ const RegistrationPage: React.FC = () => {
 
             {/* Medical Information */}
             <div className="medical-info-group">
-              <label>Relevant Medical Information</label>
+              <h4>Relevant Medical Information</h4>
               <textarea
                 name="medicalInformation"
                 value={formData.medicalInformation}
@@ -564,15 +564,15 @@ const RegistrationPage: React.FC = () => {
 
           {/* Terms Agreement */}
           <div className="terms-agreement">
-            <label>
+            <h5>
               <input
                 type="checkbox"
                 checked={formData.agreeToTerms}
                 onChange={(e) => setFormData(prev => ({ ...prev, agreeToTerms: e.target.checked }))}
                 required
               />
-              Mark this to agree with our privacy and medical statements
-            </label>
+                 By Marking this box, you to agree with the terms of our Release & Waiver of Liability
+            </h5>
           </div>
 
           {/* Submit Button */}

@@ -1,38 +1,39 @@
-body {
+.login-page-wrapper {
   font-family: 'Inter', Arial, sans-serif;
   background-color: #F0F0F0;
-  margin: 0;
-  padding: 0;
+  min-height: 100vh;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
-.login-container {
+.login-page-wrapper .login-container {
   display: flex;
   max-width: 1400px;
   width: 100%;
   margin: 1rem;
 }
 
-.login-form {
+.login-page-wrapper .login-form {
   flex: 1;
   background: white;
   padding: 2.5rem;
   max-width: 700px;
 }
 
-.login-header {
+.login-page-wrapper .login-header {
   margin-bottom: 2rem;
 }
 
-.login-header img {
+.login-page-wrapper .login-header img {
   width: 329px;
   height: auto;
 }
 
-.login-header h1 {
+.login-page-wrapper .login-header h1 {
   color: #000000;
   font-size: 48px;
   font-weight: 700;
@@ -41,14 +42,14 @@ body {
   margin: 2rem 0;
 }
 
-.input-group {
+.login-page-wrapper .input-group {
   position: relative;
-  padding-top: 24px;
+  margin-bottom: 2.5rem;
 }
 
-input {
-  width: 100%;
-  height: 60px;
+.login-page-wrapper input {
+  width: 90%;
+  height: 68px;
   padding: 0 1.5rem;
   background: #B4E5AF;
   border: 1px solid #000000;
@@ -58,31 +59,32 @@ input {
   color: #746060;
 }
 
-input::placeholder {
+.login-page-wrapper input::placeholder {
   color: #746060;
 }
 
-input:focus {
+.login-page-wrapper input:focus {
   outline: none;
   border-color: #4caf50;
 }
 
-.toggle-password {
+.login-page-wrapper .toggle-password {
   position: absolute;
-  right: 0.0001rem;
-  top: 60%;
+  right: 1rem;
+  top: 50%;
   transform: translateY(-50%);
-  background: rgba(180, 229, 175, 0.8);
-  border-radius: 50%;
+  background: transparent;
+  border: none;
   width: 39px;
   height: 38px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #1E1E1E;
 }
 
-.sign-in-button {
+.login-page-wrapper .sign-in-button {
   width: 305px;
   height: 88px;
   margin: 2rem auto;
@@ -98,16 +100,16 @@ input:focus {
   transition: background-color 0.3s;
 }
 
-.sign-in-button:hover {
+.login-page-wrapper .sign-in-button:hover {
   background-color: #4caf50;
 }
 
-.sign-in-button:disabled {
+.login-page-wrapper .sign-in-button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
 
-.new-user-section {
+.login-page-wrapper .new-user-section {
   flex: 1;
   background: #B4E5AF;
   padding: 2.5rem;
@@ -119,7 +121,7 @@ input:focus {
   max-width: 700px;
 }
 
-.new-user-section h3 {
+.login-page-wrapper .new-user-section h3 {
   color: #000000;
   font-size: 48px;
   font-weight: 700;
@@ -128,7 +130,7 @@ input:focus {
   margin-bottom: 1rem;
 }
 
-.new-user-section p {
+.login-page-wrapper .new-user-section p {
   color: #000000;
   font-size: 20px;
   font-weight: 400;
@@ -137,7 +139,7 @@ input:focus {
   margin-bottom: 2rem;
 }
 
-.sign-up-button {
+.login-page-wrapper .sign-up-button {
   width: 308px;
   height: 82px;
   background: white;
@@ -151,17 +153,17 @@ input:focus {
   transition: all 0.3s;
 }
 
-.sign-up-button:hover {
+.login-page-wrapper .sign-up-button:hover {
   background-color: #31D063;
   color: white;
 }
 
-.sign-up-button:disabled {
+.login-page-wrapper .sign-up-button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
 
-.error-message {
+.login-page-wrapper .error-message {
   color: #ff0000;
   text-align: center;
   margin: 1rem 0;
@@ -170,52 +172,52 @@ input:focus {
 
 /* Responsive design */
 @media (max-width: 1200px) {
-  .login-container {
+  .login-page-wrapper .login-container {
     margin: 0.5rem;
   }
   
-  .login-form,
-  .new-user-section {
+  .login-page-wrapper .login-form,
+  .login-page-wrapper .new-user-section {
     padding: 2rem;
   }
 }
 
 @media (max-width: 768px) {
-  .login-container {
+  .login-page-wrapper .login-container {
     flex-direction: column;
     margin: 0;
   }
 
-  .login-form,
-  .new-user-section {
+  .login-page-wrapper .login-form,
+  .login-page-wrapper .new-user-section {
     max-width: 100%;
   }
 
-  .login-header img {
+  .login-page-wrapper .login-header img {
     width: 245px;
   }
 
-  .login-header h1 {
+  .login-page-wrapper .login-header h1 {
     font-size: 24px;
     text-align: center;
   }
 
-  input {
+  .login-page-wrapper input {
     height: 55px;
     font-size: 24px;
   }
 
-  .sign-in-button {
+  .login-page-wrapper .sign-in-button {
     width: 219px;
     height: 47px;
     font-size: 20px;
   }
 
-  .new-user-section h3 {
+  .login-page-wrapper .new-user-section h3 {
     font-size: 36px;
   }
 
-  .sign-up-button {
+  .login-page-wrapper .sign-up-button {
     width: 242px;
     height: 57px;
     font-size: 20px;
@@ -223,16 +225,16 @@ input:focus {
 }
 
 @media (max-width: 480px) {
-  .login-form,
-  .new-user-section {
+  .login-page-wrapper .login-form,
+  .login-page-wrapper .new-user-section {
     padding: 1rem;
   }
 
-  input {
+  .login-page-wrapper input {
     font-size: 20px;
   }
 
-  .new-user-section p {
+  .login-page-wrapper .new-user-section p {
     font-size: 16px;
   }
 }
