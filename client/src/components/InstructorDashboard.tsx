@@ -59,20 +59,6 @@ const InstructorDashboard: React.FC = () => {
     }
   };
 
-  const handleDeleteUser = async (userId: string) => {
-    if (window.confirm('Are you sure you want to delete this account?')) {
-      try {
-        const response = await instance.delete(`/users/${userId}`, {
-          withCredentials: true
-        });
-        setUsers(users.filter(user => user.user_id !== userId));
-      } catch (err) {
-        setError('Error deleting user');
-        console.error(err);
-      }
-    }
-  };
-
   const handleViewUser = (userId: string) => {
     navigate(`/profile/${userId}`);
   };
