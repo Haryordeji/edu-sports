@@ -19,13 +19,6 @@ interface UsersResponse {
   users: User[];
 }
 
-const styles = {
-  logo: {
-    width: '200px',
-    height: 'auto',
-  },
-};
-
 const AdminDashboard: React.FC = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -252,7 +245,6 @@ const AdminDashboard: React.FC = () => {
             <img 
               src="https://static.wixstatic.com/media/09e86e_318df3ef05b647329554c64770b3fd61~mv2.jpg/v1/fill/w_658,h_226,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/Edu%20Sports%20Logo_04-01.jpg" 
               alt="Company Logo" 
-              style={styles.logo}
             />
           </Link>
         </div>

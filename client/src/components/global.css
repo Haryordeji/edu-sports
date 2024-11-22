@@ -1,157 +1,88 @@
  /*
  This CSS is imported to more than one component */
 
+ :root{
+  --primary-green: #B4E5AF;
+ }
 .dashboard-container {
-    width: 100vw;
-    min-height: 100vh;
+    font-family: 'Inter', Arial, sans-serif;
     background-color: #FFFFFF;
-    padding: 20px;
+    min-height: 100vh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #B4E5AF;
   }
   
   .dashboard-header {
     background: #FFFFFF;
     border-bottom: 1px solid #B4E5AF;
-    height: 149px;
+    height: 180px;
   }
   
   .logo {
     padding: 12px 0;
-    border-bottom: 1px solid #B4E5AF;
-    height: 60px;
+    height: 40px;
   }
   
   .logo img {
     height: 68px;
-    width: 260px;
+    width: 200px;
     object-fit: contain;
   }
   
   .main-nav {
-    height: 59px;
+    height: 100px;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     align-items: center;
+    border-top: 1px solid #B4E5AF;
   }
   
   .nav-links {
     display: flex;
     gap: 40px;
-    margin-right: 40px;
   }
   
   .nav-link {
     font-family: 'Inter', sans-serif;
-    font-weight: 700;
+    font-weight: bold;
     font-size: 20px;
-    color: #000000;
+    color: #0e5f04;;
     text-decoration: none;
   }
+
+  .custom-calendar .rbc-timeslot-group {
+    border: 1px solid var(--primary-green);
+  }
+
+  .custom-calendar .rbc-header {
+    border: 1px solid var(--primary-green);
+  }
+
+  .custom-calendar .rbc-allday-cell {
+    border: 1px solid var(--primary-green);
+  }
+
+
+
+
   
   .profile {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    width: 118px;
+    align-items: end;
+    padding-right: 5px;
+    gap: 4px;
   }
-  
-  .profile span {
-    font-family: 'Inter', sans-serif;
+
+  .profile-section span {
+    font-size: 14px;
     font-weight: 700;
-    font-size: 14px;
-    color: #000000;
   }
   
-  .calendar-container {
-    background: #FFFFFF;
-    border: 1px solid #B4E5AF;
-    margin-top: 0;
-    overflow-x: auto;
-  }
   
-  .calendar-header {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    border-bottom: 1px solid #B4E5AF;
-    height: 56px;
-  }
-  
-  .calendar-day-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Inter', sans-serif;
-    font-weight: 500;
-    font-size: 20px;
-    color: #473C3C;
-    border-right: 1px solid #B4E5AF;
-  }
-  
-  .calendar-grid {
-    display: grid;
-    grid-template-columns: 78px repeat(7, 1fr);
-    min-height: 798px;
-  }
-  
-  .time-column {
-    border-right: 1px solid #B4E5AF;
-  }
-  
-  .time-slot {
-    height: 66px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    color: #000000;
-  }
-  
-  .day-column {
-    border-right: 1px solid #B4E5AF;
-  }
-  
-  .calendar-cell {
-    height: 66px;
-    border-bottom: 1px solid #B4E5AF;
-    background: #F1F1F1;
-    position: relative;
-  }
-  
-  .event-card {
-    position: absolute;
-    width: 186px;
-    height: 170px;
-    background: #68C368;
-    border-radius: 5px;
-    padding: 17px;
-    color: #FFFFFF;
-    z-index: 1;
-  }
-  
-  .event-card::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 6px;
-    height: 100%;
-    background: #D74141;
-    border-radius: 5px 0 0 5px;
-  }
-  
-  .event-card h4 {
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    font-size: 14px;
-    margin: 0 0 5px 0;
-  }
-  
-  .event-card p {
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    margin: 0 0 5px 0;
-  }
-  
+
   @media (max-width: 1200px) {
     .calendar-grid {
       min-width: 1000px;

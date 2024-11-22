@@ -91,6 +91,7 @@ const WeeklyCalendar: React.FC = () => {
         min={new Date(2024, 10, 8, 9, 0)}
         max={new Date(2024, 10, 8, 18, 0)}
         onSelectEvent={handleEventSelect} 
+        className="custom-calendar"
       />
 
       <Modal
