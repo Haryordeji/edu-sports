@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import instance from '../utils/axios';
 import { RegistrationFormData } from '../interfaces';
 import './global.css';
+import EditProfile from './EditProfile';
 
 interface ProfileResponse {
   success: boolean;
@@ -57,6 +58,12 @@ const UserProfile: React.FC = () => {
       <div className="user-profile-container">
         <button onClick={() => navigate(-1)} className="back-button">
           ← Back
+        </button>
+        <button
+          onClick={() => navigate(`/profile/${id}/edit`)} 
+          className="back-button"
+        >
+          Edit Profile
         </button>
         
         <div className="profile-header">
