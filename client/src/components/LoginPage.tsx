@@ -87,14 +87,14 @@ const LoginPage: React.FC = () => {
         <div className="login-header">
         <img src="https://static.wixstatic.com/media/09e86e_318df3ef05b647329554c64770b3fd61~mv2.jpg/v1/fill/w_658,h_226,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/Edu%20Sports%20Logo_04-01.jpg" alt="EDU Sports Academy Logo" />
         </div>
-        <h2>Login into Your Swing 2. Tee Golf Account</h2>
+        <h2>Login into Your Swing 2 Tee Golf Account</h2>
         {/* !move this */}
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="input-group">
+          <h3>Email</h3>
             <input
               type="email"
-              placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -102,9 +102,9 @@ const LoginPage: React.FC = () => {
             />
           </div>
           <div className="input-group">
+          <h3>Password</h3>
             <input
               type={showPassword ? 'text' : 'password'}
-              placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

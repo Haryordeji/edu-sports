@@ -33,13 +33,15 @@
   height: auto;
 }
 
-.login-page-wrapper .login-header h1 {
+.login-page-wrapper h2 {
   color: #000000;
-  font-size: 48px;
-  font-weight: 700;
-  line-height: 120%;
-  letter-spacing: -0.02em;
+  font-size: 32px;
   margin: 2rem 0;
+  text-align: center;
+}
+.login-page-wrapper h3 {
+  color: #000000;
+  font-size: 24px;
 }
 
 .login-page-wrapper .input-group {
@@ -70,8 +72,8 @@
 
 .login-page-wrapper .toggle-password {
   position: absolute;
-  right: 1rem;
-  top: 50%;
+  right: 0.8rem;
+  top: 70%;
   transform: translateY(-50%);
   background: transparent;
   border: none;
@@ -91,8 +93,8 @@
   display: block;
   background: #B4E5AF;
   border: none;
-  border-radius: 15px;
-  color: white;
+  border-radius: 26px;
+  color: 00000;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
   font-size: 24px;
@@ -102,6 +104,7 @@
 
 .login-page-wrapper .sign-in-button:hover {
   background-color: #4caf50;
+  color: white;
 }
 
 .login-page-wrapper .sign-in-button:disabled {
@@ -140,12 +143,12 @@
 }
 
 .login-page-wrapper .sign-up-button {
-  width: 308px;
-  height: 82px;
+  width: 305px;
+  height: 88px;
   background: white;
-  border: 4px solid #31D063;
+  border: 4px solid #B4E5AF;
   border-radius: 26px;
-  color: #31D063;
+  color: #000000;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
   font-size: 24px;
@@ -154,7 +157,7 @@
 }
 
 .login-page-wrapper .sign-up-button:hover {
-  background-color: #31D063;
+  background-color: #4caf50;
   color: white;
 }
 
