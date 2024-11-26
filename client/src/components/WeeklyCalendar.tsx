@@ -4,7 +4,6 @@ import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import Modal from 'react-modal';
 import instance from '../utils/axios';
-import { AxiosError } from 'axios';
 
 const localizer = momentLocalizer(moment);
 
@@ -28,6 +27,21 @@ const WeeklyCalendar: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [defaultView, setDefaultView] = useState<"week" | "agenda">(Views.WEEK);
+
+  useEffect(() => {
+    const updateDefaultView = () => {
+      const isMobile = window.innerWidth < 760; 
+      setDefaultView(isMobile ? Views.AGENDA : Views.WEEK);
+    };
+
+    updateDefaultView();
+    window.addEventListener('resize', updateDefaultView);
+
+    return () => {
+      window.removeEventListener('resize', updateDefaultView);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -35,7 +49,7 @@ const WeeklyCalendar: React.FC = () => {
         const response = await instance.get<EventResponse>('/classes', 
           {withCredentials: true}
         );
-        const {data} = response;
+        const { data } = response;
         const parsedEvents = data.classes.map((event: any) => ({
           ...event,
           start: new Date(event.start),
@@ -77,22 +91,23 @@ const WeeklyCalendar: React.FC = () => {
           {error}
         </div>
       )}
-      <Calendar
-        localizer={localizer}
-        events={events}
-        startAccessor="start"
-        endAccessor="end"
-        style={{ height: '100%' }}
-        components={{
-          event: EventComponent,
-        }}
-        views={[Views.WEEK, Views.AGENDA]}
-        defaultView={Views.WEEK}
-        min={new Date(2024, 10, 8, 9, 0)}
-        max={new Date(2024, 10, 8, 18, 0)}
-        onSelectEvent={handleEventSelect} 
-        className="custom-calendar"
-      />
+     <Calendar
+      key={defaultView}
+      localizer={localizer}
+      events={events}
+      startAccessor="start"
+      endAccessor="end"
+      style={{ height: '100%' }}
+      components={{
+        event: EventComponent,
+      }}
+      views={[Views.WEEK, Views.AGENDA]}
+      defaultView={defaultView}
+      min={new Date(2024, 10, 8, 9, 0)}
+      max={new Date(2024, 10, 8, 18, 0)}
+      onSelectEvent={handleEventSelect}
+      className="custom-calendar"
+    />
 
       <Modal
         isOpen={isModalOpen}
