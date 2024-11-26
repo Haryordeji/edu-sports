@@ -393,3 +393,95 @@ export const getUsers = async (req: Request, res: Response) => {
     });
   }
 };
+
+interface RegisterInstructorRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  phone: {
+    areaCode: string;
+    prefix: string;
+    lineNumber: string;
+  };
+  user_type: string;
+}
+
+export const registerInstructor = async (req: Request<{}, {}, RegisterInstructorRequest>, res: Response) => {
+  try {
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      phone,
+      user_type
+    } = req.body;
+
+    // Check if email is already registered
+    const existingUser = await models.User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email already registered' });
+    }
+
+    const password_hash = await bcrypt.hash(password, 10);
+
+    const formatPhoneNumber = (phone: { areaCode: string; prefix: string; lineNumber: string }) => {
+      return `${phone.areaCode}${phone.prefix}${phone.lineNumber}`;
+    };
+    const formattedPhone = formatPhoneNumber(phone);
+
+    // Create user with dummy placeholders
+    const user = await models.User.create({
+      user_id: crypto.randomUUID(),
+      profile_created_at: new Date(),
+      password_hash,
+      first_name: firstName,
+      last_name: lastName,
+      street: 'N/A',
+      city: 'N/A',
+      state: 'N/A',
+      zip_code: '00000',
+      phone:formattedPhone,
+      email,
+      gender: 'N/A',
+      dob: '1900-01-01',
+      height: 'N/A',
+      handedness: 'N/A',
+      referral_source: 'N/A',
+      referral_name: '',
+      golf_experience: 'N/A',
+      previous_lessons: 'no',
+      lesson_duration: 'N/A',
+      previous_instructor: '',
+      emergency_contact_name: '',
+      emergency_contact_phone: '',
+      emergency_contact_relationship: '',
+      physician_name: '',
+      physician_phone: '',
+      medical_information: 'N/A',
+      user_type,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+
+    // Return user data
+    const userData = {
+      user_id: user.user_id,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+      phone: user.phone,
+      user_type: user.user_type
+    };
+
+    res.status(201).json({
+      success: true,
+      user: userData,
+      message: 'Instructor registration successful'
+    });
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};

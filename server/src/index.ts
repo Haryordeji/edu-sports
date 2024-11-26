@@ -13,7 +13,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app: Express = express();
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5002;
 
 // Middleware
 app.use(cors({
@@ -32,7 +32,9 @@ app.get('/api/test', (_req: Request, res: Response) => {
 app.post('/api/login', async (req: Request, res: Response) => {
   await authController.login(req, res);
 });
-
+app.post('/api/registerInstructor', async (req: Request, res: Response) => {
+  await userController.registerInstructor(req, res);
+});
 app.post('/api/register', async (req: Request, res: Response) => {
   await userController.register(req, res);
 });

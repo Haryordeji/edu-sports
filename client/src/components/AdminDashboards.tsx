@@ -5,6 +5,7 @@ import './global.css';
 import instance from '../utils/axios';
 import Logout from './ProfileDropdown';
 import ProfileDropdown from './ProfileDropdown';
+import NewInstructorModal from './NewInstructorModal'; // Import the modal
 
 interface User {
   user_id: string;
@@ -27,6 +28,7 @@ const AdminDashboard: React.FC = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { id } = useParams();
+  const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
 
   const storedUserJson = localStorage.getItem('user');
   let storedUserId = ''
@@ -91,21 +93,28 @@ const AdminDashboard: React.FC = () => {
   
     return (
       <div style={{ marginBottom: "1rem", padding: "20px" }}>
-        <h2
-          style={{
-            fontSize: "1.25rem",
-            fontWeight: 600,
-            marginBottom: "1rem",
-            color: "#1F2937",
-            cursor: "pointer",
-          }}
-          onClick={toggleCollapse}
-        >
-          {userType}s
-          <span style={{ marginLeft: "10px", fontSize: "1rem", color: "#6B7280" }}>
-            {isCollapsed ? "▼" : "▲"}
-          </span>
-        </h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h2
+            style={{
+              fontSize: "1.25rem",
+              fontWeight: 600,
+              marginBottom: "1rem",
+              color: "#1F2937",
+              cursor: "pointer",
+            }}
+            onClick={toggleCollapse}
+          >
+            {userType}s
+            <span style={{ marginLeft: "10px", fontSize: "1rem", color: "#6B7280" }}>
+              {isCollapsed ? "▼" : "▲"}
+            </span>
+          </h2>
+          {userType.toLowerCase() === 'instructor' && (
+            <button onClick={handleModalOpen} className="add-button">
+              + Add New
+            </button>
+          )}
+        </div>
         {!isCollapsed && (
           <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
             {sortedUsers
@@ -229,6 +238,16 @@ const AdminDashboard: React.FC = () => {
     navigate(`?tab=${tab}`, { replace: true });
   };
 
+  // Modal functions
+  const handleModalOpen = () => setIsModalOpen(true); // Open modal
+  const handleModalClose = () => setIsModalOpen(false); // Close modal
+
+  const handleSuccess = () => {
+    fetchUsers(); // Refresh user list after adding a new instructor
+    handleModalClose(); // Close modal
+  };
+
+
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
@@ -295,6 +314,8 @@ const AdminDashboard: React.FC = () => {
           )}
         </main>
       </div>
+      console.log(isModalOpen)
+      {isModalOpen && <NewInstructorModal onClose={handleModalClose} onSuccess={handleSuccess} />}
     </div>
   );
 };
