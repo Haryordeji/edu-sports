@@ -360,7 +360,7 @@ const EditProfile: React.FC = () => {
                 <div className="phone-parts">
                   <input
                     type="text"
-                    value={formData.emergencyContact?.phone.areaCode || ''}
+                    value={formData.emergencyContact.phone?.areaCode || ''}
                     onChange={(e) => handlePhoneChange('areaCode', e.target.value)}
                     maxLength={3}
                     placeholder="Area Code"
@@ -368,7 +368,7 @@ const EditProfile: React.FC = () => {
                   />
                   <input
                     type="text"
-                    value={formData.emergencyContact?.phone.prefix || ''}
+                    value={formData.emergencyContact?.phone?.prefix || ''}
                     onChange={(e) => handlePhoneChange('prefix', e.target.value)}
                     maxLength={3}
                     placeholder="Prefix"
@@ -376,7 +376,7 @@ const EditProfile: React.FC = () => {
                   />
                   <input
                     type="text"
-                    value={formData.emergencyContact?.phone.lineNumber || ''}
+                    value={formData.emergencyContact?.phone?.lineNumber || ''}
                     onChange={(e) => handlePhoneChange('lineNumber', e.target.value)}
                     maxLength={4}
                     placeholder="Line Number"

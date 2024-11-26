@@ -314,7 +314,6 @@ const AdminDashboard: React.FC = () => {
           )}
         </main>
       </div>
-      console.log(isModalOpen)
       {isModalOpen && <NewInstructorModal onClose={handleModalClose} onSuccess={handleSuccess} />}
     </div>
   );
