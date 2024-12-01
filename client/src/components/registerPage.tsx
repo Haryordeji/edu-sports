@@ -14,6 +14,7 @@ const styles = {
 const RegistrationPage: React.FC = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [formData, setFormData] = useState<RegistrationFormData>({
     firstName: '',
     middleInitial: '',
@@ -121,19 +122,71 @@ const RegistrationPage: React.FC = () => {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await instance.post('/register', formData, {
-        withCredentials: true,
-      });
-      const {data} = response;
-      console.log('Registration successful:', data);
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  try {
+    const response = await instance.post('/register', formData, {
+      withCredentials: true,
+    });
+    const {data} = response;
+    console.log('Registration successful:', data);
+    setShowSuccessPopup(true);
+    
+    // redirect to login after 3 seconds
+    setTimeout(() => {
       navigate('/');
-    } catch (error) {
-      console.error('Registration failed:', error);
-    } 
-  };
+    }, 3000);
+  } catch (error) {
+    console.error('Registration failed:', error);
+  } 
+};
+
+const SuccessPopup = () => (
+  <div className="popup-overlay">
+    <div className="popup-content">
+      <div className="success-icon">✓</div>
+      <h2>Registration Successful!</h2>
+      <p>Your account has been created successfully.</p>
+      <p>You will be redirected to the login page in a moment.</p>
+      <p>Please use your email and password to sign in.</p>
+    </div>
+  </div>
+);
+
+  const renderCreateAccount = () => (
+    <>
+      <h3>Create Your Account</h3>
+      <p className="section-description">
+        Welcome to Edu-Sports Academy! To begin your registration, please create your account credentials. 
+        You will use these to log in and access your profile after registration.
+      </p>
+      
+      <div className="account-creation-group">
+        <div className="input-group">
+          <h4>Email</h4>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+        
+        <div className="input-group">
+          <h4>Password</h4>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleInputChange}
+            required
+          />
+          <p className="input-hint">Password must be at least 8 characters long</p>
+        </div>
+      </div>
+    </>
+  );
 
   const renderPersonalInfo = () => (
     <>
@@ -217,30 +270,6 @@ const RegistrationPage: React.FC = () => {
 
   const renderContactInfo = () => (
     <>
-      <div className="two-column">
-        <div className="input-group">
-          <h4>Email</h4>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        
-        <div className="input-group">
-          <h4>Password</h4>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-      </div>
-
       <div className="address-group">
         <div className="input-group">
           <h4>Address</h4>
@@ -593,9 +622,9 @@ const RegistrationPage: React.FC = () => {
       </div>
     </>
   );
-
   return (
     <div className="register-page-wrapper">
+      {showSuccessPopup && <SuccessPopup />}
       <div className="progress-sidebar">
         <img 
             src="https://static.wixstatic.com/media/09e86e_318df3ef05b647329554c64770b3fd61~mv2.jpg/v1/fill/w_658,h_226,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/Edu%20Sports%20Logo_04-01.jpg" 
@@ -605,37 +634,44 @@ const RegistrationPage: React.FC = () => {
           />
         <h2 className="progress-title">Your Progress</h2>
         <ul className="progress-list">
-          <li 
+        <li 
             className={`progress-item ${currentStep >= 1 ? 'completed' : ''} ${currentStep === 1 ? 'active' : ''}`}
             onClick={() => currentStep >= 1 && setCurrentStep(1)}
-          >
+            >
             <span className="progress-indicator">✓</span>
-            Personal Information
+            Create Account
           </li>
           <li 
             className={`progress-item ${currentStep >= 2 ? 'completed' : ''} ${currentStep === 2 ? 'active' : ''}`}
             onClick={() => currentStep >= 2 && setCurrentStep(2)}
           >
             <span className="progress-indicator">✓</span>
-            Contact Details
+            Personal Information
           </li>
           <li 
             className={`progress-item ${currentStep >= 3 ? 'completed' : ''} ${currentStep === 3 ? 'active' : ''}`}
             onClick={() => currentStep >= 3 && setCurrentStep(3)}
           >
             <span className="progress-indicator">✓</span>
-            Golf Experience
+            Contact Details
           </li>
           <li 
             className={`progress-item ${currentStep >= 4 ? 'completed' : ''} ${currentStep === 4 ? 'active' : ''}`}
             onClick={() => currentStep >= 4 && setCurrentStep(4)}
           >
             <span className="progress-indicator">✓</span>
-            Medical Information
+            Golf Experience
           </li>
           <li 
             className={`progress-item ${currentStep >= 5 ? 'completed' : ''} ${currentStep === 5 ? 'active' : ''}`}
             onClick={() => currentStep >= 5 && setCurrentStep(5)}
+          >
+            <span className="progress-indicator">✓</span>
+            Medical Information
+          </li>
+          <li 
+            className={`progress-item ${currentStep >= 6 ? 'completed' : ''} ${currentStep === 6 ? 'active' : ''}`}
+            onClick={() => currentStep >= 6 && setCurrentStep(6)}
           >
             <span className="progress-indicator">✓</span>
             Review Terms & Submit
@@ -649,11 +685,12 @@ const RegistrationPage: React.FC = () => {
           <div className="required-field-note">* Required fields</div>
           
           <form onSubmit={handleSubmit}>
-            {currentStep === 1 && renderPersonalInfo()}
-            {currentStep === 2 && renderContactInfo()}
-            {currentStep === 3 && renderGolfExperience()}
-            {currentStep === 4 && renderMedicalInfo()}
-            {currentStep === 5 && renderReview()}
+            {currentStep === 1 && renderCreateAccount()}
+            {currentStep === 2 && renderPersonalInfo()}
+            {currentStep === 3 && renderContactInfo()}
+            {currentStep === 4 && renderGolfExperience()}
+            {currentStep === 5 && renderMedicalInfo()}
+            {currentStep === 6 && renderReview()}
 
             <div className="form-navigation">
               {currentStep > 1 && (
@@ -666,7 +703,7 @@ const RegistrationPage: React.FC = () => {
                 </button>
               )}
               
-              {currentStep < 5 ? (
+              {currentStep < 6 ? (
                 <button 
                   type="button" 
                   className="nav-button next-button"
