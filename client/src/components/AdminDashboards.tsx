@@ -3,9 +3,9 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import WeeklyCalendar from './WeeklyCalendar';
 import './global.css';
 import instance from '../utils/axios';
-import Logout from './ProfileDropdown';
 import ProfileDropdown from './ProfileDropdown';
 import NewInstructorModal from './NewInstructorModal'; // Import the modal
+import ScheduleEditor from './ScheduleEditor';
 
 interface User {
   user_id: string;
@@ -229,10 +229,6 @@ const AdminDashboard: React.FC = () => {
   };
   
   const handleTabChange = (tab: string) => {
-    if (tab === 'schedule-editor') {
-      navigate('/admin/schedule');
-      return;
-    }
     setActiveTab(tab);
     navigate(`?tab=${tab}`, { replace: true });
   };
@@ -283,7 +279,7 @@ const AdminDashboard: React.FC = () => {
               onClick={() => handleTabChange('schedule-editor')}
               className={`nav-link ${activeTab === 'schedule-editor' ? 'active' : ''}`}
             >
-              Edit Schedule
+              Manage Schedule
             </button>
             <button
               onClick={() => handleTabChange('academy')}
@@ -309,6 +305,12 @@ const AdminDashboard: React.FC = () => {
                   {error}
                 </div>
               )}
+            </div>
+          )}
+
+          {activeTab === 'schedule-editor' && (
+            <div>
+              <ScheduleEditor />
             </div>
           )}
         </main>
