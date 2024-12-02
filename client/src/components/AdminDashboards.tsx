@@ -230,7 +230,7 @@ const AdminDashboard: React.FC = () => {
   
   const handleTabChange = (tab: string) => {
     if (tab === 'schedule-editor') {
-      navigate('/admin/schedule-editor');
+      navigate('/admin/schedule');
       return;
     }
     setActiveTab(tab);
