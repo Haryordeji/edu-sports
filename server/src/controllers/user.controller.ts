@@ -485,3 +485,30 @@ export const registerInstructor = async (req: Request<{}, {}, RegisterInstructor
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+export const getInstructorsNameList = async (req: Request, res: Response) => {
+  try {
+    // Fetch all users with user_type 'instructor'
+    const instructors = await models.User.findAll({
+      where: { user_type: 'instructor' },
+      attributes: ['user_id', 'first_name', 'last_name']
+    });
+
+    const formattedInstructors = instructors.map(instructor => ({
+      id: instructor.user_id,
+      firstName: instructor.first_name,
+      lastName: instructor.last_name
+    }));
+
+    return res.status(200).json({
+      success: true,
+      instructors: formattedInstructors
+    });
+  } catch (error) {
+    console.error('Get instructors error:', error);
+    return res.status(500).json({
+      message: 'Internal server error'
+    });
+  }
+};
+

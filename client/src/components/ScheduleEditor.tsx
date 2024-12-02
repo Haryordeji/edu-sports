@@ -12,6 +12,12 @@ interface ClassFormData {
   level: number;
 }
 
+interface Instructor {
+  id: string;
+  firstName: string;
+  lastName: string;
+}
+
 const ScheduleEditor = () => {
   const navigate = useNavigate(); 
   const [classes, setClasses] = useState<Event[]>([]);
@@ -25,9 +31,11 @@ const ScheduleEditor = () => {
     instructor: '',
     level: 1
   });
+  const [instructors, setInstructors] = useState<Instructor[]>([]);
 
   useEffect(() => {
     fetchClasses();
+    fetchInstructors();
   }, []);
 
   const handleBack = () => {
@@ -43,6 +51,20 @@ const ScheduleEditor = () => {
       }
     } catch (error) {
       console.error('Error fetching classes:', error);
+    }
+  };
+
+  const fetchInstructors = async () => {
+    try {
+      const response = await instance.get<{ success: boolean; instructors: Instructor[] }>('/users/instructors', {
+        withCredentials: true,
+      });
+      const { data } = response;
+      if (data.success) {
+        setInstructors(data.instructors);
+      }
+    } catch (error) {
+      console.error('Error fetching instructors:', error);
     }
   };
 
@@ -195,14 +217,20 @@ const ScheduleEditor = () => {
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Instructor</label>
-              <input
-                type="text"
+              <select
                 name="instructor"
                 value={formData.instructor}
                 onChange={handleInputChange}
                 className="w-full p-2 border rounded"
                 required
-              />
+              >
+                <option value="">Select an instructor</option>
+                {instructors.map((instructor) => (
+                  <option key={instructor.id} value={instructor.id}>
+                    {instructor.firstName} {instructor.lastName}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Level</label>

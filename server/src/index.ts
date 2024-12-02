@@ -51,6 +51,17 @@ app.get('/api/users',
   }
 );
 
+app.get('/api/users/instructors',
+  authenticate, 
+  async (req: Request<UserParams>, res: Response, next: NextFunction) => {
+    try {
+      await userController.getInstructorsNameList(req, res);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 app.get('/api/users/:userId',
   authenticate, 
   async (req: Request<UserParams>, res: Response, next: NextFunction) => {

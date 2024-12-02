@@ -32,7 +32,6 @@ const NewInstructorModal: React.FC<NewInstructorModalProps> = ({ onClose, onSucc
         phone: formData.phone,
         user_type: 'instructor',  // Assuming all new registrations are instructors
       };
-      console.log('Payload being sent:', payload);
       await instance.post('/registerInstructor', payload, { withCredentials: true });
       onSuccess();
       onClose();
