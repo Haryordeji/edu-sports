@@ -27,9 +27,11 @@ const ProfileDropdown: React.FC<ProfileDropdownProps> = ({ user_id, user_type })
   };
 
   return (
-    <div style={{ position: 'relative', display: 'inline-block' }}>
+    <div      
+    onMouseOver={() => setDropdownOpen(true)}
+    onMouseLeave={() => setDropdownOpen(false)}
+      style={{ position: 'relative', display: 'inline-block' }}>
       <div
-        onClick={() => setDropdownOpen(!dropdownOpen)}
         style={{
           display: 'flex',
           alignItems: 'center',
