@@ -27,12 +27,19 @@ const WeeklyCalendar: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [defaultView, setDefaultView] = useState<"week" | "agenda">(Views.WEEK);
+  const [allowedViews, setAllowedViews] = useState<Array<"agenda" | "week"|"day">>([
+    Views.DAY,
+  ]);
 
   useEffect(() => {
     const updateDefaultView = () => {
       const isMobile = window.innerWidth < 760; 
-      setDefaultView(isMobile ? Views.AGENDA : Views.WEEK);
+      if (isMobile) {
+        setAllowedViews([Views.DAY])
+      }
+      else {
+        setAllowedViews([Views.DAY, Views.WEEK, Views.AGENDA ])
+      }
     };
 
     updateDefaultView();
@@ -92,7 +99,6 @@ const WeeklyCalendar: React.FC = () => {
         </div>
       )}
      <Calendar
-      key={defaultView}
       localizer={localizer}
       events={events}
       startAccessor="start"
@@ -101,8 +107,8 @@ const WeeklyCalendar: React.FC = () => {
       components={{
         event: EventComponent,
       }}
-      views={[Views.WEEK, Views.AGENDA]}
-      defaultView={defaultView}
+      views={allowedViews}
+      defaultView={allowedViews[0]}
       min={new Date(2024, 10, 8, 9, 0)}
       max={new Date(2024, 10, 8, 18, 0)}
       onSelectEvent={handleEventSelect}
@@ -129,12 +135,13 @@ const WeeklyCalendar: React.FC = () => {
       >
         {selectedEvent && (
           <div>
+            <button onClick={closeModal}> ✕</button>
             <h2>{selectedEvent.title}</h2>
             <p><strong>Instructor:</strong> {selectedEvent.instructor}</p>
             <p><strong>Time:</strong> {moment(selectedEvent.start).format('h:mm a')} - {moment(selectedEvent.end).format('h:mm a')}</p>
             <p><strong>Location:</strong> {selectedEvent.location}</p>
             <p><strong>Level:</strong> {selectedEvent.level}</p>
-            <button onClick={closeModal}>Close</button>
+            <button>Edit</button>
           </div>
         )}
       </Modal>

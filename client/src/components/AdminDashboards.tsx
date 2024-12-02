@@ -101,6 +101,7 @@ const AdminDashboard: React.FC = () => {
           <span>{userType}s</span>
           <span className={`dropdown-toggle ${isCollapsed ? '' : 'open'}`}>▼</span>
           {userType.toLowerCase() === 'instructor' && !isCollapsed && (
+            <div>
             <button 
               onClick={(e) => {
                 e.stopPropagation();
@@ -110,6 +111,7 @@ const AdminDashboard: React.FC = () => {
             >
               <span>+</span> Add New
             </button>
+            </div>
           )}
         </div>
       </div>

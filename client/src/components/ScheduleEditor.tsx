@@ -93,6 +93,7 @@ const ScheduleEditor = () => {
   };
 
   const handleDelete = async (classId: string) => {
+    if (window.confirm("Are you sure you want to delete this class?")){
     try {
       const response = await instance.delete(`/classes/${classId}`, { withCredentials: true });
       const { data } = response;
@@ -101,7 +102,7 @@ const ScheduleEditor = () => {
       }
     } catch (error) {
       console.error('Error deleting class:', error);
-    }
+    }}
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
