@@ -91,31 +91,30 @@ const AdminDashboard: React.FC = () => {
       ...users.filter((user) => user.user_type.toLowerCase() !== "golfer"),
     ];
   
-    return (
-      <div style={{ marginBottom: "1rem", padding: "20px" }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h2
-            style={{
-              fontSize: "1.25rem",
-              fontWeight: 600,
-              marginBottom: "1rem",
-              color: "#1F2937",
-              cursor: "pointer",
-            }}
-            onClick={toggleCollapse}
-          >
-            {userType}s
-            <span style={{ marginLeft: "10px", fontSize: "1rem", color: "#6B7280" }}>
-              {isCollapsed ? "▼" : "▲"}
-            </span>
-          </h2>
-          {userType.toLowerCase() === 'instructor' && (
-            <button onClick={handleModalOpen} className="add-button">
-              + Add New
+  return (
+    <div className="user-section">
+      <div className="section-header">
+        <div 
+          className="dropdown-header"
+          onClick={() => setIsCollapsed(!isCollapsed)}
+        >
+          <span>{userType}s</span>
+          <span className={`dropdown-toggle ${isCollapsed ? '' : 'open'}`}>▼</span>
+          {userType.toLowerCase() === 'instructor' && !isCollapsed && (
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                handleModalOpen();
+              }} 
+              className="add-button"
+            >
+              <span>+</span> Add New
             </button>
           )}
         </div>
-        {!isCollapsed && (
+      </div>
+      
+      {!isCollapsed && (
           <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
             {sortedUsers
               .filter((user) => user.user_type.toLowerCase() === userType.toLowerCase())
@@ -231,7 +230,7 @@ const AdminDashboard: React.FC = () => {
   
   const handleTabChange = (tab: string) => {
     if (tab === 'schedule-editor') {
-      navigate('/admin/schedule');
+      navigate('/admin/schedule-editor');
       return;
     }
     setActiveTab(tab);
@@ -274,21 +273,21 @@ const AdminDashboard: React.FC = () => {
 
         <nav className="main-nav">
           <div className="nav-links">
-            <button 
+            <button
               onClick={() => handleTabChange('schedule')}
-              className={`nav-link ${activeTab === 'schedule' ? 'text-black' : 'text-gray-600'}`}
+              className={`nav-link ${activeTab === 'schedule' ? 'active' : ''}`}
             >
               Schedule
             </button>
-            <button 
+            <button
               onClick={() => handleTabChange('schedule-editor')}
-              className="nav-link text-gray-600 hover:text-black"
+              className={`nav-link ${activeTab === 'schedule-editor' ? 'active' : ''}`}
             >
               Edit Schedule
             </button>
-            <button 
+            <button
               onClick={() => handleTabChange('academy')}
-              className={`nav-link ${activeTab === 'academy' ? 'text-black' : 'text-gray-600'}`}
+              className={`nav-link ${activeTab === 'academy' ? 'active' : ''}`}
             >
               Academy
             </button>

@@ -216,15 +216,15 @@ const InstructorDashboard: React.FC = () => {
 
         <nav className="main-nav">
           <div className="nav-links">
-            <button 
+            <button
               onClick={() => handleTabChange('schedule')}
-              className={`nav-link ${activeTab === 'schedule' ? 'text-black' : 'text-gray-600'}`}
+              className={`nav-link ${activeTab === 'schedule' ? 'active' : ''}`}
             >
               Schedule
             </button>
-            <button 
+            <button
               onClick={() => handleTabChange('academy')}
-              className={`nav-link ${activeTab === 'academy' ? 'text-black' : 'text-gray-600'}`}
+              className={`nav-link ${activeTab === 'academy' ? 'active' : ''}`}
             >
               Academy
             </button>
