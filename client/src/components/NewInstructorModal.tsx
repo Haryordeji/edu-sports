@@ -47,7 +47,7 @@ const NewInstructorModal: React.FC<NewInstructorModalProps> = ({ onClose, onSucc
       <div className="modal">
         <h2>Create New Instructor</h2>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div style={{ display: 'flex', gap: '1rem' }}>
+          <div style={{ display: 'flex', gap: '2rem' }}>
             <input
               type="text"
               name="first_name"
