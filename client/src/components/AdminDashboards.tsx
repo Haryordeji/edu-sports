@@ -115,7 +115,7 @@ const AdminDashboard: React.FC = () => {
       </div>
       
       {!isCollapsed && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", padding: "1rem" }}>
             {sortedUsers
               .filter((user) => user.user_type.toLowerCase() === userType.toLowerCase())
               .map((user) => (

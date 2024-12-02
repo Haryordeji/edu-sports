@@ -39,7 +39,7 @@ const ScheduleEditor = () => {
       const response = await instance.get<EventResponse>('/classes', {withCredentials: true});
       const {data} = response;
       if (data.success) {
-        setClasses(data.classes);
+        setClasses(data.classes.reverse());
       }
     } catch (error) {
       console.error('Error fetching classes:', error);
