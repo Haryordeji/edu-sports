@@ -512,3 +512,29 @@ export const getInstructorsNameList = async (req: Request, res: Response) => {
   }
 };
 
+export const getUserFullName = async (req: Request<{ userId: string }>, res: Response) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await models.User.findOne({
+      where: { user_id: userId },
+      attributes: ['first_name', 'last_name']
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const fullName = `${user.first_name} ${user.last_name}`;
+
+    return res.status(200).json({
+      success: true,
+      name: fullName
+    });
+  } catch (error) {
+    console.error('Get user full name error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+

@@ -4,10 +4,11 @@ import cookieParser from 'cookie-parser';
 import { sequelize } from './db';
 import * as authController from './controllers/auth.controller';
 import * as userController from './controllers/user.controller';
-import * as noteController from './controllers/note.controller';
 import * as classController from './controllers/class.controller';
+import * as feedbackController from './controllers/feedback.controller';
+import * as commentController from './controllers/comment.controller';
 import { authenticate } from './middleware/auth';
-import { AuthenticatedRequest, AuthRequestWithParams, UserParams, ClassParams, NoteParams } from "./types/types"
+import { AuthenticatedRequest, AuthRequestWithParams, UserParams, ClassParams, NoteParams, FeedbackParams, FeedbackDelParams, CommentDelParams } from "./types/types"
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -32,10 +33,10 @@ app.get('/api/test', (_req: Request, res: Response) => {
 app.post('/api/login', async (req: Request, res: Response) => {
   await authController.login(req, res);
 });
-app.post('/api/registerInstructor', async (req: Request, res: Response) => {
+app.post('/api/registerInstructor', authenticate, async (req: Request, res: Response) => {
   await userController.registerInstructor(req, res);
 });
-app.post('/api/register', async (req: Request, res: Response) => {
+app.post('/api/register',authenticate, async (req: Request, res: Response) => {
   await userController.register(req, res);
 });
 
@@ -56,6 +57,17 @@ app.get('/api/users/instructors',
   async (req: Request<UserParams>, res: Response, next: NextFunction) => {
     try {
       await userController.getInstructorsNameList(req, res);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+app.get('/api/users/name/:userId',
+  authenticate, 
+  async (req: Request<UserParams>, res: Response, next: NextFunction) => {
+    try {
+      await userController.getUserFullName(req, res);
     } catch (error) {
       next(error);
     }
@@ -99,87 +111,68 @@ app.delete('/api/users/:userId',
   }
 );
 
-// Note routes
-app.post('/api/notes', 
-  authenticate,
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+// Feedback routes
+app.post('/api/feedback/new', authenticate, async (req: Request, res: Response) => {
+  await feedbackController.addFeedback(req, res);
+});
+
+// get all feedback for a user
+app.get('/api/feedback/:golferId', authenticate,
+  async (req: AuthRequestWithParams<FeedbackParams>, res: Response, next: NextFunction) => {
     try {
-      await noteController.createNote(req, res);
+      await feedbackController.getFeedbackForStudent(req, res);
+    } catch (error) {
+      next(error);
+    }
+  }
+)
+
+// del feedback
+app.delete('/api/feedback/:feedbackId', 
+  authenticate,
+  async (req: Request<FeedbackDelParams>, res: Response, next: NextFunction) => {
+    try {
+      await feedbackController.deleteFeedback(req, res);
     } catch (error) {
       next(error);
     }
   }
 );
 
-app.get('/api/notes/:noteId', 
+// update feedback
+app.put('/api/feedback/:feedbackId', 
   authenticate,
-  async (req: AuthRequestWithParams<NoteParams>, res: Response, next: NextFunction) => {
+  async (req: AuthRequestWithParams<FeedbackDelParams>, res: Response, next: NextFunction) => {
     try {
-      if (!['instructor', 'golfer'].includes(req.user?.user_type || '')) {
-        res.status(403).json({ success: false, message: 'Access denied' });
-        return;
-      }
-      await noteController.getNoteById(req, res);
+      await feedbackController.updateFeedback(req, res);
     } catch (error) {
       next(error);
     }
   }
 );
 
-app.put('/api/notes/:noteId', 
-  authenticate,
-  async (req: Request<NoteParams>, res: Response, next: NextFunction) => {
+// Comment Routes
+app.post('/api/comment/new', authenticate, async (req: Request, res: Response) => {
+  await commentController.addComment(req, res);
+});
+
+// get comments for a particular feedback
+app.get('/api/comment/:feedbackId', authenticate,
+  async (req: AuthRequestWithParams<FeedbackDelParams>, res: Response, next: NextFunction) => {
     try {
-      await noteController.updateNote(req, res);
+      await commentController.getCommentsForFeedback(req, res);
     } catch (error) {
       next(error);
     }
   }
-);
+)
 
-app.delete('/api/notes/:noteId', 
+// delete a comment
+app.delete('/api/comment/:commentId', 
   authenticate,
-  async (req: Request<NoteParams>, res: Response, next: NextFunction) => {
+  async (req: Request<CommentDelParams>, res: Response, next: NextFunction) => {
     try {
-      await noteController.deleteNote(req, res);
-    } catch (error) {
-      next(error);
-    }
-  }
-);
-
-app.get('/api/notes', 
-  authenticate,
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    try {
-      if (!['instructor', 'golfer'].includes(req.user?.user_type || '')) {
-        res.status(403).json({ success: false, message: 'Access denied' });
-        return;
-      }
-      await noteController.listNotes(req, res);
-    } catch (error) {
-      next(error);
-    }
-  }
-);
-
-// Get notes for specific golfer
-app.get('/api/golfers/:golferId/notes',
-  authenticate,
-  async (req: AuthRequestWithParams<{golferId: string}>, res: Response, next: NextFunction) => {
-    try {
-      // if (!['instructor', 'golfer'].includes(req.user?.user_type || '')) {
-      //   res.status(403).json({ success: false, message: 'Access denied' });
-      //   return;
-      // }
-      
-      // If user is a golfer, they can only access their own notes
-      if (req.user?.user_type === 'golfer' && req.user?.user_id !== req.params.golferId) {
-        res.status(403).json({ success: false, message: 'Access denied' });
-        return;
-      }
-      
-      await noteController.getGolferNotes(req, res);
+      await commentController.deleteComment(req, res);
     } catch (error) {
       next(error);
     }

@@ -7,8 +7,8 @@ import { UserProfile } from './components/UserProfile';
 import GolferDashboard from './components/GolferDashboard';
 import InstructorDashboard from './components/InstructorDashboard';
 import ScheduleEditor from './components/ScheduleEditor';
-import GolferFeedback from "./components/FeedbackDashboard";
 import EditProfile  from './components/EditProfile';
+import FeedbackManager from './components/FeedbackManager';
 
 const App: React.FC = () => {
   return (
@@ -21,8 +21,8 @@ const App: React.FC = () => {
         <Route path="/golfer/dashboard/:id" element={<GolferDashboard/>} />
         <Route path="/instructor/dashboard/:id" element={<InstructorDashboard/>} />
         <Route path="/profile/:id" element={<UserProfile />} />
-        <Route path="/feedback/:instructorid/:golferid" element={<GolferFeedback/>}/>
-        <Route path="/profile/:id/edit" element={<EditProfile />} />"
+        <Route path="/profile/:id/edit" element={<EditProfile />} />
+        <Route path="/feedback/:instructor_id/:golfer_id" element={<FeedbackManager/>}/>
 
       </Routes>
     </Router>

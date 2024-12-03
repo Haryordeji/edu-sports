@@ -23,6 +23,19 @@ export interface ClassParams extends ParamsDictionary {
   classId: string;
 }
 
+export interface FeedbackParams extends ParamsDictionary {
+  golferId: string;
+}
+
+export interface FeedbackDelParams extends ParamsDictionary {
+  feedbackId: string;
+}
+
+export interface CommentDelParams extends ParamsDictionary {
+  commentId: string;
+}
+
+
 export interface NoteParams extends ParamsDictionary {
   noteId: string;
 }
