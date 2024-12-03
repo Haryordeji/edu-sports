@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import instance from '../utils/axios';
 import './global.css';
 import { AxiosResponse } from 'axios';
@@ -29,6 +29,7 @@ const FeedbackManager: React.FC = () => {
     const [message, setMessage] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [fullName, setFullName] = useState('');
+    const navigate = useNavigate();
   
     useEffect(() => {
       const fetchData = async () => {
@@ -37,17 +38,23 @@ const FeedbackManager: React.FC = () => {
             instance.get(`/feedback/${golfer_id}`, { withCredentials: true }),
             instance.get(`/classes`, { withCredentials: true }),
           ]);
-          if (feedbackResponse.data.success) setFeedbacks(feedbackResponse.data.feedbacks);
+          if (feedbackResponse.data.success) {
+            const sortedFeedbacks = feedbackResponse.data.feedbacks.sort(
+              (a: Feedback, b: Feedback) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            );
+            setFeedbacks(sortedFeedbacks);
+          }
           if (classesResponse.data.success) setClasses(classesResponse.data.classes);
         } catch (error) {
           console.error('Error loading data:', error);
           setMessage('Failed to load data. Please try again.');
         }
       };
-  
+    
       fetchData();
       fetchUserFullName();
     }, [golfer_id]);
+    
   
     const handleSaveFeedback = async (event: React.FormEvent) => {
       event.preventDefault();
@@ -55,27 +62,29 @@ const FeedbackManager: React.FC = () => {
         setMessage('Please select a class and enter feedback content.');
         return;
       }
-  
+    
       setIsLoading(true);
       try {
         let response: AxiosResponse<any, any>;
         if (editingFeedbackId) {
-          // Editing an existing feedback
           response = await instance.put(
             `/feedback/${editingFeedbackId}`,
-            { note_content: noteContent },
+            { note_content: noteContent, class_id: selectedClass },
             { withCredentials: true }
           );
           if (response.data.success) {
             setFeedbacks((prev) =>
-              prev.map((fb) =>
-                fb.feedback_id === editingFeedbackId
-                  ? { ...fb, note_content: noteContent, class: selectedClass }
-                  : fb
-              )
+              prev
+                .map((fb) =>
+                  fb.feedback_id === editingFeedbackId
+                    ? { ...fb, note_content: noteContent, class: classes.find(cls => cls.class_id === selectedClass)?.title || fb.class }
+                    : fb
+                )
+                .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
             );
             setMessage('Feedback updated successfully!');
           }
+          
         } else {
           // Adding new feedback
           response = await instance.post(
@@ -84,11 +93,15 @@ const FeedbackManager: React.FC = () => {
             { withCredentials: true }
           );
           if (response.data.success) {
-            setFeedbacks((prev) => [response.data.feedback, ...prev]);
+            const newFeedback = response.data.feedback;
+            setFeedbacks((prev) =>
+              [newFeedback, ...prev].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            );
             setMessage('Feedback submitted successfully!');
           }
+          
         }
-  
+    
         if (response.data.success) {
           setSelectedClass('');
           setNoteContent('');
@@ -135,6 +148,11 @@ const FeedbackManager: React.FC = () => {
   
     return (
       <div>
+        <div>
+          <button onClick={() => navigate(-1)} className="back-button">
+            ← Back
+          </button>
+        </div>
         <h2>{fullName}'s Feedback</h2>
         {message && <p>{message}</p>}
         <button
@@ -148,39 +166,43 @@ const FeedbackManager: React.FC = () => {
           Add New Feedback
         </button>
         <div>
-          {feedbacks.map((feedback) => (
-            <div
-              key={feedback.feedback_id}
-              style={{ borderBottom: '1px solid #ccc', padding: '10px', cursor: 'pointer' }}
-              onClick={() => setExpandedFeedback(feedback)}
-            >
-              <p>
-                Feedback on <strong>{feedback.class}</strong> by {feedback.instructor_name} on{' '}
-                {new Date(feedback.createdAt).toLocaleString()}
-              </p>
-              <div>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsAddingOrEditing(true);
-                    setEditingFeedbackId(feedback.feedback_id);
-                    setSelectedClass(feedback.class);
-                    setNoteContent(feedback.note_content);
-                  }}
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDelete(feedback.feedback_id);
-                  }}
-                >
-                  Delete
-                </button>
+          {feedbacks.length === 0 ? (
+            <p>No feedback found for student</p>
+          ) : (
+            feedbacks.map((feedback) => (
+              <div
+                key={feedback.feedback_id}
+                style={{ borderBottom: '1px solid #ccc', padding: '10px', cursor: 'pointer' }}
+                onClick={() => setExpandedFeedback(feedback)}
+              >
+                <p>
+                  Feedback on <strong>{feedback.class}</strong> by {feedback.instructor_name} on{' '}
+                  {new Date(feedback.createdAt).toLocaleString()}
+                </p>
+                <div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsAddingOrEditing(true);
+                      setEditingFeedbackId(feedback.feedback_id);
+                      setSelectedClass(classes.find(cls => cls.title === feedback.class)?.class_id || '');
+                      setNoteContent(feedback.note_content);
+                    }}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(feedback.feedback_id);
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
   
         {expandedFeedback && (
@@ -205,10 +227,12 @@ const FeedbackManager: React.FC = () => {
                   <label htmlFor="classSelect">Class:</label>
                   <select
                     id="classSelect"
-                    value={selectedClass}
+                    value={selectedClass || ''}
                     onChange={(e) => setSelectedClass(e.target.value)}
                   >
-                    <option value="">Select a class</option>
+                    <option value="" disabled>
+                      Select a class
+                    </option>
                     {classes.map((cls) => (
                       <option key={cls.class_id} value={cls.class_id}>
                         {cls.title}

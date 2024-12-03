@@ -56,5 +56,15 @@ export const initModels = (sequelize: Sequelize) => {
     as: 'feedback',
   });
 
+  Feedback.belongsTo(User, {
+    foreignKey: 'instructor_id',
+    as: 'instructor_name',
+  });
+
+  User.hasMany(Feedback, {
+    foreignKey: 'instructor_id',
+    as: 'instructedFeedbacks',
+  });
+
   return { User, Class, ClassInstructor, ClassRegistration, Comment, Feedback };
 };
