@@ -4,7 +4,7 @@ import WeeklyCalendar from './WeeklyCalendar';
 import './global.css';
 import instance from '../utils/axios';
 import ProfileDropdown from './ProfileDropdown';
-import NewInstructorModal from './NewInstructorModal'; // Import the modal
+import NewInstructorModal from './NewInstructorModal';
 import ScheduleEditor from './ScheduleEditor';
 
 interface User {
@@ -28,7 +28,7 @@ const AdminDashboard: React.FC = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { id } = useParams();
-  const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const storedUserJson = localStorage.getItem('user');
   let storedUserId = ''
@@ -135,10 +135,10 @@ const AdminDashboard: React.FC = () => {
                     transition: "box-shadow 0.2s",
                   }}
                   onMouseEnter={(e) =>
-                    (e.currentTarget.style.boxShadow = "0 2px 6px rgba(0, 0, 0, 0.15)")
+                    (e.currentTarget.style.boxShadow = "0 2px 6px rgba(0, 0, 0, 0.15)", e.currentTarget.style.backgroundColor = "#fafff2")
                   }
                   onMouseLeave={(e) =>
-                    (e.currentTarget.style.boxShadow = "0 1px 3px rgba(0, 0, 0, 0.1)")
+                    (e.currentTarget.style.boxShadow = "0 1px 3px rgba(0, 0, 0, 0.1)", e.currentTarget.style.backgroundColor = "transparent")
                   }
                 >
                   <div>
@@ -146,13 +146,19 @@ const AdminDashboard: React.FC = () => {
                       {user.first_name} {user.last_name}
                     </span>
                     <span
+                      onClick={() => navigator.clipboard.writeText(user.email)}
                       style={{
                         marginLeft: "1rem",
                         fontSize: "0.875rem",
                         color: "#6B7280",
+                        cursor: "pointer",
+                        transition: "color 0.2s ease-in-out",
                       }}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = "##0e5f04")}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = "#6B7280")}
+                      title="Click to copy email"
                     >
-                      {user.email}
+                      {user.email} 🔗
                     </span>
                   </div>
                   <div style={{ display: "flex", gap: "0.5rem" }}>
@@ -161,15 +167,15 @@ const AdminDashboard: React.FC = () => {
                       style={{
                         padding: "0.5rem 1rem",
                         fontSize: "0.875rem",
-                        color: "#2563EB",
-                        border: "1px solid #2563EB",
+                        color: "#0e5f04",
+                        border: "1px solid #0e5f04",
                         borderRadius: "0.375rem",
                         backgroundColor: "transparent",
                         cursor: "pointer",
                         transition: "background-color 0.2s",
                       }}
                       onMouseEnter={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#EFF6FF")
+                        (e.currentTarget.style.backgroundColor = "#B4E5AF")
                       }
                       onMouseLeave={(e) =>
                         (e.currentTarget.style.backgroundColor = "transparent")
@@ -183,15 +189,15 @@ const AdminDashboard: React.FC = () => {
                         style={{
                           padding: "0.5rem 1rem",
                           fontSize: "0.875rem",
-                          color: "#2563EB",
-                          border: "1px solid #2563EB",
+                          color: "#0e5f04",
+                          border: "1px solid #0e5f04",
                           borderRadius: "0.375rem",
                           backgroundColor: "transparent",
                           cursor: "pointer",
                           transition: "background-color 0.2s",
                         }}
                         onMouseEnter={(e) =>
-                          (e.currentTarget.style.backgroundColor = "#EFF6FF")
+                          (e.currentTarget.style.backgroundColor = "#B4E5AF")
                         }
                         onMouseLeave={(e) =>
                           (e.currentTarget.style.backgroundColor = "transparent")

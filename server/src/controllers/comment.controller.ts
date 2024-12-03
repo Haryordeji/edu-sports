@@ -52,7 +52,7 @@ export const addComment = async (req: Request, res: Response) => {
   
       const comments = await models.Comment.findAll({
         where: { feedback_id: feedbackId },
-        order: [['created_at', 'ASC']],
+        order: [['createdAt', 'ASC']],
       });
   
       if (!comments.length) {
