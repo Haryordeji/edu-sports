@@ -5,6 +5,7 @@ import instance from '../utils/axios';
 import { RegistrationFormData } from '../interfaces';
 import './global.css';
 import EditProfile from './EditProfile';
+import { set } from 'date-fns';
 
 interface ProfileResponse {
   success: boolean;
@@ -30,12 +31,10 @@ const UserProfile: React.FC = () => {
         setLoading(false);
       }
     };
-
     if (id) {
       fetchProfile();
     }
   }, [id]);
-
   const formatPhone = (phone: any) => {
     if (!phone) return 'N/A';
     return `(${phone.areaCode}) ${phone.prefix}-${phone.lineNumber}`;
@@ -91,130 +90,169 @@ const UserProfile: React.FC = () => {
               <div className="info-label">Phone</div>
               <div className="info-value">{formatPhone(profile.Phone)}</div>
             </div>
+            {profile.user_type.toLowerCase() === "golfer" && (
+              <div>
+                <div className="info-group">
+                  <div className="info-label">Address</div>
+                  <div className="info-value">{profile.address}</div>
+                </div>
 
-            <div className="info-group">
-              <div className="info-label">Address</div>
-              <div className="info-value">{profile.address}</div>
-            </div>
+                <div className="info-group">
+                  <div className="info-label">City</div>
+                  <div className="info-value">{profile.city}</div>
+                </div>
 
-            <div className="info-group">
-              <div className="info-label">City</div>
-              <div className="info-value">{profile.city}</div>
-            </div>
+                <div className="info-group">
+                  <div className="info-label">State</div>
+                  <div className="info-value">{profile.state}</div>
+                </div>
 
-            <div className="info-group">
-              <div className="info-label">State</div>
-              <div className="info-value">{profile.state}</div>
-            </div>
+                <div className="info-group">
+                  <div className="info-label">Zip Code</div>
+                  <div className="info-value">{profile.zipCode}</div>
+                </div>
 
-            <div className="info-group">
-              <div className="info-label">Zip Code</div>
-              <div className="info-value">{profile.zipCode}</div>
-            </div>
+                <div className="info-group">
+                  <div className="info-label">Gender</div>
+                  <div className="info-value">{profile.gender || 'N/A'}</div>
+                </div>
 
-            <div className="info-group">
-              <div className="info-label">Gender</div>
-              <div className="info-value">{profile.gender || 'N/A'}</div>
-            </div>
+                <div className="info-group">
+                  <div className="info-label">Date of Birth</div>
+                  <div className="info-value">{profile.dateOfBirth}</div>
+                </div>
 
-            <div className="info-group">
-              <div className="info-label">Date of Birth</div>
-              <div className="info-value">{profile.dateOfBirth}</div>
-            </div>
+                <div className="info-group">
+                  <div className="info-label">Height</div>
+                  <div className="info-value">{profile.height}</div>
+                </div>
 
-            <div className="info-group">
-              <div className="info-label">Height</div>
-              <div className="info-value">{profile.height}</div>
-            </div>
-
-            <div className="info-group">
-              <div className="info-label">Handedness</div>
-              <div className="info-value">{profile.handedness}</div>
-            </div>
-          </div>
-
-          {/* Golf and Medical Information Section */}
-          <div className="profile-section">
-            <h2 className="section-title">Golf Information</h2>
-            
-            <div className="info-group">
-              <div className="info-label">Golf Experience</div>
-              <div className="info-value">{profile.golfExperience}</div>
-            </div>
-
-            <div className="info-group">
-              <div className="info-label">Previous Lessons</div>
-              <div className={profile.previousLessons ? 'status-yes' : 'status-no'}>
-                {profile.previousLessons ? 'Yes' : 'No'}
+                <div className="info-group">
+                  <div className="info-label">Handedness</div>
+                  <div className="info-value">{profile.handedness}</div>
+                </div>
               </div>
-            </div>
-
-            {profile.previousLessons && (
-              <>
-                <div className="info-group">
-                  <div className="info-label">Lesson Duration</div>
-                  <div className="info-value">{profile.lessonDuration}</div>
-                </div>
-
-                <div className="info-group">
-                  <div className="info-label">Previous Instructor</div>
-                  <div className="info-value">{profile.previousInstructor}</div>
-                </div>
-              </>
-            )}
-
-            <div className="info-group">
-              <div className="info-label">Heard From</div>
-              <div className="info-value">{profile.heardFrom.source}</div>
-            </div>
-
-            {profile.heardFrom.name && (
+          )}
+          </div>
+            {/* Golf and Medical Information Section */}
+          {profile.user_type.toLowerCase() === "golfer" && (
+            
+              <div className="profile-section">
+              <h2 className="section-title">Golf Information</h2>
+              
               <div className="info-group">
-                <div className="info-label">Referral Name</div>
-                <div className="info-value">{profile.heardFrom.name}</div>
+                <div className="info-label">Golf Experience</div>
+                <div className="info-value">{profile.golfExperience}</div>
               </div>
-            )}
 
-            <h2 className="section-title">Emergency Contact</h2>
-            
-            <div className="info-group">
-              <div className="info-label">Name</div>
-              <div className="info-value">{profile.emergencyContact?.name}</div>
-            </div>
+              <div className="info-group">
+                <div className="info-label">Previous Lessons</div>
+                <div className={profile.previousLessons ? 'status-yes' : 'status-no'}>
+                  {profile.previousLessons ? 'Yes' : 'No'}
+                </div>
+              </div>
 
-            <div className="info-group">
-              <div className="info-label">Phone</div>
-              <div className="info-value">
-                {formatPhone(profile.emergencyContact?.phone)}
+              {profile.previousLessons && (
+                <>
+                  <div className="info-group">
+                    <div className="info-label">Lesson Duration</div>
+                    <div className="info-value">{profile.lessonDuration}</div>
+                  </div>
+
+                  <div className="info-group">
+                    <div className="info-label">Previous Instructor</div>
+                    <div className="info-value">{profile.previousInstructor}</div>
+                  </div>
+                </>
+              )}
+
+              <div className="info-group">
+                <div className="info-label">Heard From</div>
+                <div className="info-value">{profile.heardFrom.source}</div>
+              </div>
+
+              {profile.heardFrom.name && (
+                <div className="info-group">
+                  <div className="info-label">Referral Name</div>
+                  <div className="info-value">{profile.heardFrom.name}</div>
+                </div>
+              )}
+
+              <h2 className="section-title">Emergency Contact</h2>
+              
+              <div className="info-group">
+                <div className="info-label">Name</div>
+                <div className="info-value">{profile.emergencyContact?.name}</div>
+              </div>
+
+              <div className="info-group">
+                <div className="info-label">Phone</div>
+                <div className="info-value">
+                  {formatPhone(profile.emergencyContact?.phone)}
+                </div>
+              </div>
+
+              <div className="info-group">
+                <div className="info-label">Relationship</div>
+                <div className="info-value">{profile.emergencyContact?.relationship}</div>
+              </div>
+
+              <h2 className="section-title">Medical Information</h2>
+              
+              <div className="info-group">
+                <div className="info-label">Physician</div>
+                <div className="info-value">{profile.physician?.name}</div>
+              </div>
+
+              <div className="info-group">
+                <div className="info-label">Physician Phone</div>
+                <div className="info-value">
+                  {formatPhone(profile.physician?.phone)}
+                </div>
+              </div>
+
+              <div className="info-group">
+                <div className="info-label">Medical Information</div>
+                <div className="info-value">
+                  {profile.medicalInformation || 'None provided'}
+                </div>
               </div>
             </div>
+          )}
 
-            <div className="info-group">
-              <div className="info-label">Relationship</div>
-              <div className="info-value">{profile.emergencyContact?.relationship}</div>
-            </div>
+          {/* Instructor Information Section */}
+          {profile.user_type.toLowerCase() === "instructor" && (
+                      
+                    <div className="profile-section">
+                      <h2 className="section-title">Instructor Certification</h2>
+                      
+                      <div className="info-group">
+                        <div className="info-label">Golf Experience</div>
+                        <div className="info-value">{profile.golfExperience}</div>
+                      </div>
 
-            <h2 className="section-title">Medical Information</h2>
-            
-            <div className="info-group">
-              <div className="info-label">Physician</div>
-              <div className="info-value">{profile.physician?.name}</div>
-            </div>
+                      <div className="info-group">
+                        <div className="info-label">Certifications</div>
+                        <div className={profile.previousLessons ? 'status-yes' : 'status-no'}>
+                          {profile.previousLessons ? 'Yes' : 'No'}
+                        </div>
+                      </div>
 
-            <div className="info-group">
-              <div className="info-label">Physician Phone</div>
-              <div className="info-value">
-                {formatPhone(profile.physician?.phone)}
-              </div>
-            </div>
+                      {profile.previousLessons && (
+                        <>
+                          <div className="info-group">
+                            <div className="info-label">Levels teaching</div>
+                            <div className="info-value">{profile.lessonDuration}</div>
+                          </div>
 
-            <div className="info-group">
-              <div className="info-label">Medical Information</div>
-              <div className="info-value">
-                {profile.medicalInformation || 'None provided'}
-              </div>
-            </div>
-          </div>
+                          <div className="info-group">
+                            <div className="info-label">Instructor level</div>
+                            <div className="info-value">{profile.previousInstructor}</div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  )}
         </div>
       </div>
     </div>
