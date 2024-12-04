@@ -36,6 +36,7 @@ const UserProfile: React.FC = () => {
     }
   }, [id]);
   const formatPhone = (phone: any) => {
+    console.log(phone);
     if (!phone) return 'N/A';
     return `(${phone.areaCode}) ${phone.prefix}-${phone.lineNumber}`;
   };

@@ -399,11 +399,7 @@ interface RegisterInstructorRequest {
   lastName: string;
   email: string;
   password: string;
-  phone: {
-    areaCode: string;
-    prefix: string;
-    lineNumber: string;
-  };
+  phone: string;
   user_type: string;
   golf_experience: string;
 }
@@ -431,7 +427,6 @@ export const registerInstructor = async (req: Request<{}, {}, RegisterInstructor
     const formatPhoneNumber = (phone: { areaCode: string; prefix: string; lineNumber: string }) => {
       return `${phone.areaCode}${phone.prefix}${phone.lineNumber}`;
     };
-    const formattedPhone = formatPhoneNumber(phone);
 
     // Create user with dummy placeholders
     const user = await models.User.create({
@@ -444,7 +439,7 @@ export const registerInstructor = async (req: Request<{}, {}, RegisterInstructor
       city: 'N/A',
       state: 'N/A',
       zip_code: '00000',
-      phone:formattedPhone,
+      phone:phone,
       email,
       gender: 'N/A',
       dob: '1900-01-01',
