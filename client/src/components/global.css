@@ -21,14 +21,13 @@
   }
   
   .logo {
-    padding: 12px 0;
+    padding: 8px 0;
     height: 40px;
   }
   
   .logo img {
-    height: 68px;
-    width: 200px;
-    object-fit: contain;
+    height: 64px;
+    width: auto;
   }
   
   .main-nav {
@@ -313,13 +312,13 @@
   }
   
   .logo {
-    padding: 8px 0;
+    padding: 4px 4px;
     height: 30px;
   }
   
   .logo img {
     height: 50px;
-    width: 150px;
+    width: auto;
   }
   
   .main-nav {
