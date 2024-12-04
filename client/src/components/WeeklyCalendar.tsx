@@ -27,18 +27,16 @@ const WeeklyCalendar: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [allowedViews, setAllowedViews] = useState<Array<"agenda" | "week"|"day">>([
-    Views.DAY,
-  ]);
+  const [defaultView, setDefaultView] = useState("");
 
   useEffect(() => {
     const updateDefaultView = () => {
       const isMobile = window.innerWidth < 760; 
       if (isMobile) {
-        setAllowedViews([Views.DAY])
+        setDefaultView(Views.DAY)
       }
       else {
-        setAllowedViews([Views.DAY, Views.WEEK, Views.AGENDA ])
+        setDefaultView(Views.WEEK)
       }
     };
 
@@ -107,8 +105,8 @@ const WeeklyCalendar: React.FC = () => {
       components={{
         event: EventComponent,
       }}
-      views={allowedViews}
-      defaultView={allowedViews[0]}
+      views={[Views.DAY, Views.WEEK, Views.AGENDA]}
+      defaultView={"day"}
       min={new Date(2024, 10, 8, 9, 0)}
       max={new Date(2024, 10, 8, 18, 0)}
       onSelectEvent={handleEventSelect}
