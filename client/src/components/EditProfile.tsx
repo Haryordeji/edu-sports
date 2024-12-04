@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import instance from '../utils/axios';
 import { RegistrationFormData } from '../interfaces';
+import "./registerPage.css"
+import { PhoneNumber } from '../interfaces';
 
 interface ProfileResponse {
   success: boolean;
@@ -81,6 +83,25 @@ const EditProfile: React.FC = () => {
     );
   };
   
+  const handleEmergencyContactPhoneChange = (
+    field: keyof PhoneNumber, // Adjusted to match PhoneNumber keys
+    value: string
+  ) => {
+    setFormData((prev: RegistrationFormData | null) =>
+      prev
+        ? {
+            ...prev,
+            emergencyContact: {
+              ...prev.emergencyContact,
+              phone: {
+                ...prev.emergencyContact.phone,
+                [field]: value, // Update the specific phone field dynamically
+              },
+            },
+          }
+        : null
+    );
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -361,7 +382,7 @@ const EditProfile: React.FC = () => {
                   <input
                     type="text"
                     value={formData.emergencyContact.phone?.areaCode || ''}
-                    onChange={(e) => handlePhoneChange('areaCode', e.target.value)}
+                    onChange={(e) => handleEmergencyContactPhoneChange('areaCode', e.target.value)}
                     maxLength={3}
                     placeholder="Area Code"
                     required
@@ -369,7 +390,7 @@ const EditProfile: React.FC = () => {
                   <input
                     type="text"
                     value={formData.emergencyContact?.phone?.prefix || ''}
-                    onChange={(e) => handlePhoneChange('prefix', e.target.value)}
+                    onChange={(e) => handleEmergencyContactPhoneChange('prefix', e.target.value)}
                     maxLength={3}
                     placeholder="Prefix"
                     required
@@ -377,7 +398,7 @@ const EditProfile: React.FC = () => {
                   <input
                     type="text"
                     value={formData.emergencyContact?.phone?.lineNumber || ''}
-                    onChange={(e) => handlePhoneChange('lineNumber', e.target.value)}
+                    onChange={(e) => handleEmergencyContactPhoneChange('lineNumber', e.target.value)}
                     maxLength={4}
                     placeholder="Line Number"
                     required

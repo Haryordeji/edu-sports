@@ -133,13 +133,11 @@ const WeeklyCalendar: React.FC = () => {
       >
         {selectedEvent && (
           <div>
-            <button onClick={closeModal}> ✕</button>
             <h2>{selectedEvent.title}</h2>
             <p><strong>Instructor:</strong> {selectedEvent.instructor}</p>
             <p><strong>Time:</strong> {moment(selectedEvent.start).format('h:mm a')} - {moment(selectedEvent.end).format('h:mm a')}</p>
             <p><strong>Location:</strong> {selectedEvent.location}</p>
             <p><strong>Level:</strong> {selectedEvent.level}</p>
-            <button>Edit</button>
           </div>
         )}
       </Modal>
