@@ -28,6 +28,7 @@ const FeedbackManager: React.FC = () => {
   const { instructor_id, golfer_id } = useParams<{ instructor_id: string; golfer_id: string }>();
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [classes, setClasses] = useState<Event[]>([]);
   const [selectedClass, setSelectedClass] = useState<string>('');
   const [noteContent, setNoteContent] = useState<string>('');
@@ -193,6 +194,64 @@ const FeedbackManager: React.FC = () => {
     }
   };
 
+  const handleDeleteComment = async (commentId: string) => {
+    try {
+      const response = await instance.delete(`/comment/${commentId}`, { withCredentials: true });
+      if (response.data.success) {
+        setComments((prev) => prev.filter((comment) => comment.comment_id !== commentId));
+        setMessage('Comment deleted successfully.');
+      } else {
+        setMessage('Failed to delete comment.');
+      }
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      setMessage('An error occurred while deleting the comment.');
+    }
+  };
+
+  const handleEditComment = (comment: Comment) => {
+    setEditingCommentId(comment.comment_id);
+    setCommentContent(comment.content);
+  };
+
+  const handleSaveComment = async () => {
+    if (!commentContent.trim()) {
+      setMessage('Comment content cannot be empty.');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await instance.put(
+        `/comment/${editingCommentId}`,
+        { content: commentContent },
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        setComments((prev) =>
+          prev.map((comment) =>
+            comment.comment_id === editingCommentId ? { ...comment, content: commentContent } : comment
+          )
+        );
+        setMessage('Comment updated successfully.');
+        setEditingCommentId(null);
+        setCommentContent('');
+      } else {
+        setMessage('Failed to update comment.');
+      }
+    } catch (error) {
+      console.error('Error updating comment:', error);
+      setMessage('An error occurred while updating the comment.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCancelEditComment = () => {
+    setEditingCommentId(null);
+    setCommentContent('');
+  };
+
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '1rem' }}>
       <button onClick={() => navigate(-1)} style={styles.button}>← Back</button>
@@ -292,6 +351,7 @@ const FeedbackManager: React.FC = () => {
         )}
       </div>
 
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '1rem' }}>
       {expandedFeedback && (
         <div className="modal-overlay">
           <div className="modal">
@@ -301,6 +361,21 @@ const FeedbackManager: React.FC = () => {
             <p><strong>Created At:</strong> {new Date(expandedFeedback.createdAt).toLocaleString()}</p>
             <p>{expandedFeedback.note_content}</p>
             <h4>Comments:</h4>
+
+            {editingCommentId === null && (
+            <div>
+              <textarea
+                value={commentContent}
+                onChange={(e) => setCommentContent(e.target.value)}
+                placeholder="Add a comment..."
+                style={{ width: '100%', margin: '1rem 0', padding: '0.5rem' }}
+              />
+              <button onClick={handleAddComment} disabled={isLoading}>
+                {isLoading ? 'Adding...' : 'Add Comment'}
+              </button>
+            </div>
+          )}
+          
             <div>
               {comments.length === 0 ? (
                 <p>No comments yet.</p>
@@ -308,23 +383,40 @@ const FeedbackManager: React.FC = () => {
                 comments.map((comment) => (
                   <div key={comment.comment_id} style={{ borderBottom: '1px solid #ccc', marginBottom: '1rem' }}>
                     <p><strong>{comment.author_name}</strong> on {new Date(comment.createdAt).toLocaleString()}</p>
-                    <p>{comment.content}</p>
+                    {editingCommentId === comment.comment_id ? (
+                      <div>
+                        <textarea
+                          value={commentContent}
+                          onChange={(e) => setCommentContent(e.target.value)}
+                          style={{ width: '100%', margin: '0.5rem 0' }}
+                        />
+                        <button onClick={handleSaveComment} disabled={isLoading}>
+                          {isLoading ? 'Saving...' : 'Save'}
+                        </button>
+                        <button onClick={handleCancelEditComment}>Cancel</button>
+                      </div>
+                    ) : (
+                      <div> 
+                        <p>{comment.content}</p>
+                        {editingCommentId === null && (
+                          <div>
+                        <button onClick={() => handleEditComment(comment)}>Edit</button>
+                        <button onClick={() => handleDeleteComment(comment.comment_id)}>Delete</button>
+                          </div>
+                        )}
+                      </div>
+                      
+                    )}
                   </div>
                 ))
               )}
             </div>
-            <textarea
-              value={commentContent}
-              onChange={(e) => setCommentContent(e.target.value)}
-              placeholder="Add a comment..."
-              style={{ width: '100%', margin: '1rem 0', padding: '0.5rem' }}
-            />
-            <button onClick={handleAddComment} disabled={isLoading}>
-              {isLoading ? 'Adding...' : 'Add Comment'}
-            </button>
+          
+
           </div>
         </div>
       )}
+    </div>
 
       {isAddingOrEditing && (
         <div className="modal-overlay">
