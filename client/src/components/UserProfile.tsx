@@ -53,18 +53,29 @@ const UserProfile: React.FC = () => {
     return <div className="error-state">No profile data found</div>;
   }
 
+  const storedUserJson = localStorage.getItem('user');
+  let storedUserId = ''
+  let storedUserType = ''
+  if (storedUserJson) {
+    const storedUser = JSON.parse(storedUserJson);
+    storedUserId = storedUser.user_id;
+    storedUserType = storedUser.user_type
+  }
+
   return (
     <div className="user-profile-wrapper">
       <div className="user-profile-container">
         <button onClick={() => navigate(-1)} className="back-button">
           ← Back
         </button>
-        <button
+        {(storedUserId === id || storedUserType === "admin") && <div>
+          <button
           onClick={() => navigate(`/profile/${id}/edit`)} 
           className="back-button"
         >
           Edit Profile
         </button>
+        </div>}
         
         <div className="profile-header">
           <h1>User Profile</h1>
