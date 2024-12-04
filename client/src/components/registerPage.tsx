@@ -46,7 +46,8 @@ const RegistrationPage: React.FC = () => {
     },
     medicalInformation: '',
     agreeToTerms: false,
-    user_type: 'golfer'
+    user_type: 'golfer',
+    level: [7]
   }
 );
 

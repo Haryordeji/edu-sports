@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import instance from '../utils/axios';
-import { RegistrationFormData } from '../interfaces';
+import { GolfLevels, RegistrationFormData } from '../interfaces';
 import "./registerPage.css"
 import { PhoneNumber } from '../interfaces';
 
@@ -68,6 +68,14 @@ const EditProfile: React.FC = () => {
     );
   };
 
+  const storedUserJson = localStorage.getItem('user');
+  let storedUserId = ''
+  let storedUserType = ''
+  if (storedUserJson) {
+    const storedUser = JSON.parse(storedUserJson);
+    storedUserId = storedUser.user_id;
+    storedUserType = storedUser.user_type
+  }
 
   const handlePhoneChange = (field: keyof RegistrationFormData['Phone'], value: string) => {
     setFormData((prev) =>
@@ -82,7 +90,24 @@ const EditProfile: React.FC = () => {
         : null
     );
   };
-  
+
+  const handleLevelChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { checked, value } = event.target;
+    const levelIndex = Number(value);
+
+    setFormData((prevState) => {
+        if (!prevState) return null;
+        const currentLevels = prevState.level ?? []; 
+        const updatedLevels = checked
+            ? [...currentLevels, levelIndex]
+            : currentLevels.filter((level) => level !== levelIndex);
+        return {
+            ...prevState,
+            level: updatedLevels,
+        };
+    });
+  };
+
   const handleEmergencyContactPhoneChange = (
     field: keyof PhoneNumber, // Adjusted to match PhoneNumber keys
     value: string
@@ -360,6 +385,35 @@ const EditProfile: React.FC = () => {
                 </label>
               </div>
             </div>
+            {storedUserType === "admin" && (
+            <div className="level-group">
+            <div>
+                <label>Select Golf Level(s):</label>
+                <div>
+                  {Object.keys(GolfLevels)
+                    .filter((key) => isNaN(Number(key)))
+                    .map((level, index) => (
+                      <label key={index} style={{ display: 'block', margin: '4px 0' }}>
+                        <input
+                          type="checkbox"
+                          value={index}
+                          checked={formData.level?.includes(index) || false}
+                          onChange={handleLevelChange}
+                          disabled={
+                            !(formData.user_type === "instructor" || formData.user_type === "admin") &&
+                            !formData.level?.includes(index) &&
+                            formData.level?.length >= 1
+                          }
+                          required
+                        />
+                        {level}
+                      </label>
+                    ))}
+                </div>
+              </div>
+          </div>
+            )}
+
           </div>
           {/* Emergency Contact */}
           <div className="emergency-section">

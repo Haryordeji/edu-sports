@@ -40,9 +40,12 @@ interface UserAttributes {
 
   createdAt: Date;
   updatedAt: Date;
+
+  // 
+  level: number[];
 }
 
-interface UserCreationAttributes extends Optional<UserAttributes, 'user_id'> {}
+interface UserCreationAttributes extends Optional<UserAttributes, 'user_id' | 'level'> {}
 
 export class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   public user_id!: UUID;
@@ -79,6 +82,8 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
 
   public createdAt!: Date;
   public updatedAt!: Date;
+
+  public level!: number[];
 }
 
 export const UserModelInit = (sequelize: Sequelize) => {
@@ -116,6 +121,8 @@ export const UserModelInit = (sequelize: Sequelize) => {
       user_type: { type: DataTypes.STRING, allowNull: false },
       createdAt: { type: DataTypes.DATE },
       updatedAt: { type: DataTypes.DATE },
+
+      level: { type: DataTypes.ARRAY(DataTypes.INTEGER), allowNull: true },
     },
     { sequelize, tableName: 'users' }
   );

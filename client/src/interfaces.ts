@@ -46,5 +46,18 @@ export interface RegistrationFormData {
     agreeToTerms: boolean;
 
     // ! dynamic render registration form based on whether golfer or instructor
-    user_type: 'golfer' | 'instructor'
+    user_type: 'golfer' | 'instructor' | 'admin';
+
+    level: number[]
+  }
+
+  export enum GolfLevels {
+    "Wee Golfer",
+    "Academy Golfer Level 1",
+    "Academy Golfer Level 2",
+    "Club Golfer Level 3",
+    "Club Golfer Level 4",
+    "Tour Golfer Level 5",
+    "Tour Golfer Level 6",
+    "Unassigned"
   }

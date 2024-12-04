@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import instance from '../utils/axios';
-import { RegistrationFormData } from '../interfaces';
+import { GolfLevels, RegistrationFormData } from '../interfaces';
 import './global.css';
 import EditProfile from './EditProfile';
 import { set } from 'date-fns';
@@ -36,7 +36,6 @@ const UserProfile: React.FC = () => {
     }
   }, [id]);
   const formatPhone = (phone: any) => {
-    console.log(phone);
     if (!phone) return 'N/A';
     return `(${phone.areaCode}) ${phone.prefix}-${phone.lineNumber}`;
   };
@@ -152,6 +151,10 @@ const UserProfile: React.FC = () => {
               <div className="profile-section">
               <h2 className="section-title">Golf Information</h2>
               
+              <div className="info-group">
+                <div className="info-label">Golf Level</div>
+                <div className="info-value"> {GolfLevels[profile.level?.[0]] || "unknown"}</div>            
+            </div>
               <div className="info-group">
                 <div className="info-label">Golf Experience</div>
                 <div className="info-value">{profile.golfExperience}</div>

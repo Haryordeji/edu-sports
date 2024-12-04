@@ -50,6 +50,7 @@ interface RegisterRequest {
   medicalInformation: string;
   agreeToTerms: boolean;
   user_type: string;
+  level: number[]
 }
 
 export const register = async (req: Request<{}, {}, RegisterRequest>, res: Response) => {
@@ -78,7 +79,8 @@ export const register = async (req: Request<{}, {}, RegisterRequest>, res: Respo
       physician,
       medicalInformation,
       agreeToTerms,
-      user_type
+      user_type,
+      level
     } = req.body;
 
     // required fields
@@ -132,7 +134,8 @@ export const register = async (req: Request<{}, {}, RegisterRequest>, res: Respo
       medical_information: medicalInformation,
       user_type: user_type,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      level: level
     });
 
     // return data
@@ -141,7 +144,8 @@ export const register = async (req: Request<{}, {}, RegisterRequest>, res: Respo
       first_name: user.first_name,
       last_name: user.last_name,
       email: user.email,
-      user_type: user.user_type
+      user_type: user.user_type,
+      level: user.level
     };
 
     res.status(201).json({
@@ -214,7 +218,8 @@ export const updateProfile = async (req: Request<{ userId: string }, {}, Partial
         physician_phone: formatPhoneNumber(updates.physician.phone)
       }),
       ...(updates.medicalInformation && { medical_information: updates.medicalInformation }),
-      updated_at: new Date()
+      updated_at: new Date(),
+      ...(updates.level && { level: updates.level }),
     };
 
     // update user
@@ -232,7 +237,8 @@ export const updateProfile = async (req: Request<{ userId: string }, {}, Partial
       first_name: updatedUser.first_name,
       last_name: updatedUser.last_name,
       email: updatedUser.email,
-      user_type: updatedUser.user_type
+      user_type: updatedUser.user_type,
+      level: updatedUser.level
     };
 
     res.json({
@@ -335,7 +341,8 @@ export const getProfile = async (req: Request<{ userId: string }>, res: Response
       medicalInformation: user.medical_information,
       user_type: user.user_type,
       profileCreatedAt: user.profile_created_at,
-      updatedAt: user.updatedAt
+      updatedAt: user.updatedAt,
+      level: user.level
     };
 
     res.json({
@@ -349,13 +356,13 @@ export const getProfile = async (req: Request<{ userId: string }>, res: Response
   }
 };
 
-
 interface User {
   user_id: UUID;
   first_name: string;
   last_name: string;
   email: string;
   user_type: string;
+  level: number[];
 }
 
 export const getUsers = async (req: Request, res: Response) => {
@@ -369,7 +376,7 @@ export const getUsers = async (req: Request, res: Response) => {
 
     const users = await models.User.findAll({ 
       where,
-      attributes: ['user_id', 'first_name', 'last_name', 'email', 'user_type']
+      attributes: ['user_id', 'first_name', 'last_name', 'email', 'user_type', 'level']
     });
 
     const formattedUsers: User[] = users.map(user => ({
@@ -377,7 +384,8 @@ export const getUsers = async (req: Request, res: Response) => {
       first_name: user.first_name,
       last_name: user.last_name,
       email: user.email,
-      user_type: user.user_type
+      user_type: user.user_type,
+      level: user.level
     }));
 
     return res.status(200).json({
@@ -402,6 +410,7 @@ interface RegisterInstructorRequest {
   phone: string;
   user_type: string;
   golf_experience: string;
+  level: number[];
 }
 
 export const registerInstructor = async (req: Request<{}, {}, RegisterInstructorRequest>, res: Response) => {
@@ -414,6 +423,7 @@ export const registerInstructor = async (req: Request<{}, {}, RegisterInstructor
       phone,
       user_type,
       golf_experience,
+      level
     } = req.body;
 
     // Check if email is already registered
@@ -459,7 +469,9 @@ export const registerInstructor = async (req: Request<{}, {}, RegisterInstructor
       medical_information: 'N/A',
       user_type,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+
+      level: level
     });
 
     // Return user data
@@ -471,6 +483,7 @@ export const registerInstructor = async (req: Request<{}, {}, RegisterInstructor
       phone: user.phone,
       user_type: user.user_type,
       golf_experience: user.golf_experience,
+      level: level
     };
 
     res.status(201).json({
