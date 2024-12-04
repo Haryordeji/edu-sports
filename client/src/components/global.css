@@ -222,6 +222,224 @@
   font-weight: 500;
 }
 
+/* Schedule Management Styles */
+.schedule-management-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.schedule-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.create-class-btn {
+  padding: 0.5rem 1rem;
+  background-color: var(--primary-green);
+  color: #0e5f04;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.create-class-btn:hover {
+  background-color: #98d89b;
+}
+
+/* class cards for the class managements */
+.class-cards-container {
+  display: grid;
+  gap: 1rem;
+  margin: 0 auto;
+  max-width: 900px;
+}
+
+.class-card {
+  background: white;
+  border: 1px solid var(--primary-green);
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.class-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #fafff2;
+}
+
+.class-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #0e5f04;
+  margin-bottom: 1rem;
+}
+
+.class-info {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.info-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #666;
+  min-width: 100px;
+}
+
+.class-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.action-button {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.edit-btn {
+  color: #0e5f04;
+  border: 1px solid var(--primary-green);
+  background: transparent;
+}
+
+.edit-btn:hover {
+  background: var(--primary-green);
+  color: white;
+}
+
+.delete-btn {
+  color: #dc2626;
+  border: 1px solid #dc2626;
+  background: transparent;
+}
+
+.delete-btn:hover {
+  background: #fee2e2;
+}
+
+/* the modal {specific for class managmt} styles */
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  border: 1px solid var(--primary-green);
+  max-width: 500px;
+  width: 90%;
+  margin: 2rem auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--primary-green);
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #0e5f04;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--primary-green);
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #0e5f04;
+  box-shadow: 0 0 0 2px rgba(14, 95, 4, 0.1);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .schedule-management-container {
+    padding: 1rem;
+  }
+
+  .class-cards-container {
+    grid-template-columns: 1fr;
+  }
+
+  .class-card {
+    padding: 1rem;
+  }
+
+  .class-info {
+    font-size: 0.9rem;
+  }
+
+  .action-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .modal-content {
+    padding: 1.5rem;
+    width: 95%;
+  }
+}
+
+@media (max-width: 480px) {
+  .schedule-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .create-class-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .class-actions {
+    flex-direction: column;
+  }
+
+  .action-button {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+
+
 /* Loading State */
 .loading-state {
   display: flex;
@@ -459,9 +677,4 @@ textarea {
 
 .modal .submit-button:hover {
     background-color: #98d89b; /* Slightly darker green for hover */
-}
-#experience {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
 }

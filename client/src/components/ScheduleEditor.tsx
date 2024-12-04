@@ -136,16 +136,56 @@ const ScheduleEditor = () => {
   };
 
   return (
-    <div className="relative">
-      <div className="mb-6 flex justify-between items-center">
+    <div className="schedule-management-container">
+      <div className="schedule-header">
         <button
           onClick={() => setScheduleModalOpen(true)}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+          className="create-class-btn"
         >
-          Create New Class
+          + Create New Class
         </button>
       </div>
 
+      <div className="class-cards-container">
+      {classes.map((classItem) => (
+        <div key={classItem.class_id} className="class-card">
+          <h3 className="class-title">{classItem.title}</h3>
+          <div className="class-info">
+            <div className="info-row">
+              <span className="info-label">Time:</span>
+              <span>{new Date(classItem.start).toLocaleString()} - {new Date(classItem.end).toLocaleString()}</span>
+            </div>
+            <div className="info-row">
+              <span className="info-label">Location:</span>
+              <span>{classItem.location}</span>
+            </div>
+            <div className="info-row">
+              <span className="info-label">Instructor:</span>
+              <span>{classItem.instructor}</span>
+            </div>
+            <div className="info-row">
+              <span className="info-label">Level:</span>
+              <span>{classItem.level}</span>
+            </div>
+          </div>
+          <div className="class-actions">
+            <button
+              onClick={() => handleEdit(classItem)}
+              className="action-button edit-btn"
+            >
+              Edit
+            </button>
+            <button
+              onClick={() => handleDelete(classItem.class_id)}
+              className="action-button delete-btn"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+      
       {isScheduleModalOpen && (
         <div className="modal-overlay">
           <div className="modal">
@@ -253,48 +293,6 @@ const ScheduleEditor = () => {
         </div>
         </div>
       )}
-
-      <div className="grid gap-4">
-        {classes.map((classItem) => (
-          <div
-            key={classItem.class_id}
-            className="bg-white p-4 rounded-lg shadow-sm flex justify-between items-start"
-          >
-            <div>
-              <h3 className="text-lg font-semibold">{classItem.title}</h3>
-              <div className="mt-2 space-y-1 text-gray-600">
-                <p>
-                  <span className="font-medium">Time:</span>{' '}
-                  {new Date(classItem.start).toLocaleString()} - {new Date(classItem.end).toLocaleString()}
-                </p>
-                <p>
-                  <span className="font-medium">Location:</span> {classItem.location}
-                </p>
-                <p>
-                  <span className="font-medium">Instructor:</span> {classItem.instructor}
-                </p>
-                <p>
-                  <span className="font-medium">Level:</span> {classItem.level}
-                </p>
-              </div>
-            </div>
-            <div className="space-x-2">
-              <button
-                onClick={() => handleEdit(classItem)}
-                className="px-3 py-1 text-blue-600 hover:bg-blue-50 rounded"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDelete(classItem.class_id)}
-                className="px-3 py-1 text-red-600 hover:bg-red-50 rounded"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
     </div>
   );
 };
