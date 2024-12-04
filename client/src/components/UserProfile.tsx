@@ -231,13 +231,6 @@ const UserProfile: React.FC = () => {
                         <div className="info-value">{profile.golfExperience}</div>
                       </div>
 
-                      <div className="info-group">
-                        <div className="info-label">Certifications</div>
-                        <div className={profile.previousLessons ? 'status-yes' : 'status-no'}>
-                          {profile.previousLessons ? 'Yes' : 'No'}
-                        </div>
-                      </div>
-
                       {profile.previousLessons && (
                         <>
                           <div className="info-group">

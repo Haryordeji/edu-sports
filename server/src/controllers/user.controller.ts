@@ -405,6 +405,7 @@ interface RegisterInstructorRequest {
     lineNumber: string;
   };
   user_type: string;
+  golf_experience: string;
 }
 
 export const registerInstructor = async (req: Request<{}, {}, RegisterInstructorRequest>, res: Response) => {
@@ -415,7 +416,8 @@ export const registerInstructor = async (req: Request<{}, {}, RegisterInstructor
       email,
       password,
       phone,
-      user_type
+      user_type,
+      golf_experience,
     } = req.body;
 
     // Check if email is already registered
@@ -450,7 +452,7 @@ export const registerInstructor = async (req: Request<{}, {}, RegisterInstructor
       handedness: 'N/A',
       referral_source: 'N/A',
       referral_name: '',
-      golf_experience: 'N/A',
+      golf_experience: golf_experience,
       previous_lessons: 'no',
       lesson_duration: 'N/A',
       previous_instructor: '',
@@ -472,7 +474,8 @@ export const registerInstructor = async (req: Request<{}, {}, RegisterInstructor
       last_name: user.last_name,
       email: user.email,
       phone: user.phone,
-      user_type: user.user_type
+      user_type: user.user_type,
+      golf_experience: user.golf_experience,
     };
 
     res.status(201).json({

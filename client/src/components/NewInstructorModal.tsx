@@ -13,10 +13,11 @@ const NewInstructorModal: React.FC<NewInstructorModalProps> = ({ onClose, onSucc
     email: '',
     password: '',
     phone: '',
+    golf_experience: '',
   });
   const [error, setError] = useState('');
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
@@ -31,6 +32,7 @@ const NewInstructorModal: React.FC<NewInstructorModalProps> = ({ onClose, onSucc
         password: formData.password,
         phone: formData.phone,
         user_type: 'instructor',  // Assuming all new registrations are instructors
+        golf_experience: formData.golf_experience,  
       };
       await instance.post('/registerInstructor', payload, { withCredentials: true });
       onSuccess();
@@ -89,6 +91,16 @@ const NewInstructorModal: React.FC<NewInstructorModalProps> = ({ onClose, onSucc
             onChange={handleInputChange}
             required
           />
+          <textarea
+            id='experience'
+            name="golf_experience"
+            placeholder="Experience and Certifications"
+            value={formData.golf_experience}
+            onChange={handleInputChange}
+            required
+            rows={4}
+          />
+          
           {error && <p style={{ color: 'red' }}>{error}</p>}
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
             <button type="button" onClick={onClose} className="cancel-button">

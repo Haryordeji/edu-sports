@@ -461,3 +461,8 @@ textarea {
 .modal .submit-button:hover {
     background-color: #98d89b; /* Slightly darker green for hover */
 }
+#experience {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
