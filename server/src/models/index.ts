@@ -61,6 +61,11 @@ export const initModels = (sequelize: Sequelize) => {
     as: 'instructor_name',
   });
 
+  Comment.belongsTo(User, {
+    foreignKey: 'author_id',
+    as: 'author_name'
+  });
+
   User.hasMany(Feedback, {
     foreignKey: 'instructor_id',
     as: 'instructedFeedbacks',

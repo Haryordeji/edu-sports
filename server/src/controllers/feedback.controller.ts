@@ -94,7 +94,7 @@ export const getFeedbackForStudent = async (req: Request<{ golferId: string }>, 
 
     if (!feedbacks.length) {
       return res.status(200).json({
-        success: true,
+        success: false,
         message: 'No feedback found for this student',
         feedbacks: [],
       });

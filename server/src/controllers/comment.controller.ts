@@ -45,35 +45,51 @@ export const addComment = async (req: Request, res: Response) => {
     }
   };
   
-  // Get Comments for Feedback
-  export const getCommentsForFeedback = async (req: Request<{ feedbackId: string }>, res: Response) => {
-    try {
-      const { feedbackId } = req.params;
-  
-      const comments = await models.Comment.findAll({
-        where: { feedback_id: feedbackId },
-        order: [['createdAt', 'ASC']],
-      });
-  
-      if (!comments.length) {
-        return res.status(404).json({
-          success: false,
-          message: 'No comments found for this feedback',
-        });
-      }
-  
-      res.json({
-        success: true,
-        comments: comments,
-      });
-    } catch (error) {
-      console.error('Get comments error:', error);
-      res.status(500).json({
+// Get Comments for Feedback
+export const getCommentsForFeedback = async (req: Request<{ feedbackId: string }>, res: Response) => {
+  try {
+    const { feedbackId } = req.params;
+
+    const comments = await models.Comment.findAll({
+      where: { feedback_id: feedbackId },
+      include: [
+        {
+          model: models.User,
+          as: 'author_name',
+          attributes: ['first_name', 'last_name'],
+        },
+      ],
+      order: [['createdAt', 'DESC']],
+    });
+
+    if (!comments.length) {
+      return res.status(404).json({
         success: false,
-        message: 'Internal server error',
+        message: 'No comments found for this feedback',
       });
     }
-  };
+
+    const formattedComments = comments.map((comment: any) => ({
+      comment_id: comment.comment_id,
+      content: comment.content,
+      author_name: comment.author_name
+        ? `${comment.author_name.first_name} ${comment.author_name.last_name}`
+        : 'Unknown Author',
+      createdAt: comment.createdAt,
+    }));
+
+    res.json({
+      success: true,
+      comments: formattedComments,
+    });
+  } catch (error) {
+    console.error('Get comments error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+};
   
   // Delete Comment
   export const deleteComment = async (req: Request<{ commentId: string }>, res: Response) => {
@@ -102,4 +118,35 @@ export const addComment = async (req: Request, res: Response) => {
       });
     }
   };
-  
+
+  // Update Comment
+export const updateComment = async (req: Request<{ commentId: string }>, res: Response) => {
+  try {
+    const { commentId } = req.params;
+    const { content } = req.body;
+
+    const comment = await models.Comment.findOne({ where: { comment_id: commentId } });
+    if (!comment) {
+      return res.status(404).json({
+        success: false,
+        message: 'Comment not found',
+      });
+    }
+
+    comment.content = content || comment.content;
+    comment.updatedAt = new Date();
+    await comment.save();
+
+    res.json({
+      success: true,
+      comment,
+      message: 'Comment updated successfully',
+    });
+  } catch (error) {
+    console.error('Update comment error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+};

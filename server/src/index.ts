@@ -179,6 +179,18 @@ app.delete('/api/comment/:commentId',
   }
 );
 
+// update comment
+app.put('/api/comment/:commentId', 
+  authenticate,
+  async (req: AuthRequestWithParams<CommentDelParams>, res: Response, next: NextFunction) => {
+    try {
+      await commentController.updateComment(req, res);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 // Class routes
 app.get('/api/classes',
   authenticate,
