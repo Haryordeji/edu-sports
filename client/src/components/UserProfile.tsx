@@ -291,7 +291,7 @@ const UserProfile: React.FC = () => {
         </div>
 
         {/* Delete Account Section */}
-        {profile.user_type === "golfer" && storedUserId === id && (
+        {(profile.user_type === "golfer" || profile.user_type === "instructor") && storedUserId === id && (
           <div style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid #e5e7eb', textAlign: 'center' }}>
             <button
               onClick={handleDeleteAccount}
