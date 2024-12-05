@@ -4,8 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import instance from '../utils/axios';
 import { GolfLevels, RegistrationFormData } from '../interfaces';
 import './global.css';
-import EditProfile from './EditProfile';
-import { set } from 'date-fns';
+import DOMPurify from 'dompurify';
 
 interface ProfileResponse {
   success: boolean;
@@ -51,6 +50,15 @@ const UserProfile: React.FC = () => {
   if (!profile) {
     return <div className="error-state">No profile data found</div>;
   }
+  const formatGolfLevels = (levels: number[]): string[] => {
+    if(levels == null) {
+      return []
+    }
+    return levels.map(level => GolfLevels[level] || "Invalid Level");
+  };
+  
+  const formattedLevels = formatGolfLevels(profile.level);
+
 
   const storedUserJson = localStorage.getItem('user');
   let storedUserId = ''
@@ -236,29 +244,31 @@ const UserProfile: React.FC = () => {
           )}
 
           {/* Instructor Information Section */}
-          {profile.user_type.toLowerCase() === "instructor" && (
+          {(profile.user_type.toLowerCase() === "instructor" || profile.user_type.toLowerCase() === "admin") && (
                       
                     <div className="profile-section">
-                      <h2 className="section-title">Instructor Certification</h2>
+                      <h2 className="section-title">Instructor Information</h2>
                       
                       <div className="info-group">
-                        <div className="info-label">Golf Experience</div>
-                        <div className="info-value">{profile.golfExperience}</div>
+                        <div className="info-label">Golf Certifications</div>
+                        <div
+                          className="info-value"
+                          dangerouslySetInnerHTML={{
+                            __html: DOMPurify.sanitize(profile.golfExperience),
+                          }}
+                        ></div>
                       </div>
 
-                      {profile.previousLessons && (
-                        <>
-                          <div className="info-group">
-                            <div className="info-label">Levels teaching</div>
-                            <div className="info-value">{profile.lessonDuration}</div>
-                          </div>
-
-                          <div className="info-group">
-                            <div className="info-label">Instructor level</div>
-                            <div className="info-value">{profile.previousInstructor}</div>
-                          </div>
-                        </>
-                      )}
+                      <div className="info-group">
+                        <div className="info-label">Levels Teaching</div>
+                        <div className="info-value">
+                        <ul>
+                          {formattedLevels.map((level, index) => (
+                            <li key={index}>{level}</li>
+                          ))}
+                        </ul>
+                        </div>
+                      </div>
                     </div>
                   )}
         </div>

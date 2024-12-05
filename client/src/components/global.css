@@ -678,3 +678,7 @@ textarea {
 .modal .submit-button:hover {
     background-color: #98d89b; /* Slightly darker green for hover */
 }
+
+.new-instructor-quill {
+  padding-bottom: 1rem;
+}

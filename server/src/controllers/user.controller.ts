@@ -53,6 +53,17 @@ interface RegisterRequest {
   level: number[]
 }
 
+// format phone numbers as strings
+// sets 0000000000 if bad input is provided
+const formatPhoneNumber = (phone: { areaCode: string; prefix: string; lineNumber: string }) => {
+  let phoneStr = `${phone.areaCode}${phone.prefix}${phone.lineNumber}`;
+  if (phoneStr && phoneStr.length !== 10) {
+    return "000000000"
+  }
+
+return `${phone.areaCode}${phone.prefix}${phone.lineNumber}`;
+};
+
 export const register = async (req: Request<{}, {}, RegisterRequest>, res: Response) => {
   try {
     const {
@@ -97,11 +108,6 @@ export const register = async (req: Request<{}, {}, RegisterRequest>, res: Respo
     }
 
     const password_hash = await bcrypt.hash(password, 10);
-
-    // format phone numbers as strings
-    const formatPhoneNumber = (phone: { areaCode: string; prefix: string; lineNumber: string }) => {
-      return `${phone.areaCode}${phone.prefix}${phone.lineNumber}`;
-    };
 
     const user = await models.User.create({
       user_id: crypto.randomUUID(),
@@ -182,10 +188,6 @@ export const updateProfile = async (req: Request<{ userId: string }, {}, Partial
       password_hash = await bcrypt.hash(updates.password, 10);
     }
 
-    const formatPhoneNumber = (phone: { areaCode: string; prefix: string; lineNumber: string }) => {
-      return `${phone.areaCode}${phone.prefix}${phone.lineNumber}`;
-    };
-
     const updateData: any = {
       ...(updates.firstName && { first_name: updates.firstName }),
       ...(updates.middleInitial && { middle_initial: updates.middleInitial }),
@@ -219,7 +221,7 @@ export const updateProfile = async (req: Request<{ userId: string }, {}, Partial
       }),
       ...(updates.medicalInformation && { medical_information: updates.medicalInformation }),
       updated_at: new Date(),
-      ...(updates.level && { level: updates.level }),
+      ...(updates.level ? { level: updates.level } : { level: [7] }),
     };
 
     // update user
@@ -302,7 +304,11 @@ export const getProfile = async (req: Request<{ userId: string }>, res: Response
           lineNumber: phoneStr.substring(6)
         };
       }
-      return null;
+      return {
+        areaCode: "000",
+          prefix: "000",
+          lineNumber: "000"
+      };
     };
 
     // format in same interface paradigm
@@ -433,10 +439,6 @@ export const registerInstructor = async (req: Request<{}, {}, RegisterInstructor
     }
 
     const password_hash = await bcrypt.hash(password, 10);
-
-    const formatPhoneNumber = (phone: { areaCode: string; prefix: string; lineNumber: string }) => {
-      return `${phone.areaCode}${phone.prefix}${phone.lineNumber}`;
-    };
 
     // Create user with dummy placeholders
     const user = await models.User.create({

@@ -327,6 +327,7 @@ const SuccessPopup = () => (
               value={formData.Phone.areaCode}
               onChange={(e) => handlePhoneChange('Phone', 'areaCode', e.target.value)}
               maxLength={3}
+              minLength={3}
               placeholder="000"
             />
             <input
@@ -334,6 +335,7 @@ const SuccessPopup = () => (
               value={formData.Phone.prefix}
               onChange={(e) => handlePhoneChange('Phone', 'prefix', e.target.value)}
               maxLength={3}
+              minLength={3}
               placeholder="000"
             />
             <input
@@ -341,6 +343,7 @@ const SuccessPopup = () => (
               value={formData.Phone.lineNumber}
               onChange={(e) => handlePhoneChange('Phone', 'lineNumber', e.target.value)}
               maxLength={4}
+              minLength={4}
               placeholder="0000"
             />
           </div>
@@ -489,6 +492,7 @@ const SuccessPopup = () => (
                     value={formData.emergencyContact.phone.areaCode}
                     onChange={(e) => handlePhoneChange('emergencyContact.phone', 'areaCode', e.target.value)}
                     maxLength={3}
+                    minLength={3}
                     required
                   />
                   <input
@@ -496,6 +500,7 @@ const SuccessPopup = () => (
                     value={formData.emergencyContact.phone.prefix}
                     onChange={(e) => handlePhoneChange('emergencyContact.phone', 'prefix', e.target.value)}
                     maxLength={3}
+                    minLength={3}
                     required
                   />
                   <input
@@ -503,6 +508,7 @@ const SuccessPopup = () => (
                     value={formData.emergencyContact.phone.lineNumber}
                     onChange={(e) => handlePhoneChange('emergencyContact.phone', 'lineNumber', e.target.value)}
                     maxLength={4}
+                    minLength={4}
                     required
                   />
                 </div>
@@ -542,6 +548,7 @@ const SuccessPopup = () => (
                     value={formData.physician.phone.areaCode}
                     onChange={(e) => handlePhoneChange('physician.phone', 'areaCode', e.target.value)}
                     maxLength={3}
+                    minLength={3}
                     required
                   />
                   <input
@@ -549,6 +556,7 @@ const SuccessPopup = () => (
                     value={formData.physician.phone.prefix}
                     onChange={(e) => handlePhoneChange('physician.phone', 'prefix', e.target.value)}
                     maxLength={3}
+                    minLength={3}
                     required
                   />
                   <input
@@ -556,6 +564,7 @@ const SuccessPopup = () => (
                     value={formData.physician.phone.lineNumber}
                     onChange={(e) => handlePhoneChange('physician.phone', 'lineNumber', e.target.value)}
                     maxLength={4}
+                    minLength={4}
                     required
                   />
                 </div>
