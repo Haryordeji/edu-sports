@@ -88,6 +88,12 @@ const InstructorDashboard: React.FC = () => {
         });
         return acc;
       }, {} as { [key: string]: User[] });
+
+
+    const totalCount = Object.values(usersByLevel).reduce((uniqueUsers, users) => {
+      users.forEach((user) => uniqueUsers.add(user.user_id));
+      return uniqueUsers;
+    }, new Set<string>()).size;
   
     return (
       <div style={{ marginBottom: "1rem", padding: "20px" }}>
@@ -105,7 +111,7 @@ const InstructorDashboard: React.FC = () => {
           }}
           onClick={toggleCollapse}
         >
-          {userType}s
+          {userType}s ({totalCount})
           <span style={{ marginLeft: "10px", fontSize: "1rem", color: "#6B7280" }}>
             {isCollapsed ? "▼" : "▲"}
           </span>

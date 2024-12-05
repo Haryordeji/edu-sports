@@ -6,6 +6,7 @@ import instance from '../utils/axios';
 import ProfileDropdown from './ProfileDropdown';
 import NewInstructorModal from './NewInstructorModal';
 import ScheduleEditor from './ScheduleEditor';
+import { GolfLevels } from '../interfaces';
 
 interface User {
   user_id: string;
@@ -13,6 +14,7 @@ interface User {
   last_name: string;
   email: string;
   user_type: string;
+  level: number[]
 }
 
 interface UsersResponse {
@@ -86,155 +88,203 @@ const AdminDashboard: React.FC = () => {
       setIsCollapsed((prev) => !prev);
     };
   
-    const sortedUsers = [
-      ...users.filter((user) => user.user_type.toLowerCase() === "golfer"),
-      ...users.filter((user) => user.user_type.toLowerCase() !== "golfer"),
-    ];
+    // Group users by level
+    const usersByLevel: { [key: string]: User[] } = users
+      .filter((user) => user.user_type.toLowerCase() === userType.toLowerCase())
+      .reduce((acc, user) => {
+        user.level.forEach((lvl) => {
+          const levelName = GolfLevels[lvl];
+          if (!acc[levelName]) acc[levelName] = [];
+          acc[levelName].push(user);
+        });
+        return acc;
+      }, {} as { [key: string]: User[] });
   
-  return (
-    <div className="user-section">
-      <div className="section-header">
-        <div 
-          className="dropdown-header"
-          onClick={() => setIsCollapsed(!isCollapsed)}
-        >
-          <span>{userType}s ({users.filter(user => user.user_type.toLowerCase() === userType.toLowerCase()).length})</span>
-          <span className={`dropdown-toggle ${isCollapsed ? '' : 'open'}`}>▼</span>
-          {userType.toLowerCase() === 'instructor' && !isCollapsed && (
-            <div>
-            <button 
-              onClick={(e) => {
-                e.stopPropagation();
-                handleModalOpen();
-              }} 
-              className="add-button"
-            >
-              <span>+</span> Add New
-            </button>
-            </div>
-          )}
-        </div>
-      </div>
+      const totalCount = Object.values(usersByLevel).reduce((uniqueUsers, users) => {
+        users.forEach((user) => uniqueUsers.add(user.user_id));
+        return uniqueUsers;
+      }, new Set<string>()).size;
       
-      {!isCollapsed && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", padding: "1rem" }}>
-            {sortedUsers
-              .filter((user) => user.user_type.toLowerCase() === userType.toLowerCase())
-              .map((user) => (
+  
+    return (
+      <div className="user-section">
+        <div className="section-header">
+          <div
+            className="dropdown-header"
+            onClick={() => toggleCollapse()}
+          >
+            <span>
+              {userType}s ({totalCount})
+            </span>
+            <span className={`dropdown-toggle ${isCollapsed ? "" : "open"}`}>▼</span>
+            {userType.toLowerCase() === "instructor" && !isCollapsed && (
+              <div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleModalOpen();
+                  }}
+                  className="add-button"
+                >
+                  <span>+</span> Add New
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+  
+        {!isCollapsed && (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "1rem",
+              padding: "1rem",
+            }}
+          >
+            {Object.entries(usersByLevel).map(([levelName, levelUsers]) => (
+              <div key={levelName} style={{ marginLeft: "1rem" }}>
+                <h3 style={{ marginBottom: "0.5rem", color: "#374151" }}>
+                  {levelName}
+                </h3>
                 <div
-                  key={user.user_id}
                   style={{
                     display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    padding: "1rem",
-                    backgroundColor: "#ffffff",
-                    borderRadius: "0.5rem",
-                    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-                    border: "1px solid #E5E7EB",
-                    transition: "box-shadow 0.2s",
+                    flexDirection: "column",
+                    gap: "0.5rem",
                   }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.boxShadow = "0 2px 6px rgba(0, 0, 0, 0.15)", e.currentTarget.style.backgroundColor = "#fafff2")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.boxShadow = "0 1px 3px rgba(0, 0, 0, 0.1)", e.currentTarget.style.backgroundColor = "transparent")
-                  }
                 >
-                  <div>
-                    <span style={{ fontWeight: 500, color: "#111827" }}>
-                      {user.first_name} {user.last_name}
-                    </span>
-                    <span
-                      onClick={() => navigator.clipboard.writeText(user.email)}
+                  {levelUsers.map((user) => (
+                    <div
+                      key={user.user_id}
                       style={{
-                        marginLeft: "1rem",
-                        fontSize: "0.875rem",
-                        color: "#6B7280",
-                        cursor: "pointer",
-                        transition: "color 0.2s ease-in-out",
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.color = "##0e5f04")}
-                      onMouseLeave={(e) => (e.currentTarget.style.color = "#6B7280")}
-                      title="Click to copy email"
-                    >
-                      {user.email} 🔗
-                    </span>
-                  </div>
-                  <div style={{ display: "flex", gap: "0.5rem" }}>
-                    <button
-                      onClick={() => handleViewUser(user.user_id)}
-                      style={{
-                        padding: "0.5rem 1rem",
-                        fontSize: "0.875rem",
-                        color: "#0e5f04",
-                        border: "1px solid #0e5f04",
-                        borderRadius: "0.375rem",
-                        backgroundColor: "transparent",
-                        cursor: "pointer",
-                        transition: "background-color 0.2s",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        padding: "1rem",
+                        backgroundColor: "#ffffff",
+                        borderRadius: "0.5rem",
+                        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+                        border: "1px solid #E5E7EB",
+                        transition: "box-shadow 0.2s",
                       }}
                       onMouseEnter={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#B4E5AF")
+                        ((e.currentTarget.style.boxShadow =
+                          "0 2px 6px rgba(0, 0, 0, 0.15)"),
+                        (e.currentTarget.style.backgroundColor = "#fafff2"))
                       }
                       onMouseLeave={(e) =>
-                        (e.currentTarget.style.backgroundColor = "transparent")
+                        ((e.currentTarget.style.boxShadow =
+                          "0 1px 3px rgba(0, 0, 0, 0.1)"),
+                        (e.currentTarget.style.backgroundColor = "transparent"))
                       }
                     >
-                      View Profile
-                    </button>
-                    {user.user_type.toLowerCase() === "golfer" && (
-                      <button
-                      onClick={() => navigate(`/feedback/${id}/${user.user_id}`)}
-                        style={{
-                          padding: "0.5rem 1rem",
-                          fontSize: "0.875rem",
-                          color: "#0e5f04",
-                          border: "1px solid #0e5f04",
-                          borderRadius: "0.375rem",
-                          backgroundColor: "transparent",
-                          cursor: "pointer",
-                          transition: "background-color 0.2s",
-                        }}
-                        onMouseEnter={(e) =>
-                          (e.currentTarget.style.backgroundColor = "#B4E5AF")
-                        }
-                        onMouseLeave={(e) =>
-                          (e.currentTarget.style.backgroundColor = "transparent")
-                        }
-                      >
-                        View Feedback
-                      </button>
-                    )}
-                    <button
-                      onClick={() => handleDeleteUser(user.user_id)}
-                      style={{
-                        padding: "0.5rem 1rem",
-                        fontSize: "0.875rem",
-                        color: "#DC2626",
-                        border: "1px solid #DC2626",
-                        borderRadius: "0.375rem",
-                        backgroundColor: "transparent",
-                        cursor: "pointer",
-                        transition: "background-color 0.2s",
-                      }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#FEE2E2")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.backgroundColor = "transparent")
-                      }
-                    >
-                      Delete
-                    </button>
-                  </div>
+                      <div>
+                        <span style={{ fontWeight: 500, color: "#111827" }}>
+                          {user.first_name} {user.last_name}
+                        </span>
+                        <span
+                          onClick={() =>
+                            navigator.clipboard.writeText(user.email)
+                          }
+                          style={{
+                            marginLeft: "1rem",
+                            fontSize: "0.875rem",
+                            color: "#6B7280",
+                            cursor: "pointer",
+                            transition: "color 0.2s ease-in-out",
+                          }}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.color = "##0e5f04")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.color = "#6B7280")
+                          }
+                          title="Click to copy email"
+                        >
+                          {user.email} 🔗
+                        </span>
+                      </div>
+                      <div style={{ display: "flex", gap: "0.5rem" }}>
+                        <button
+                          onClick={() => handleViewUser(user.user_id)}
+                          style={{
+                            padding: "0.5rem 1rem",
+                            fontSize: "0.875rem",
+                            color: "#0e5f04",
+                            border: "1px solid #0e5f04",
+                            borderRadius: "0.375rem",
+                            backgroundColor: "transparent",
+                            cursor: "pointer",
+                            transition: "background-color 0.2s",
+                          }}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.backgroundColor = "#B4E5AF")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.backgroundColor = "transparent")
+                          }
+                        >
+                          View Profile
+                        </button>
+                        {user.user_type.toLowerCase() === "golfer" && (
+                          <button
+                            onClick={() =>
+                              navigate(`/feedback/${id}/${user.user_id}`)
+                            }
+                            style={{
+                              padding: "0.5rem 1rem",
+                              fontSize: "0.875rem",
+                              color: "#0e5f04",
+                              border: "1px solid #0e5f04",
+                              borderRadius: "0.375rem",
+                              backgroundColor: "transparent",
+                              cursor: "pointer",
+                              transition: "background-color 0.2s",
+                            }}
+                            onMouseEnter={(e) =>
+                              (e.currentTarget.style.backgroundColor = "#B4E5AF")
+                            }
+                            onMouseLeave={(e) =>
+                              (e.currentTarget.style.backgroundColor = "transparent")
+                            }
+                          >
+                            View Feedback
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleDeleteUser(user.user_id)}
+                          style={{
+                            padding: "0.5rem 1rem",
+                            fontSize: "0.875rem",
+                            color: "#DC2626",
+                            border: "1px solid #DC2626",
+                            borderRadius: "0.375rem",
+                            backgroundColor: "transparent",
+                            cursor: "pointer",
+                            transition: "background-color 0.2s",
+                          }}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.backgroundColor = "#FEE2E2")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.backgroundColor = "transparent")
+                          }
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+            ))}
           </div>
         )}
       </div>
     );
   };
+  
   
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
