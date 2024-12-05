@@ -100,27 +100,38 @@ const InstructorDashboard: React.FC = () => {
         <h2
           style={{
             display: "flex",
-            justifyContent: "space-between",
             alignItems: "center",
-            padding: "1rem",
-            backgroundColor: "#ffffff",
-            borderRadius: "0.5rem",
-            boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-            border: "1px solid #E5E7EB",
-            transition: "box-shadow 0.2s",
+            gap: "0.5rem",
+            cursor: "pointer",
+            color: "#0e5f04",
+            fontSize: "1.25rem",
+            fontWeight: 600,
+            marginBottom: "1rem"
           }}
           onClick={toggleCollapse}
         >
-          {userType}s ({totalCount})
-          <span style={{ marginLeft: "10px", fontSize: "1rem", color: "#6B7280" }}>
-            {isCollapsed ? "▼" : "▲"}
+          <span>
+            {userType}s ({totalCount})
+          </span>
+          <span style={{ 
+            marginLeft: "0.5rem",
+            color: "#0e5f04",
+            transform: isCollapsed ? "rotate(0deg)" : "rotate(180deg)",
+            transition: "transform 0.2s ease-in-out"
+          }}>
+            ▼
           </span>
         </h2>
         {!isCollapsed && (
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             {Object.entries(usersByLevel).map(([levelName, levelUsers]) => (
               <div key={levelName} style={{ marginLeft: "1rem" }}>
-                <h3 style={{ marginBottom: "0.5rem", color: "#374151" }}>
+                <h3 style={{ 
+                  marginBottom: "0.5rem", 
+                  color: "#0e5f04",
+                  fontSize: "1.1rem",
+                  fontWeight: 500
+                }}>
                   {levelName}
                 </h3>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
