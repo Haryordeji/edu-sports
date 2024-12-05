@@ -1,0 +1,214 @@
+.edit-profile-container {
+    min-height: 100vh;
+    background: #F0F0F0;
+    padding: 2rem;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .edit-profile-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--primary-green);
+  }
+  
+  .logo-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .logo-section img {
+    height: 80px;
+    width: auto;
+    cursor: pointer;
+  }
+  
+  .header-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #0e5f04;
+  }
+  
+  .back-button {
+    padding: 0.5rem 1rem;
+    color: #0e5f04;
+    background: transparent;
+    border: 1px solid var(--primary-green);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .back-button:hover {
+    background: var(--primary-green);
+    color: white;
+  }
+  
+  /* Form Sections */
+  .form-section {
+    display: grid;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+  
+  .section-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #0e5f04;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--primary-green);
+  }
+  
+  .input-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .input-group label {
+    display: block;
+    font-weight: 500;
+    color: #0e5f04;
+    margin-bottom: 0.5rem;
+  }
+  
+  .input-group input,
+  .input-group select,
+  .input-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--primary-green);
+    border-radius: 6px;
+    background-color: #fafff2;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .input-group input:focus,
+  .input-group select:focus,
+  .input-group textarea:focus {
+    outline: none;
+    border-color: #0e5f04;
+    box-shadow: 0 0 0 2px rgba(14, 95, 4, 0.1);
+  }
+  
+  .phone-input {
+    margin-bottom: 1.5rem;
+  }
+  
+  .phone-parts {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .phone-parts input {
+    width: 80px;
+    text-align: center;
+  }
+  
+  .phone-parts input:last-child {
+    width: 100px;
+  }
+  
+  .radio-group,
+  .checkbox-group {
+    display: flex;
+    gap: 2rem;
+    margin: 1rem 0;
+  }
+  
+  .radio-option,
+  .checkbox-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .radio-option input[type="radio"],
+  .checkbox-option input[type="checkbox"] {
+    width: 1.2rem;
+    height: 1.2rem;
+    border: 2px solid var(--primary-green);
+  }
+  
+  .emergency-section {
+    background: #fafff2;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-top: 2rem;
+    border: 1px solid var(--primary-green);
+  }
+  
+  .emergency-section h3 {
+    color: #0e5f04;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .save-button {
+    width: 100%;
+    padding: 1rem;
+    background: var(--primary-green);
+    color: #0e5f04;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 2rem;
+  }
+  
+  .save-button:hover {
+    background: #98d89b;
+  }
+  
+  @media (max-width: 768px) {
+    .edit-profile-container {
+      padding: 1rem;
+    }
+  
+    .edit-profile-wrapper {
+      padding: 1.5rem;
+    }
+  
+    .phone-parts {
+      flex-direction: column;
+    }
+  
+    .phone-parts input {
+      width: 100%;
+    }
+  
+    .radio-group,
+    .checkbox-group {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .profile-header {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+  
+    .input-group {
+      margin-bottom: 1rem;
+    }
+  
+    .emergency-section {
+      padding: 1rem;
+    }
+  }

@@ -2,19 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import instance from '../utils/axios';
 import { GolfLevels, RegistrationFormData } from '../interfaces';
-import "./registerPage.css"
+import "./editProfile.css";
 import { PhoneNumber } from '../interfaces';
 
 interface ProfileResponse {
   success: boolean;
   user: RegistrationFormData;
 }
-const styles = {
-  logo: {
-    width: 'auto',
-    height: '80px',
-  },
-};
 
 const EditProfile: React.FC = () => {
   const { id } = useParams(); 
@@ -185,368 +179,364 @@ const EditProfile: React.FC = () => {
   }
 
   return (
-    <div>
-      <div className="registration-form">
-        <div className="registration-header">
-        <img src="/swing2tee_logo.png" alt="Swing 2 Tee Logo" style={styles.logo} onClick={() => navigate(0)} />
-          <h1>Edu-Sports Academy</h1>
+    <div className="edit-profile-container">
+      <div className="edit-profile-wrapper">
+        <div className="profile-header">
+          <div className="logo-section">
+            <img 
+              src="/swing2tee_logo.png" 
+              alt="Swing 2 Tee Logo" 
+              onClick={() => navigate(0)} 
+            />
+            <h1 className="header-title">Edu-Sports Academy</h1>
           </div>
           <button 
-              onClick={() => navigate(-2)} 
-              className="mb-4 px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded"
-            >
+            onClick={() => navigate(-2)} 
+            className="back-button"
+          >
             ← Back
           </button>
-          <div className="w-full max-w-4xl mx-auto p-4">
-      <h2>Edit Profile</h2>
-      {formData && (
-        <form onSubmit={handleSubmit}>
-          <div>
-          <label htmlFor="firstName">First Name</label>
-          <input
-            type="text"
-            id="firstName"
-            name="firstName"
-            value={formData.firstName || ''}
-            onChange={(e) => handleNameChange('firstName', e.target.value)}
-            required
-          />
         </div>
-        <div>
-        <label htmlFor="middleInitial">Middle Name</label>
-        <input
-          type="text"
-          id="middleInitial"
-          name="middleInitial"
-          value={formData.middleInitial || ''} // Default to an empty string if undefined
-          onChange={(e) => handleNameChange('middleInitial', e.target.value)} // Use handleNameChange for middleName
-        />
-      </div>
-        <div>
-          <label htmlFor="lastName">Last Name</label>
-          <input
-            type="text"
-            id="lastName"
-            name="lastName"
-            value={formData.lastName || ''}
-            onChange={(e) => handleNameChange('lastName', e.target.value)}
-            required
-          />
-        </div>
-          {/* Address Fields */}
-          <div className="address-group">
-            <div className="input-group">
-              <label>Address</label>
-              <input
-                type="text"
-                name="address"
-                value={formData.address}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div className="city-state-zip">
-              <div className="input-group">
-                <label>City</label>
-                <input
-                  type="text"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="input-group small">
-                <label>State</label>
-                <input
-                  type="text"
-                  name="state"
-                  value={formData.state}
-                  onChange={handleInputChange}
-                  required
-                  maxLength={2}
-                />
-              </div>
-              <div className="input-group">
-                <label>Zip Code</label>
-                <input
-                  type="text"
-                  name="zipCode"
-                  value={formData.zipCode}
-                  onChange={handleInputChange}
-                  required
-                  maxLength={5}
-                />
-              </div>
-            </div>
-          </div>
-          {/* Contact Information */}
-          <div className="contact-group">
-            <div className="phone-input">
-              <label>Phone</label>
-              <div className="phone-parts">
-                <input
-                  type="text"
-                  value={formData.Phone?.areaCode || ''}
-                  onChange={(e) => handlePhoneChange('areaCode', e.target.value)}
-                  maxLength={3}
-                  placeholder="Area Code"
-                  required
-                />
-                <input
-                  type="text"
-                  value={formData.Phone?.prefix || ''}
-                  onChange={(e) => handlePhoneChange('prefix', e.target.value)}
-                  maxLength={3}
-                  placeholder="Prefix"
-                  required
-                />
-                <input
-                  type="text"
-                  value={formData.Phone?.lineNumber || ''}
-                  onChange={(e) => handlePhoneChange('lineNumber', e.target.value)}
-                  maxLength={4}
-                  placeholder="Line Number"
-                  required
-                />
-              </div>
-            </div>
-          </div>
-          {/* Golf Experience */}
-          <div className="golf-experience-group">
-            <label>Golf Experience</label>
-            <div className="experience-options">
-              {[
-                { value: 'none', label: 'None' },
-                { value: 'veryLittle', label: 'Very Little' },
-                { value: 'moderate', label: 'Moderate' },
-                { value: 'aLot', label: 'A Lot' }
-              ].map((option) => (
-                <label key={option.value}>
+  
+        <div className="form-section">
+          <h2 className="section-title">Edit Profile</h2>
+          {formData && (
+            <form onSubmit={handleSubmit}>
+              {/* Personal Information */}
+              <div className="section-group">
+                <h3 className="section-title">Personal Information</h3>
+                <div className="input-group">
+                  <label htmlFor="firstName">First Name</label>
                   <input
-                    type="radio"
-                    name="golfExperience"
-                    value={option.value}
-                    checked={formData.golfExperience === option.value}
-                    onChange={(e) => handleInputChange(e)}
+                    type="text"
+                    id="firstName"
+                    name="firstName"
+                    value={formData.firstName || ''}
+                    onChange={(e) => handleNameChange('firstName', e.target.value)}
+                    required
                   />
-                  {option.label}
-                </label>
-              ))}
-            </div>
-          </div>
-          {/* Personal Information */}
-          <div className="personal-info-group">
-            <div className="gender-group">
-              <label>Gender</label>
-              <div className="radio-options">
-                <label>
+                </div>
+  
+                <div className="input-group">
+                  <label htmlFor="middleInitial">Middle Name</label>
                   <input
-                    type="radio"
-                    name="gender"
-                    value="male"
-                    checked={formData.gender === 'male'}
-                    onChange={(e) => handleInputChange(e)}
+                    type="text"
+                    id="middleInitial"
+                    name="middleInitial"
+                    value={formData.middleInitial || ''}
+                    onChange={(e) => handleNameChange('middleInitial', e.target.value)}
                   />
-                  Male
-                </label>
-                <label>
+                </div>
+  
+                <div className="input-group">
+                  <label htmlFor="lastName">Last Name</label>
                   <input
-                    type="radio"
-                    name="gender"
-                    value="female"
-                    checked={formData.gender === 'female'}
-                    onChange={(e) => handleInputChange(e)}
+                    type="text"
+                    id="lastName"
+                    name="lastName"
+                    value={formData.lastName || ''}
+                    onChange={(e) => handleNameChange('lastName', e.target.value)}
+                    required
                   />
-                  Female
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="gender"
-                    value="other"
-                    checked={formData.gender === 'other'}
-                    onChange={(e) => handleInputChange(e)}
-                  />
-                  Other
-                </label>
+                </div>
               </div>
-            </div>
-
-            <div className="age-dob-group">
-              <div className="input-group">
-                <label>Date of Birth</label>
-                <input
-                  type="date"
-                  name="dateOfBirth"
-                  value={formData.dateOfBirth}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="input-group">
-                <label>Height</label>
-                <input
-                  type="text"
-                  name="height"
-                  value={formData.height}
-                  onChange={handleInputChange}
-                  placeholder="5'10''"
-                />
-              </div>
-            </div>
-
-            <div className="handedness-group">
-              <label>Handedness</label>
-              <div className="radio-options">
-                <label>
+  
+              {/* Contact Information */}
+              <div className="section-group">
+                <h3 className="section-title">Contact Information</h3>
+                <div className="input-group">
+                  <label>Address</label>
                   <input
-                    type="radio"
-                    name="handedness"
-                    value="right"
-                    checked={formData.handedness === 'right'}
-                    onChange={(e) => handleInputChange(e)}
+                    type="text"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleInputChange}
+                    required
                   />
-                  Right Handed
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="handedness"
-                    value="left"
-                    checked={formData.handedness === 'left'}
-                    onChange={(e) => handleInputChange(e)}
-                  />
-                  Left Handed
-                </label>
-              </div>
-            </div>
-
-            {(storedUserType === "admin") && (
-              <div className="level-group">
-                <div>
-                  <label>Select Golf Level(s):</label>
-                  <div>
-                    {formData.user_type !== "golfer" ? (
-                      Object.keys(GolfLevels)
-                        .filter((key) => isNaN(Number(key)) && key != "Unassigned")
-                        .map((level, index) => (
-                          <label key={index} style={{ display: "block", margin: "4px 0" }}>
-                            <input
-                              type="checkbox"
-                              value={index}
-                              checked={formData.level?.includes(index) || false}
-                              onChange={handleLevelChange}
-                            />
-                            {level}
-                          </label>
-                        ))
-                    ) : (
-                      Object.keys(GolfLevels)
-                        .filter((key) => isNaN(Number(key)) && key != "Unassigned")
-                        .map((level, index) => (
-                          <label key={index} style={{ display: "block", margin: "4px 0" }}>
-                            <input
-                              type="radio"
-                              name="golf-level"
-                              value={index}
-                              checked={formData.level?.[0] === index}
-                              onChange={handleLevelChangeForRadio}
-                            />
-                            {level}
-                          </label>
-                        ))
-                    )}
+                </div>
+  
+                <div className="address-details">
+                  <div className="input-group">
+                    <label>City</label>
+                    <input
+                      type="text"
+                      name="city"
+                      value={formData.city}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+  
+                  <div className="input-group">
+                    <label>State</label>
+                    <input
+                      type="text"
+                      name="state"
+                      value={formData.state}
+                      onChange={handleInputChange}
+                      required
+                      maxLength={2}
+                    />
+                  </div>
+  
+                  <div className="input-group">
+                    <label>Zip Code</label>
+                    <input
+                      type="text"
+                      name="zipCode"
+                      value={formData.zipCode}
+                      onChange={handleInputChange}
+                      required
+                      maxLength={5}
+                    />
+                  </div>
+                </div>
+  
+                <div className="phone-input">
+                  <label>Phone</label>
+                  <div className="phone-parts">
+                    <input
+                      type="text"
+                      value={formData.Phone?.areaCode || ''}
+                      onChange={(e) => handlePhoneChange('areaCode', e.target.value)}
+                      maxLength={3}
+                      placeholder="Area Code"
+                      required
+                    />
+                    <input
+                      type="text"
+                      value={formData.Phone?.prefix || ''}
+                      onChange={(e) => handlePhoneChange('prefix', e.target.value)}
+                      maxLength={3}
+                      placeholder="Prefix"
+                      required
+                    />
+                    <input
+                      type="text"
+                      value={formData.Phone?.lineNumber || ''}
+                      onChange={(e) => handlePhoneChange('lineNumber', e.target.value)}
+                      maxLength={4}
+                      placeholder="Line Number"
+                      required
+                    />
                   </div>
                 </div>
               </div>
-            )}
-
-
-          </div>
-          {/* Emergency Contact */}
-          <div className="emergency-section">
-          <h3>EMERGENCY CONTACT - (Other than Participant/Parent/Legal Guardian)</h3>
-          <div className="input-group">
-            <label>Physician's Name</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.physician.name || ''} // Default to empty string if undefined
-              onChange={(e) => handlePhysicianNameChange(e.target.value)} // Call the specific handler
-              required
-            />
-
-              <div className="phone-input">
-                <label>Physician Phone</label>
-                <div className="phone-parts">
+  
+              {/* Golf Information */}
+              <div className="section-group">
+                <h3 className="section-title">Golf Information</h3>
+                <div className="radio-group">
+                  <label>Golf Experience</label>
+                  <div className="experience-options">
+                    {[
+                      { value: 'none', label: 'None' },
+                      { value: 'veryLittle', label: 'Very Little' },
+                      { value: 'moderate', label: 'Moderate' },
+                      { value: 'aLot', label: 'A Lot' }
+                    ].map((option) => (
+                      <label key={option.value} className="radio-option">
+                        <input
+                          type="radio"
+                          name="golfExperience"
+                          value={option.value}
+                          checked={formData.golfExperience === option.value}
+                          onChange={handleInputChange}
+                        />
+                        {option.label}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+  
+                <div className="handedness-group">
+                  <label>Handedness</label>
+                  <div className="radio-options">
+                    <label className="radio-option">
+                      <input
+                        type="radio"
+                        name="handedness"
+                        value="right"
+                        checked={formData.handedness === 'right'}
+                        onChange={handleInputChange}
+                      />
+                      Right Handed
+                    </label>
+                    <label className="radio-option">
+                      <input
+                        type="radio"
+                        name="handedness"
+                        value="left"
+                        checked={formData.handedness === 'left'}
+                        onChange={handleInputChange}
+                      />
+                      Left Handed
+                    </label>
+                  </div>
+                </div>
+  
+                {storedUserType === "admin" && (
+                  <div className="level-group">
+                    <label>Select Golf Level(s):</label>
+                    <div className={formData.user_type !== "golfer" ? "checkbox-group" : "radio-group"}>
+                      {Object.keys(GolfLevels)
+                        .filter((key) => isNaN(Number(key)) && key !== "Unassigned")
+                        .map((level, index) => (
+                          <label key={index} className={formData.user_type !== "golfer" ? "checkbox-option" : "radio-option"}>
+                            <input
+                              type={formData.user_type !== "golfer" ? "checkbox" : "radio"}
+                              name="golf-level"
+                              value={index}
+                              checked={formData.user_type !== "golfer" 
+                                ? formData.level?.includes(index) 
+                                : formData.level?.[0] === index}
+                              onChange={formData.user_type !== "golfer" 
+                                ? handleLevelChange 
+                                : handleLevelChangeForRadio}
+                            />
+                            {level}
+                          </label>
+                        ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+  
+              {/* Personal Details */}
+              <div className="section-group">
+                <h3 className="section-title">Personal Details</h3>
+                <div className="gender-group">
+                  <label>Gender</label>
+                  <div className="radio-options">
+                    {['male', 'female', 'other'].map((gender) => (
+                      <label key={gender} className="radio-option">
+                        <input
+                          type="radio"
+                          name="gender"
+                          value={gender}
+                          checked={formData.gender === gender}
+                          onChange={handleInputChange}
+                        />
+                        {gender.charAt(0).toUpperCase() + gender.slice(1)}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+  
+                <div className="input-group">
+                  <label>Date of Birth</label>
                   <input
-                    type="text"
-                    value={formData.physician.phone?.areaCode || ''}
-                    onChange={(e) => handlePhysicianContactPhoneChange('areaCode', e.target.value)}
-                    maxLength={3}
-                    placeholder="Area Code"
-                    required
-                  />
-                  <input
-                    type="text"
-                    value={formData.physician?.phone?.prefix || ''}
-                    onChange={(e) => handlePhysicianContactPhoneChange('prefix', e.target.value)}
-                    maxLength={3}
-                    placeholder="Prefix"
-                    required
-                  />
-                  <input
-                    type="text"
-                    value={formData.physician?.phone?.lineNumber || ''}
-                    onChange={(e) => handlePhysicianContactPhoneChange('lineNumber', e.target.value)}
-                    maxLength={4}
-                    placeholder="Line Number"
+                    type="date"
+                    name="dateOfBirth"
+                    value={formData.dateOfBirth}
+                    onChange={handleInputChange}
                     required
                   />
                 </div>
-              </div>
-          </div>
-          <div className="emergency-contact-group">
-            <div className="input-group">
-              <div className="phone-input">
-                <label>Emergency Contact Phone</label>
-                <div className="phone-parts">
+  
+                <div className="input-group">
+                  <label>Height</label>
                   <input
                     type="text"
-                    value={formData.emergencyContact.phone?.areaCode || ''}
-                    onChange={(e) => handleEmergencyContactPhoneChange('areaCode', e.target.value)}
-                    maxLength={3}
-                    placeholder="Area Code"
-                    required
-                  />
-                  <input
-                    type="text"
-                    value={formData.emergencyContact?.phone?.prefix || ''}
-                    onChange={(e) => handleEmergencyContactPhoneChange('prefix', e.target.value)}
-                    maxLength={3}
-                    placeholder="Prefix"
-                    required
-                  />
-                  <input
-                    type="text"
-                    value={formData.emergencyContact?.phone?.lineNumber || ''}
-                    onChange={(e) => handleEmergencyContactPhoneChange('lineNumber', e.target.value)}
-                    maxLength={4}
-                    placeholder="Line Number"
-                    required
+                    name="height"
+                    value={formData.height}
+                    onChange={handleInputChange}
+                    placeholder="5'10''"
                   />
                 </div>
               </div>
-            </div>
-            </div>
-            </div>
-
-          <button type="submit">Save Changes</button>
-        </form>
-      )}
-    </div>
-    </div>
+  
+              {/* Emergency Contact Section */}
+              <div className="emergency-section">
+                <h3>EMERGENCY CONTACT - (Other than Participant/Parent/Legal Guardian)</h3>
+                <div className="input-group">
+                  <label>Physician's Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.physician.name || ''}
+                    onChange={(e) => handlePhysicianNameChange(e.target.value)}
+                    required
+                  />
+                </div>
+  
+                <div className="phone-input">
+                  <label>Physician Phone</label>
+                  <div className="phone-parts">
+                    <input
+                      type="text"
+                      value={formData.physician.phone?.areaCode || ''}
+                      onChange={(e) => handlePhysicianContactPhoneChange('areaCode', e.target.value)}
+                      maxLength={3}
+                      placeholder="Area Code"
+                      required
+                    />
+                    <input
+                      type="text"
+                      value={formData.physician?.phone?.prefix || ''}
+                      onChange={(e) => handlePhysicianContactPhoneChange('prefix', e.target.value)}
+                      maxLength={3}
+                      placeholder="Prefix"
+                      required
+                    />
+                    <input
+                      type="text"
+                      value={formData.physician?.phone?.lineNumber || ''}
+                      onChange={(e) => handlePhysicianContactPhoneChange('lineNumber', e.target.value)}
+                      maxLength={4}
+                      placeholder="Line Number"
+                      required
+                    />
+                  </div>
+                </div>
+  
+                <div className="phone-input">
+                  <label>Emergency Contact Phone</label>
+                  <div className="phone-parts">
+                    <input
+                      type="text"
+                      value={formData.emergencyContact.phone?.areaCode || ''}
+                      onChange={(e) => handleEmergencyContactPhoneChange('areaCode', e.target.value)}
+                      maxLength={3}
+                      placeholder="Area Code"
+                      required
+                    />
+                    <input
+                      type="text"
+                      value={formData.emergencyContact?.phone?.prefix || ''}
+                      onChange={(e) => handleEmergencyContactPhoneChange('prefix', e.target.value)}
+                      maxLength={3}
+                      placeholder="Prefix"
+                      required
+                    />
+                    <input
+                      type="text"
+                      value={formData.emergencyContact?.phone?.lineNumber || ''}
+                      onChange={(e) => handleEmergencyContactPhoneChange('lineNumber', e.target.value)}
+                      maxLength={4}
+                      placeholder="Line Number"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="medical-info-group">
+                <h4>Relevant Medical Information</h4>
+                <textarea
+                 name="medicalInformation"
+                 value={formData.medicalInformation}
+                 onChange={handleInputChange}
+                 rows={4}
+                 />
+               </div>
+              </div>
+  
+              <button type="submit" className="save-button">
+                Save Changes
+              </button>
+            </form>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
