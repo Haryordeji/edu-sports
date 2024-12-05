@@ -39,6 +39,22 @@ const UserProfile: React.FC = () => {
     return `(${phone.areaCode}) ${phone.prefix}-${phone.lineNumber}`;
   };
 
+  const handleDeleteAccount = async () => {
+    if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+      try {
+        const response = await instance.delete(`/users/${id}`, {
+          withCredentials: true
+        });
+        if (response.data.success) {
+          localStorage.removeItem('user'); // Clear user data from localStorage
+          navigate('/');
+        }
+      } catch (err) {
+        setError('Failed to delete account. Please try again.');
+      }
+    }
+  };
+
   if (loading) {
     return <div className="loading-state">Loading...</div>;
   }
@@ -75,15 +91,16 @@ const UserProfile: React.FC = () => {
         <button onClick={() => navigate(-1)} className="back-button">
           ← Back
         </button>
-        {(storedUserId === id || storedUserType === "admin") && <div>
-          <button
-          onClick={() => navigate(`/profile/${id}/edit`)} 
-          className="back-button"
-        >
-          Edit Profile
-        </button>
-        </div>}
         
+        {(storedUserId === id || storedUserType === "admin") && (
+          <button
+            onClick={() => navigate(`/profile/${id}/edit`)} 
+            className="back-button"
+          >
+            Edit Profile
+          </button>
+        )}
+
         <div className="profile-header">
           <h1>User Profile</h1>
         </div>
@@ -272,6 +289,18 @@ const UserProfile: React.FC = () => {
                     </div>
                   )}
         </div>
+
+        {/* Delete Account Section */}
+        {profile.user_type === "golfer" && storedUserId === id && (
+          <div style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid #e5e7eb', textAlign: 'center' }}>
+            <button
+              onClick={handleDeleteAccount}
+              className="delete-button"
+            >
+              Delete Account
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,9 +1,9 @@
  /*
  This CSS is imported to more than one component */
 
- :root{
+:root{
   --primary-green: #B4E5AF;
- }
+}
 .dashboard-container {
     font-family: 'Inter', Arial;
     background-color: #FFFFFF;
@@ -161,6 +161,26 @@
 }
 
 .back-button:hover {
+  opacity: 0.7;
+}
+
+.delete-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: 1px solid #DC2626;
+  color: #DC2626;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.delete-button:hover {
+  background-color: #FEE2E2;
   opacity: 0.7;
 }
 
