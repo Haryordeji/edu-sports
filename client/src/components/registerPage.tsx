@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import './registerPage.css';
 import { RegistrationFormData } from '../interfaces';
 import instance from '../utils/axios';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import DOMPurify from 'dompurify';
 
 const styles = {
   logo: {
@@ -155,6 +158,13 @@ const RegistrationPage: React.FC = () => {
         };
       }
     });
+  };
+
+  const handleQuillInputChange = (value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      medicalInformation: DOMPurify.sanitize(value)
+    }));
   };
 
 const handleSubmit = async (e: React.FormEvent) => {
@@ -314,7 +324,7 @@ const SuccessPopup = () => (
                 required
               >
                 <option value="">Feet</option>
-                {Array.from({ length: 8 }, (_, i) => i + 4).map((feet) => (
+                {Array.from({ length: 5 }, (_, i) => i + 2).map((feet) => (
                   <option key={feet} value={feet}>
                     {feet}'
                   </option>
@@ -657,11 +667,11 @@ const SuccessPopup = () => (
 
       <div className="medical-info-group">
         <h4>Relevant Medical Information</h4>
-        <textarea
-          name="medicalInformation"
+        <ReactQuill
           value={formData.medicalInformation}
-          onChange={handleInputChange}
-          rows={4}
+          onChange={handleQuillInputChange}
+          theme="snow"
+          placeholder="Please provide any relevant medical information..."
         />
       </div>
     </>
