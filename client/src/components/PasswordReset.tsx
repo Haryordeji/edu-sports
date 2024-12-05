@@ -71,7 +71,7 @@ const PasswordReset = () => {
               required
             />
           </div>
-          <button type="submit" disabled={loading}>
+          <button className="submit-button" type="submit" disabled={loading}>
             {loading ? 'Sending...' : 'Send Reset Link'}
           </button>
         </form>
@@ -95,7 +95,7 @@ const PasswordReset = () => {
               required
             />
           </div>
-          <button type="submit" disabled={loading}>
+          <button className="submit-button" type="submit" disabled={loading}>
             {loading ? 'Resetting...' : 'Reset Password'}
           </button>
         </form>
