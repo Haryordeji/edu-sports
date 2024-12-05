@@ -5,6 +5,7 @@ import './global.css';
 import instance from '../utils/axios';
 import Logout from './ProfileDropdown';
 import ProfileDropdown from './ProfileDropdown';
+import { GolfLevels } from '../interfaces';
 
 interface User {
   user_id: string;
@@ -77,10 +78,16 @@ const InstructorDashboard: React.FC = () => {
       setIsCollapsed((prev) => !prev);
     };
   
-    const sortedUsers = [
-      ...users.filter((user) => user.user_type.toLowerCase() === "golfer"),
-      ...users.filter((user) => user.user_type.toLowerCase() !== "golfer"),
-    ];
+    const usersByLevel: { [key: string]: User[] } = users
+      .filter((user) => user.user_type.toLowerCase() === userType.toLowerCase())
+      .reduce((acc, user) => {
+        user.level.forEach((lvl) => {
+          const levelName = GolfLevels[lvl];
+          if (!acc[levelName]) acc[levelName] = [];
+          acc[levelName].push(user);
+        });
+        return acc;
+      }, {} as { [key: string]: User[] });
   
     return (
       <div style={{ marginBottom: "1rem", padding: "20px" }}>
@@ -104,75 +111,65 @@ const InstructorDashboard: React.FC = () => {
           </span>
         </h2>
         {!isCollapsed && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-            {sortedUsers
-              .filter((user) => user.user_type.toLowerCase() === userType.toLowerCase())
-              .map((user) => (
-                <div
-                  key={user.user_id}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    padding: "1rem",
-                    backgroundColor: "#ffffff",
-                    borderRadius: "0.5rem",
-                    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-                    border: "1px solid #E5E7EB",
-                    transition: "box-shadow 0.2s",
-                  }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.boxShadow = "0 2px 6px rgba(0, 0, 0, 0.15)", e.currentTarget.style.backgroundColor = "#fafff2")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.boxShadow = "0 1px 3px rgba(0, 0, 0, 0.1)", e.currentTarget.style.backgroundColor = "transparent")
-                  }
-                >
-                  <div>
-                    <span style={{ fontWeight: 500, color: "#111827" }}>
-                      {user.first_name} {user.last_name}
-                    </span>
-                    <span
-                      onClick={() => navigator.clipboard.writeText(user.email)}
+          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            {Object.entries(usersByLevel).map(([levelName, levelUsers]) => (
+              <div key={levelName} style={{ marginLeft: "1rem" }}>
+                <h3 style={{ marginBottom: "0.5rem", color: "#374151" }}>
+                  {levelName}
+                </h3>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                  {levelUsers.map((user) => (
+                    <div
+                      key={user.user_id}
                       style={{
-                        marginLeft: "1rem",
-                        fontSize: "0.875rem",
-                        color: "#6B7280",
-                        cursor: "pointer",
-                        transition: "color 0.2s ease-in-out",
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.color = "##0e5f04")}
-                      onMouseLeave={(e) => (e.currentTarget.style.color = "#6B7280")}
-                      title="Click to copy email"
-                    >
-                      {user.email} 🔗
-                    </span>
-                  </div>
-                  <div style={{ display: "flex", gap: "0.5rem" }}>
-                  <button
-                      onClick={() => handleViewUser(user.user_id)}
-                      style={{
-                        padding: "0.5rem 1rem",
-                        fontSize: "0.875rem",
-                        color: "#0e5f04",
-                        border: "1px solid #0e5f04",
-                        borderRadius: "0.375rem",
-                        backgroundColor: "transparent",
-                        cursor: "pointer",
-                        transition: "background-color 0.2s",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        padding: "1rem",
+                        backgroundColor: "#ffffff",
+                        borderRadius: "0.5rem",
+                        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+                        border: "1px solid #E5E7EB",
+                        transition: "box-shadow 0.2s",
                       }}
                       onMouseEnter={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#B4E5AF")
+                        ((e.currentTarget.style.boxShadow =
+                          "0 2px 6px rgba(0, 0, 0, 0.15)"),
+                        (e.currentTarget.style.backgroundColor = "#fafff2"))
                       }
                       onMouseLeave={(e) =>
-                        (e.currentTarget.style.backgroundColor = "transparent")
+                        ((e.currentTarget.style.boxShadow =
+                          "0 1px 3px rgba(0, 0, 0, 0.1)"),
+                        (e.currentTarget.style.backgroundColor = "transparent"))
                       }
                     >
-                      View Profile
-                    </button>
-                    {user.user_type.toLowerCase() === "golfer" && (
+                      <div>
+                        <span style={{ fontWeight: 500, color: "#111827" }}>
+                          {user.first_name} {user.last_name}
+                        </span>
+                        <span
+                          onClick={() => navigator.clipboard.writeText(user.email)}
+                          style={{
+                            marginLeft: "1rem",
+                            fontSize: "0.875rem",
+                            color: "#6B7280",
+                            cursor: "pointer",
+                            transition: "color 0.2s ease-in-out",
+                          }}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.color = "##0e5f04")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.color = "#6B7280")
+                          }
+                          title="Click to copy email"
+                        >
+                          {user.email} 🔗
+                        </span>
+                      </div>
+                      <div style={{ display: "flex", gap: "0.5rem" }}>
                         <button
-                        onClick={() => navigate(`/feedback/${id}/${user.user_id}`)}
+                          onClick={() => handleViewUser(user.user_id)}
                           style={{
                             padding: "0.5rem 1rem",
                             fontSize: "0.875rem",
@@ -190,18 +187,45 @@ const InstructorDashboard: React.FC = () => {
                             (e.currentTarget.style.backgroundColor = "transparent")
                           }
                         >
-                          View Feedback
+                          View Profile
                         </button>
-                    )}
-                  </div>
+                        {user.user_type.toLowerCase() === "golfer" && (
+                          <button
+                            onClick={() =>
+                              navigate(`/feedback/${id}/${user.user_id}`)
+                            }
+                            style={{
+                              padding: "0.5rem 1rem",
+                              fontSize: "0.875rem",
+                              color: "#0e5f04",
+                              border: "1px solid #0e5f04",
+                              borderRadius: "0.375rem",
+                              backgroundColor: "transparent",
+                              cursor: "pointer",
+                              transition: "background-color 0.2s",
+                            }}
+                            onMouseEnter={(e) =>
+                              (e.currentTarget.style.backgroundColor = "#B4E5AF")
+                            }
+                            onMouseLeave={(e) =>
+                              (e.currentTarget.style.backgroundColor = "transparent")
+                            }
+                          >
+                            Manage Feedback
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+            ))}
           </div>
         )}
       </div>
     );
   };
-  
+    
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
     navigate(`?tab=${tab}`, { replace: true });
@@ -215,7 +239,7 @@ const InstructorDashboard: React.FC = () => {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          padding: "1rem", // optional: adjust padding for spacing
+          padding: "1rem",
         }}
       >
         <div className="logo" onClick={() => handleTabChange("schedule")}>
