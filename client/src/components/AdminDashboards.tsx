@@ -98,7 +98,7 @@ const AdminDashboard: React.FC = () => {
           className="dropdown-header"
           onClick={() => setIsCollapsed(!isCollapsed)}
         >
-          <span>{userType}s</span>
+          <span>{userType}s ({users.filter(user => user.user_type.toLowerCase() === userType.toLowerCase()).length})</span>
           <span className={`dropdown-toggle ${isCollapsed ? '' : 'open'}`}>▼</span>
           {userType.toLowerCase() === 'instructor' && !isCollapsed && (
             <div>
