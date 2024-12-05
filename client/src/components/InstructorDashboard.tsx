@@ -12,6 +12,7 @@ interface User {
   last_name: string;
   email: string;
   user_type: string;
+  level: number[];
 }
 
 interface UsersResponse {
@@ -32,10 +33,12 @@ const InstructorDashboard: React.FC = () => {
   const storedUserJson = localStorage.getItem('user');
   let storedUserId = ''
   let storedUserType = ''
+  let storedUserLevel = [] as number[];
   if (storedUserJson) {
     const storedUser = JSON.parse(storedUserJson);
     storedUserId = storedUser.user_id;
     storedUserType = storedUser.user_type
+    storedUserLevel = storedUser.level
   }
   useEffect(() => {
     if (activeTab === 'academy') {
@@ -45,9 +48,13 @@ const InstructorDashboard: React.FC = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await instance.get<UsersResponse>('/users', 
-        {withCredentials: true}
-      );
+      const response = await instance.get<UsersResponse>('/users', {
+        params: {
+          user_type: 'golfer',
+          level: storedUserLevel.join(','),
+        },
+        withCredentials: true
+      });
       const {data} = response;
 
       if (data.success) {
@@ -79,11 +86,15 @@ const InstructorDashboard: React.FC = () => {
       <div style={{ marginBottom: "1rem", padding: "20px" }}>
         <h2
           style={{
-            fontSize: "1.25rem",
-            fontWeight: 600,
-            marginBottom: "1rem",
-            color: "#1F2937",
-            cursor: "pointer",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "1rem",
+            backgroundColor: "#ffffff",
+            borderRadius: "0.5rem",
+            boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+            border: "1px solid #E5E7EB",
+            transition: "box-shadow 0.2s",
           }}
           onClick={toggleCollapse}
         >
@@ -111,10 +122,10 @@ const InstructorDashboard: React.FC = () => {
                     transition: "box-shadow 0.2s",
                   }}
                   onMouseEnter={(e) =>
-                    (e.currentTarget.style.boxShadow = "0 2px 6px rgba(0, 0, 0, 0.15)")
+                    (e.currentTarget.style.boxShadow = "0 2px 6px rgba(0, 0, 0, 0.15)", e.currentTarget.style.backgroundColor = "#fafff2")
                   }
                   onMouseLeave={(e) =>
-                    (e.currentTarget.style.boxShadow = "0 1px 3px rgba(0, 0, 0, 0.1)")
+                    (e.currentTarget.style.boxShadow = "0 1px 3px rgba(0, 0, 0, 0.1)", e.currentTarget.style.backgroundColor = "transparent")
                   }
                 >
                   <div>
@@ -122,30 +133,36 @@ const InstructorDashboard: React.FC = () => {
                       {user.first_name} {user.last_name}
                     </span>
                     <span
+                      onClick={() => navigator.clipboard.writeText(user.email)}
                       style={{
                         marginLeft: "1rem",
                         fontSize: "0.875rem",
                         color: "#6B7280",
+                        cursor: "pointer",
+                        transition: "color 0.2s ease-in-out",
                       }}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = "##0e5f04")}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = "#6B7280")}
+                      title="Click to copy email"
                     >
-                      {user.email}
+                      {user.email} 🔗
                     </span>
                   </div>
                   <div style={{ display: "flex", gap: "0.5rem" }}>
-                    <button
+                  <button
                       onClick={() => handleViewUser(user.user_id)}
                       style={{
                         padding: "0.5rem 1rem",
                         fontSize: "0.875rem",
-                        color: "#2563EB",
-                        border: "1px solid #2563EB",
+                        color: "#0e5f04",
+                        border: "1px solid #0e5f04",
                         borderRadius: "0.375rem",
                         backgroundColor: "transparent",
                         cursor: "pointer",
                         transition: "background-color 0.2s",
                       }}
                       onMouseEnter={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#EFF6FF")
+                        (e.currentTarget.style.backgroundColor = "#B4E5AF")
                       }
                       onMouseLeave={(e) =>
                         (e.currentTarget.style.backgroundColor = "transparent")
@@ -154,27 +171,27 @@ const InstructorDashboard: React.FC = () => {
                       View Profile
                     </button>
                     {user.user_type.toLowerCase() === "golfer" && (
-                      <button
-                      onClick={() => navigate(`/feedback/${id}/${user.user_id}`)}
-                        style={{
-                          padding: "0.5rem 1rem",
-                          fontSize: "0.875rem",
-                          color: "#2563EB",
-                          border: "1px solid #2563EB",
-                          borderRadius: "0.375rem",
-                          backgroundColor: "transparent",
-                          cursor: "pointer",
-                          transition: "background-color 0.2s",
-                        }}
-                        onMouseEnter={(e) =>
-                          (e.currentTarget.style.backgroundColor = "#EFF6FF")
-                        }
-                        onMouseLeave={(e) =>
-                          (e.currentTarget.style.backgroundColor = "transparent")
-                        }
-                      >
-                        View Feedback
-                      </button>
+                        <button
+                        onClick={() => navigate(`/feedback/${id}/${user.user_id}`)}
+                          style={{
+                            padding: "0.5rem 1rem",
+                            fontSize: "0.875rem",
+                            color: "#0e5f04",
+                            border: "1px solid #0e5f04",
+                            borderRadius: "0.375rem",
+                            backgroundColor: "transparent",
+                            cursor: "pointer",
+                            transition: "background-color 0.2s",
+                          }}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.backgroundColor = "#B4E5AF")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.backgroundColor = "transparent")
+                          }
+                        >
+                          View Feedback
+                        </button>
                     )}
                   </div>
                 </div>

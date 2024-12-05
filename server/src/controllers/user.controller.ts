@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import { models } from '../db';
 import { UUID } from 'crypto';
+import { Op } from 'sequelize';
 
 interface RegisterRequest {
   firstName: string;
@@ -374,15 +375,24 @@ interface User {
 export const getUsers = async (req: Request, res: Response) => {
   try {
     const user_type = req.query.user_type as string | undefined;
-    const where: { user_type?: string } = {};
+    const levelQuery = req.query.level as string | undefined; 
+    const where: any = {};
     
     if (user_type) {
       where.user_type = user_type;
+    } else {
+      where.user_type = { [Op.ne]: 'Admin' }; // hide admin lol
+    }
+    
+    if (levelQuery) {
+      const levels = levelQuery.split(',').map(Number);
+      where.level = { [Op.overlap]: levels };
     }
 
     const users = await models.User.findAll({ 
       where,
-      attributes: ['user_id', 'first_name', 'last_name', 'email', 'user_type', 'level']
+      attributes: ['user_id', 'first_name', 'last_name', 'email', 'user_type', 'level'],
+      order: [['first_name', 'ASC']],
     });
 
     const formattedUsers: User[] = users.map(user => ({
@@ -407,6 +417,7 @@ export const getUsers = async (req: Request, res: Response) => {
     });
   }
 };
+
 
 interface RegisterInstructorRequest {
   firstName: string;
