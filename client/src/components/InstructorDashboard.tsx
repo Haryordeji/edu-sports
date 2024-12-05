@@ -289,7 +289,7 @@ const InstructorDashboard: React.FC = () => {
       <div style={{paddingTop: "2rem"}}>
         <main className="dashboard-main">
           {activeTab === 'schedule' && (
-            <WeeklyCalendar />
+            <WeeklyCalendar levelProp={[]}/>
           )}
 
           {activeTab === 'academy' && (

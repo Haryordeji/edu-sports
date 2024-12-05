@@ -22,7 +22,11 @@ export interface EventResponse {
   classes: Event[];
 }
 
-const WeeklyCalendar: React.FC = () => {
+interface WeeklyCalendarProps {
+  levelProp: number[];
+}
+
+const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ levelProp }) => {
   const [events, setEvents] = useState<Event[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
@@ -51,9 +55,12 @@ const WeeklyCalendar: React.FC = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await instance.get<EventResponse>('/classes', 
-          {withCredentials: true}
-        );
+        const response = await instance.get<EventResponse>('/classes', {
+          params: {
+            level: (levelProp ?? []).join(','),
+          },
+          withCredentials: true
+        });
         const { data } = response;
         const parsedEvents = data.classes.map((event: any) => ({
           ...event,
