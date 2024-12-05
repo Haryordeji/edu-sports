@@ -54,6 +54,7 @@ const EditProfile: React.FC = () => {
         : null
     );
   };
+
   const handlePhysicianNameChange = (value: string) => {
     setFormData((prev) =>
       prev
@@ -67,6 +68,8 @@ const EditProfile: React.FC = () => {
         : null
     );
   };
+
+  
 
   const storedUserJson = localStorage.getItem('user');
   let storedUserId = ''
@@ -108,6 +111,19 @@ const EditProfile: React.FC = () => {
     });
   };
 
+  const handleLevelChangeForRadio = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    const levelIndex = Number(value);
+  
+    setFormData((prevState) => {
+      if (!prevState) return null;
+      return {
+        ...prevState,
+        level: [levelIndex],
+      };
+    });
+  };
+
   const handleEmergencyContactPhoneChange = (
     field: keyof PhoneNumber, // Adjusted to match PhoneNumber keys
     value: string
@@ -120,6 +136,26 @@ const EditProfile: React.FC = () => {
               ...prev.emergencyContact,
               phone: {
                 ...prev.emergencyContact.phone,
+                [field]: value, // Update the specific phone field dynamically
+              },
+            },
+          }
+        : null
+    );
+  };
+
+  const handlePhysicianContactPhoneChange = (
+    field: keyof PhoneNumber, // Adjusted to match PhoneNumber keys
+    value: string
+  ) => {
+    setFormData((prev: RegistrationFormData | null) =>
+      prev
+        ? {
+            ...prev,
+            physician: {
+              ...prev.physician,
+              phone: {
+                ...prev.physician.phone,
                 [field]: value, // Update the specific phone field dynamically
               },
             },
@@ -385,34 +421,47 @@ const EditProfile: React.FC = () => {
                 </label>
               </div>
             </div>
-            {storedUserType === "admin" && (
-            <div className="level-group">
-            <div>
-                <label>Select Golf Level(s):</label>
+
+            {(storedUserType === "admin") && (
+              <div className="level-group">
                 <div>
-                  {Object.keys(GolfLevels)
-                    .filter((key) => isNaN(Number(key)))
-                    .map((level, index) => (
-                      <label key={index} style={{ display: 'block', margin: '4px 0' }}>
-                        <input
-                          type="checkbox"
-                          value={index}
-                          checked={formData.level?.includes(index) || false}
-                          onChange={handleLevelChange}
-                          disabled={
-                            !(formData.user_type === "instructor" || formData.user_type === "admin") &&
-                            !formData.level?.includes(index) &&
-                            formData.level?.length >= 1
-                          }
-                          required
-                        />
-                        {level}
-                      </label>
-                    ))}
+                  <label>Select Golf Level(s):</label>
+                  <div>
+                    {formData.user_type !== "golfer" ? (
+                      Object.keys(GolfLevels)
+                        .filter((key) => isNaN(Number(key)) && key != "Unassigned")
+                        .map((level, index) => (
+                          <label key={index} style={{ display: "block", margin: "4px 0" }}>
+                            <input
+                              type="checkbox"
+                              value={index}
+                              checked={formData.level?.includes(index) || false}
+                              onChange={handleLevelChange}
+                            />
+                            {level}
+                          </label>
+                        ))
+                    ) : (
+                      Object.keys(GolfLevels)
+                        .filter((key) => isNaN(Number(key)) && key != "Unassigned")
+                        .map((level, index) => (
+                          <label key={index} style={{ display: "block", margin: "4px 0" }}>
+                            <input
+                              type="radio"
+                              name="golf-level"
+                              value={index}
+                              checked={formData.level?.[0] === index}
+                              onChange={handleLevelChangeForRadio}
+                            />
+                            {level}
+                          </label>
+                        ))
+                    )}
+                  </div>
                 </div>
               </div>
-          </div>
             )}
+
 
           </div>
           {/* Emergency Contact */}
@@ -427,6 +476,36 @@ const EditProfile: React.FC = () => {
               onChange={(e) => handlePhysicianNameChange(e.target.value)} // Call the specific handler
               required
             />
+
+              <div className="phone-input">
+                <label>Physician Phone</label>
+                <div className="phone-parts">
+                  <input
+                    type="text"
+                    value={formData.physician.phone?.areaCode || ''}
+                    onChange={(e) => handlePhysicianContactPhoneChange('areaCode', e.target.value)}
+                    maxLength={3}
+                    placeholder="Area Code"
+                    required
+                  />
+                  <input
+                    type="text"
+                    value={formData.physician?.phone?.prefix || ''}
+                    onChange={(e) => handlePhysicianContactPhoneChange('prefix', e.target.value)}
+                    maxLength={3}
+                    placeholder="Prefix"
+                    required
+                  />
+                  <input
+                    type="text"
+                    value={formData.physician?.phone?.lineNumber || ''}
+                    onChange={(e) => handlePhysicianContactPhoneChange('lineNumber', e.target.value)}
+                    maxLength={4}
+                    placeholder="Line Number"
+                    required
+                  />
+                </div>
+              </div>
           </div>
           <div className="emergency-contact-group">
             <div className="input-group">
