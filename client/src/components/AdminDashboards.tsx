@@ -144,7 +144,12 @@ const AdminDashboard: React.FC = () => {
           >
             {Object.entries(usersByLevel).map(([levelName, levelUsers]) => (
               <div key={levelName} style={{ marginLeft: "1rem" }}>
-                <h3 style={{ marginBottom: "0.5rem", color: "#374151" }}>
+                <h3 style={{ 
+                  marginBottom: "0.5rem", 
+                  color: "#0e5f04",
+                  fontSize: "1.1rem",
+                  fontWeight: 500
+                }}>
                   {levelName}
                 </h3>
                 <div
