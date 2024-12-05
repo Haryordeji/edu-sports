@@ -51,8 +51,33 @@ const RegistrationPage: React.FC = () => {
   }
 );
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [phoneError, setPhoneError] = useState('');
+
+  const states = [
+    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+    'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
+    'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
+    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+  ];
+
+  const validatePhone = (areaCode: string, prefix: string, lineNumber: string): boolean => {
+    const phoneRegex = /^\d+$/;
+    if (!phoneRegex.test(areaCode) || !phoneRegex.test(prefix) || !phoneRegex.test(lineNumber)) {
+      setPhoneError('Phone number must contain only digits');
+      return false;
+    }
+    if (areaCode.length !== 3 || prefix.length !== 3 || lineNumber.length !== 4) {
+      setPhoneError('Please enter a valid phone number');
+      return false;
+    }
+    setPhoneError('');
+    return true;
+  };
+
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
     section?: keyof RegistrationFormData,
     subField?: string
   ) => {
@@ -88,6 +113,9 @@ const RegistrationPage: React.FC = () => {
     part: 'areaCode' | 'prefix' | 'lineNumber',
     value: string
   ) => {
+    // Only allow digits
+    const digitsOnly = value.replace(/\D/g, '');
+    
     setFormData(prev => {
       if (section === 'emergencyContact.phone') {
         return {
@@ -96,7 +124,7 @@ const RegistrationPage: React.FC = () => {
             ...prev.emergencyContact,
             phone: {
               ...prev.emergencyContact.phone,
-              [part]: value
+              [part]: digitsOnly
             }
           }
         };
@@ -107,17 +135,23 @@ const RegistrationPage: React.FC = () => {
             ...prev.physician,
             phone: {
               ...prev.physician.phone,
-              [part]: value
+              [part]: digitsOnly
             }
           }
         };
       } else {
+        const newPhone = {
+          ...prev[section],
+          [part]: digitsOnly
+        };
+        validatePhone(
+          part === 'areaCode' ? digitsOnly : prev.Phone.areaCode,
+          part === 'prefix' ? digitsOnly : prev.Phone.prefix,
+          part === 'lineNumber' ? digitsOnly : prev.Phone.lineNumber
+        );
         return {
           ...prev,
-          [section]: {
-            ...prev[section],
-            [part]: value
-          }
+          [section]: newPhone
         };
       }
     });
@@ -176,13 +210,22 @@ const SuccessPopup = () => (
         
         <div className="input-group">
           <h4>Password</h4>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleInputChange}
-            required
-          />
+          <div className="password-input-container">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              required
+            />
+            <button
+              type="button"
+              className="toggle-password"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
           <p className="input-hint">Password must be at least 8 characters long</p>
         </div>
       </div>
@@ -213,7 +256,7 @@ const SuccessPopup = () => (
           />
         </div>
         <div className="input-group small">
-          <h4>Middle Name Initial</h4>
+          <h4>Middle Initial</h4>
           <input
             type="text"
             name="middleInitial"
@@ -256,13 +299,48 @@ const SuccessPopup = () => (
           </div>
           <div className="input-group">
             <h4>Height</h4>
-            <input
-              type="text"
-              name="height"
-              value={formData.height}
-              onChange={handleInputChange}
-              placeholder="5'10''"
-            />
+            <div className="height-selection">
+              <select
+                name="height"
+                value={formData.height.split("'")[0] || ""}
+                onChange={(e) => {
+                  const feet = e.target.value;
+                  const inches = formData.height.split("'")[1]?.replace('"', '') || "0";
+                  setFormData(prev => ({
+                    ...prev,
+                    height: `${feet}'${inches}"`
+                  }));
+                }}
+                required
+              >
+                <option value="">Feet</option>
+                {Array.from({ length: 8 }, (_, i) => i + 4).map((feet) => (
+                  <option key={feet} value={feet}>
+                    {feet}'
+                  </option>
+                ))}
+              </select>
+              <select
+                name="height-inches"
+                value={formData.height.split("'")[1]?.replace('"', '') || ""}
+                onChange={(e) => {
+                  const feet = formData.height.split("'")[0] || "5";
+                  const inches = e.target.value;
+                  setFormData(prev => ({
+                    ...prev,
+                    height: `${feet}'${inches}"`
+                  }));
+                }}
+                required
+              >
+                <option value="">Inches</option>
+                {Array.from({ length: 12 }, (_, i) => i).map((inch) => (
+                  <option key={inch} value={inch}>
+                    {inch}"
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
       </div>
@@ -295,14 +373,19 @@ const SuccessPopup = () => (
           </div>
           <div className="input-group small">
             <h4>State</h4>
-            <input
-              type="text"
+            <select
               name="state"
               value={formData.state}
               onChange={handleInputChange}
               required
-              maxLength={2}
-            />
+            >
+              <option value="">Select State</option>
+              {states.map((state) => (
+                <option key={state} value={state}>
+                  {state}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="input-group">
             <h4>Zip Code</h4>
@@ -347,6 +430,7 @@ const SuccessPopup = () => (
               placeholder="0000"
             />
           </div>
+          {phoneError && <p className="error-message">{phoneError}</p>}
         </div>
       </div>
     </>
@@ -611,7 +695,7 @@ const SuccessPopup = () => (
     employees, and other affiliated participants, sponsors, advertisers, and if applicable, any owners
     and lessors of premises on which the activity takes place from all liability, any losses, claims
     (other than that of the medical accident benefit), demands, costs, or damages that I (and/or my minor child)
-    may incur as a results of participation in Edu-Sports Academy, Swing 2 Tee program and further agree that if,
+    may incur as a results of participation in Edu-Sports Academy, Swing 2 program and further agree that if,
     despite the “Release and Waiver of Liability” agreement, I or anyone on my behalf makes a claim against any
     of the Releasees, I will indemnify, save, and hold harmless each of the Releasees from any litigation expenses,
     attorney fees, loss, liability, damage of cost which may incur as a result of such action.
