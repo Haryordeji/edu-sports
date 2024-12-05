@@ -46,7 +46,8 @@ const UserProfile: React.FC = () => {
           withCredentials: true
         });
         if (response.data.success) {
-          localStorage.removeItem('user'); // Clear user data from localStorage
+          localStorage.removeItem('user'); 
+          localStorage.removeItem('token'); 
           navigate('/');
         }
       } catch (err) {
