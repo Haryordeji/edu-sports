@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import ProfileDropdown from './ProfileDropdown';
 import WeeklyCalendar from './WeeklyCalendar';
 import './global.css';
+import GolferFeedbackManager from './GolferFeedbackManager';
 
 const GolferDashboard: React.FC = () => {
   const location = useLocation();
@@ -64,7 +65,7 @@ const GolferDashboard: React.FC = () => {
         </nav>
       </header>
       <main className="dashboard-main" style={{paddingTop: '0.5rem', paddingRight: '0.3rem', paddingLeft: '0.3rem'}}>
-        {activeTab === 'feedback' && <div>Feedback Content Goes Here</div>}
+        {activeTab === 'feedback' && <GolferFeedbackManager />}
         {activeTab === 'schedule' && <WeeklyCalendar levelProp={storedUserLevel}/>}
       </main>
     </div>

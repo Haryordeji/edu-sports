@@ -381,7 +381,7 @@ export const getUsers = async (req: Request, res: Response) => {
     if (user_type) {
       where.user_type = user_type;
     } else {
-      where.user_type = { [Op.ne]: 'Admin' }; // hide admin lol
+      where.user_type = { [Op.ne]: 'admin' }; // hide admin lol
     }
     
     if (levelQuery) {
