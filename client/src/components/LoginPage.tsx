@@ -132,6 +132,9 @@ const LoginPage: React.FC = () => {
         <h3>New Here?</h3>
         <p>Sign up and discover and have a sporting chance to be more</p>
         <button onClick={handleSignUp} className="sign-up-button" disabled={isLoading}>Sign Up</button>
+        <a href="/reset-password" onClick={(e) => {e.preventDefault(); navigate("/reset-password"); }} className="reset-password-link">
+            Click here to reset password
+        </a>
       </div>
     </div>
     </div>
