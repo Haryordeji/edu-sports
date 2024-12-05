@@ -146,3 +146,9 @@ export const verifyOwnership = (
     next();
   };
 };
+
+export const generateResetToken = (email: string) => {
+  const payload = { email };
+  const options = { expiresIn: '1h' };
+  return jwt.sign(payload, JWT_SECRET, options);
+};

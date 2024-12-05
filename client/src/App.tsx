@@ -9,12 +9,14 @@ import InstructorDashboard from './components/InstructorDashboard';
 import ScheduleEditor from './components/ScheduleEditor';
 import EditProfile  from './components/EditProfile';
 import FeedbackManager from './components/FeedbackManager';
+import PasswordReset from './components/PasswordReset';
 
 const App: React.FC = () => {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LoginPage />} />
+        <Route path = "/reset-password" element={<PasswordReset/>} />
         <Route path="/register" element={<RegistrationPage />} />
         <Route path="/admin/dashboard/:id" element={<AdminDashboard />} />
         <Route path="/admin/schedule" element={<ScheduleEditor />} />

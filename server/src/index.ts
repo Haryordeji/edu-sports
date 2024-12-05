@@ -40,6 +40,14 @@ app.post('/api/register',authenticate, async (req: Request, res: Response) => {
   await userController.register(req, res);
 });
 
+app.post('/api/auth/request-reset', async (req: Request, res: Response) => {
+  await authController.requestPasswordReset(req, res);
+});
+
+app.post('/api/auth/reset-password', async (req: Request, res: Response) => {
+  await authController.resetPassword(req, res);
+});
+
 // User routes
 app.get('/api/users',
   authenticate,
