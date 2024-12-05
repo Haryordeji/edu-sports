@@ -536,13 +536,14 @@ export const getInstructorsNameList = async (req: Request, res: Response) => {
   }
 };
 
-export const getUserFullName = async (req: Request<{ userId: string }>, res: Response) => {
+// return full name and level of user
+export const getUserFeedbackInfo = async (req: Request<{ userId: string }>, res: Response) => {
   try {
     const { userId } = req.params;
 
     const user = await models.User.findOne({
       where: { user_id: userId },
-      attributes: ['first_name', 'last_name']
+      attributes: ['first_name', 'last_name', 'level']
     });
 
     if (!user) {
@@ -553,10 +554,13 @@ export const getUserFullName = async (req: Request<{ userId: string }>, res: Res
 
     return res.status(200).json({
       success: true,
-      name: fullName
+      info: {
+        name: fullName,
+        level: user.level,
+      },
     });
   } catch (error) {
-    console.error('Get user full name error:', error);
+    console.error('Get user info for feedback error:', error);
     return res.status(500).json({ message: 'Internal server error' });
   }
 };

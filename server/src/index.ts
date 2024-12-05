@@ -63,11 +63,11 @@ app.get('/api/users/instructors',
   }
 );
 
-app.get('/api/users/name/:userId',
+app.get('/api/users/feedbackinfo/:userId',
   authenticate, 
   async (req: Request<UserParams>, res: Response, next: NextFunction) => {
     try {
-      await userController.getUserFullName(req, res);
+      await userController.getUserFeedbackInfo(req, res);
     } catch (error) {
       next(error);
     }

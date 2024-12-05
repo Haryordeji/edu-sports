@@ -3,6 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import instance from '../utils/axios';
 import './global.css';
 import { AxiosResponse } from 'axios';
+import ReactQuill from 'react-quill';
+import DOMPurify from 'dompurify';
 
 interface Feedback {
   feedback_id: string;
@@ -22,6 +24,12 @@ interface Comment {
 interface Event {
   class_id: string;
   title: string;
+  level: number;
+}
+
+interface FeedbackInfo {
+  name: string;
+  level: number[]
 }
 
 const FeedbackManager: React.FC = () => {
@@ -38,7 +46,7 @@ const FeedbackManager: React.FC = () => {
   const [message, setMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [commentContent, setCommentContent] = useState<string>('');
-  const [fullName, setFullName] = useState('');
+  const [feedbackInfo, setFeedbackInfo] = useState<FeedbackInfo>();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,7 +54,12 @@ const FeedbackManager: React.FC = () => {
       try {
         const [feedbackResponse, classesResponse] = await Promise.all([
           instance.get(`/feedback/${golfer_id}`, { withCredentials: true }),
-          instance.get(`/classes`, { withCredentials: true }),
+          instance.get(`/classes`, {
+            withCredentials: true,
+            params: {
+              level: feedbackInfo?.level.join(','),
+            },
+          }),
         ]);
         if (feedbackResponse.data.success) {
           const sortedFeedbacks = feedbackResponse.data.feedbacks.sort(
@@ -61,20 +74,25 @@ const FeedbackManager: React.FC = () => {
       }
     };
 
-    fetchData();
     fetchUserFullName();
+    fetchData();
   }, [golfer_id]);
+
+  // fail-safe in case, feedbackInfo is not set yet
+  useEffect(() => {
+    classes.filter(cl => cl.level != feedbackInfo?.level[0])
+  }, [feedbackInfo])
 
   const fetchUserFullName = async () => {
     try {
-      const response = await instance.get(`/users/name/${golfer_id}`);
+      const response = await instance.get(`/users/feedbackinfo/${golfer_id}`);
       if (response.data && response.data.success) {
-        setFullName(response.data.name);
+        setFeedbackInfo(response.data.info);
       } else {
-        setFullName('Unknown');
+        setFeedbackInfo({} as FeedbackInfo);
       }
     } catch (err) {
-      console.error('Error fetching user full name:', err);
+      console.error('Error fetching user info for feedback:', err);
     }
   };
 
@@ -255,7 +273,7 @@ const FeedbackManager: React.FC = () => {
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '1rem' }}>
       <button onClick={() => navigate(-1)} style={styles.button}>← Back</button>
-      <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1F2937' }}>{fullName}'s Feedback</h2>
+      <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1F2937' }}>{feedbackInfo?.name}'s Feedback</h2>
       {message && <p style={{ color: 'red', margin: '1rem 0' }}>{message}</p>}
       <button
         onClick={() => {
@@ -355,22 +373,31 @@ const FeedbackManager: React.FC = () => {
       {expandedFeedback && (
         <div className="modal-overlay">
           <div className="modal">
-            <button onClick={() => setExpandedFeedback(null)} className="back-button">✕</button>
+            <button onClick={() => {setExpandedFeedback(null); setCommentContent('')}} className="back-button">✕</button>
             <p><strong>Class:</strong> {expandedFeedback.class}</p>
             <p><strong>Instructor:</strong> {expandedFeedback.instructor_name}</p>
             <p><strong>Created At:</strong> {new Date(expandedFeedback.createdAt).toLocaleString()}</p>
-            <p>{expandedFeedback.note_content}</p>
+            <p><strong>Feedback: </strong></p>
+            <div
+              className = "feedback-content"
+              dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(expandedFeedback.note_content),
+                  }}
+            >
+            </div>
             <h4>Comments:</h4>
 
             {editingCommentId === null && (
             <div>
-              <textarea
-                value={commentContent}
-                onChange={(e) => setCommentContent(e.target.value)}
-                placeholder="Add a comment..."
-                style={{ width: '100%', margin: '1rem 0', padding: '0.5rem' }}
-              />
-              <button onClick={handleAddComment} disabled={isLoading}>
+            <ReactQuill
+              id="new-comment"
+              placeholder="Add a comment..."
+              value={commentContent}
+              onChange={(value) => setCommentContent(value.trim())}
+              style={{ height: "200px", paddingBottom: "2rem" }}
+              
+            />
+              <button className='submit-button' onClick={handleAddComment} disabled={isLoading}>
                 {isLoading ? 'Adding...' : 'Add Comment'}
               </button>
             </div>
@@ -385,11 +412,14 @@ const FeedbackManager: React.FC = () => {
                     <p><strong>{comment.author_name}</strong> on {new Date(comment.createdAt).toLocaleString()}</p>
                     {editingCommentId === comment.comment_id ? (
                       <div>
-                        <textarea
-                          value={commentContent}
-                          onChange={(e) => setCommentContent(e.target.value)}
-                          style={{ width: '100%', margin: '0.5rem 0' }}
-                        />
+                    <ReactQuill
+                      id="edit-commit"
+                      placeholder="edit comment"
+                      value={commentContent}
+                      onChange={(value) => setCommentContent(value.trim())}
+                      style={{ height: "200px", paddingBottom: '2rem' }}
+                      
+                    />
                         <button onClick={handleSaveComment} disabled={isLoading}>
                           {isLoading ? 'Saving...' : 'Save'}
                         </button>
@@ -397,11 +427,17 @@ const FeedbackManager: React.FC = () => {
                       </div>
                     ) : (
                       <div> 
-                        <p>{comment.content}</p>
+                        <div
+                          className = "comment-content"
+                          dangerouslySetInnerHTML={{
+                                __html: DOMPurify.sanitize(comment.content),
+                              }}
+                        >
+                        </div>
                         {editingCommentId === null && (
-                          <div>
-                        <button onClick={() => handleEditComment(comment)}>Edit</button>
-                        <button onClick={() => handleDeleteComment(comment.comment_id)}>Delete</button>
+                          <div style={{paddingBottom: "0.5rem"}}>
+                        <button className='submit-button' style = {{marginRight: '0.5rem'}} onClick={() => handleEditComment(comment)}>Edit</button>
+                        <button className ='cancel-button' onClick={() => handleDeleteComment(comment.comment_id)}>Delete</button>
                           </div>
                         )}
                       </div>
@@ -452,19 +488,14 @@ const FeedbackManager: React.FC = () => {
                   ))}
                 </select>
               </div>
-              <div style={{ marginTop: '1rem' }}>
-                <textarea
-                  value={noteContent}
-                  onChange={(e) => setNoteContent(e.target.value)}
-                  rows={5}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '0.375rem',
-                    border: '1px solid #E5E7EB',
-                  }}
-                  placeholder="Write your feedback here"
-                />
+              <div style={{ marginTop: '1rem', paddingBottom: '1.5rem' }}>
+                <ReactQuill
+                id="feedback-box"
+                placeholder="Write your feedback here"
+                value={noteContent}
+                onChange={(value) => setNoteContent(value.trim())}
+                style={{ height: "200px" }}
+              />
               </div>
               <button
                 type="submit"

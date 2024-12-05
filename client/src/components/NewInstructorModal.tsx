@@ -3,6 +3,7 @@ import instance from '../utils/axios';
 import { GolfLevels } from '../interfaces';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import DOMPurify from 'dompurify';
 
 interface NewInstructorModalProps {
   onClose: () => void;
@@ -32,7 +33,7 @@ const NewInstructorModal: React.FC<NewInstructorModalProps> = ({ onClose, onSucc
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    setFormData((prevData) => ({ ...prevData, [name]: DOMPurify.sanitize(value) }));
   };
 
   const handleQuillInputChange = (value: any) => {

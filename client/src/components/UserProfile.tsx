@@ -254,9 +254,12 @@ const UserProfile: React.FC = () => {
 
               <div className="info-group">
                 <div className="info-label">Medical Information</div>
-                <div className="info-value">
-                  {profile.medicalInformation || 'None provided'}
-                </div>
+                <div
+                  className="info-value"
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(profile.medicalInformation || "None provided"),
+                  }}
+                ></div>
               </div>
             </div>
           )}
