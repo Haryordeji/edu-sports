@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import instance from '../utils/axios';
 import './global.css';
 
@@ -20,6 +20,7 @@ interface Comment {
 
 const GolferFeedbackManager: React.FC = () => {
   const { golfer_id } = useParams<{ golfer_id: string }>();
+  const navigate = useNavigate();
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
   const [expandedFeedback, setExpandedFeedback] = useState<Feedback | null>(null);
@@ -150,7 +151,8 @@ const GolferFeedbackManager: React.FC = () => {
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '1rem' }}>
-      <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1F2937' }}>
+      <button onClick={() => navigate(-1)} className="back-button">← Back</button>
+      <h2 className="dropdown-header" style={{ marginBottom: '1.5rem', fontFamily: 'Inter, sans-serif' }}>
         Your Feedback ({feedbacks.length})
       </h2>
       {message && <p style={{ color: 'red', margin: '1rem 0' }}>{message}</p>}
@@ -167,6 +169,7 @@ const GolferFeedbackManager: React.FC = () => {
                 borderRadius: '10px',
                 marginBottom: '1rem',
                 cursor: 'pointer',
+                fontFamily: 'Inter, sans-serif',
               }}
               onClick={() => {
                 setExpandedFeedback(feedback);
@@ -179,8 +182,9 @@ const GolferFeedbackManager: React.FC = () => {
                 (e.currentTarget.style.backgroundColor = "transparent")
               }
             >
-              <p>
-                Feedback on <strong>{feedback.class}</strong> by {feedback.instructor_name} on{' '}
+              <p style={{ fontSize: '1rem', color: '#1F2937' }}>
+                Feedback on <strong>{feedback.class}</strong> by{' '}
+                <span style={{ color: '#0e5f04' }}>{feedback.instructor_name}</span> on{' '}
                 {new Date(feedback.createdAt).toLocaleString()}
               </p>
             </div>
@@ -229,7 +233,12 @@ const GolferFeedbackManager: React.FC = () => {
                       <div>
                         <p>{comment.content}</p>
                         <button onClick={() => handleEditComment(comment)}>Edit</button>
-                        <button onClick={() => handleDeleteComment(comment.comment_id)}>Delete</button>
+                        <button 
+                          onClick={() => handleDeleteComment(comment.comment_id)}
+                          className="delete-button"
+                        >
+                          Delete
+                        </button>
                       </div>
                     )}
                   </div>

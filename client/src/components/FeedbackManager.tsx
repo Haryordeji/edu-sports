@@ -272,8 +272,8 @@ const FeedbackManager: React.FC = () => {
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '1rem' }}>
-      <button onClick={() => navigate(-1)} style={styles.button}>← Back</button>
-      <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1F2937' }}>
+      <button onClick={() => navigate(-1)} className="back-button">← Back</button>
+      <h2 className="dropdown-header" style={{ marginBottom: '1.5rem', fontFamily: 'Inter, sans-serif' }}>
         {feedbackInfo?.name}'s Feedback ({feedbacks.length})
       </h2>
       {message && <p style={{ color: 'red', margin: '1rem 0' }}>{message}</p>}
@@ -310,7 +310,14 @@ const FeedbackManager: React.FC = () => {
           feedbacks.map((feedback) => (
             <div
               key={feedback.feedback_id}
-              style={{ padding: '1rem', border: '1px solid #E5E7EB', borderRadius:'10px', marginBottom: '1rem', cursor: 'pointer' }}
+              style={{
+                padding: '1rem',
+                border: '1px solid #E5E7EB',
+                borderRadius: '10px',
+                marginBottom: '1rem',
+                cursor: 'pointer',
+                fontFamily: 'Inter, sans-serif',
+              }}
               onClick={() => {
                 setExpandedFeedback(feedback);
                 fetchComments(feedback.feedback_id);
@@ -322,8 +329,9 @@ const FeedbackManager: React.FC = () => {
                 (e.currentTarget.style.backgroundColor = "transparent")
               }
             >
-              <p>
-                Feedback on <strong>{feedback.class}</strong> by {feedback.instructor_name} on{' '}
+              <p style={{ fontSize: '1rem', color: '#1F2937' }}>
+                Feedback on <strong>{feedback.class}</strong> by{' '}
+                <span style={{ color: '#0e5f04' }}>{feedback.instructor_name}</span> on{' '}
                 {new Date(feedback.createdAt).toLocaleString()}
               </p>
               <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -361,7 +369,7 @@ const FeedbackManager: React.FC = () => {
                     e.stopPropagation();
                     handleDelete(feedback.feedback_id);
                   }}
-                  style={{ ...styles.button, backgroundColor: '#F87171', color: '#fff' }}
+                  className="delete-button"
                 >
                   Delete
                 </button>
@@ -439,7 +447,12 @@ const FeedbackManager: React.FC = () => {
                         {editingCommentId === null && (
                           <div style={{paddingBottom: "0.5rem"}}>
                         <button className='submit-button' style = {{marginRight: '0.5rem'}} onClick={() => handleEditComment(comment)}>Edit</button>
-                        <button className ='cancel-button' onClick={() => handleDeleteComment(comment.comment_id)}>Delete</button>
+                        <button 
+                          className="delete-button"
+                          onClick={() => handleDeleteComment(comment.comment_id)}
+                        >
+                          Delete
+                        </button>
                           </div>
                         )}
                       </div>
