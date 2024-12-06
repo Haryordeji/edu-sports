@@ -20,13 +20,6 @@ interface LoginResponse {
   token: string;
 }
 
-const styles = {
-  logo: {
-    width: '200px',
-    height: 'auto',
-  },
-};
-
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -88,19 +81,20 @@ const LoginPage: React.FC = () => {
   };
 
   return (
+    <div className="login-page-wrapper">
     <div className="login-container">
       <div className="login-form">
         <div className="login-header">
-        <img src="https://static.wixstatic.com/media/09e86e_318df3ef05b647329554c64770b3fd61~mv2.jpg/v1/fill/w_658,h_226,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/Edu%20Sports%20Logo_04-01.jpg" alt="Company Logo" style={styles.logo} />
+        <img src="/swing2tee_logo.png" alt="Swing 2 Tee Logo" />
         </div>
-        <h2>Login into Your Swing 2. Tee Golf Account</h2>
+        <h2>Login into Your Swing 2 Tee Golf Account</h2>
         {/* !move this */}
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="input-group">
+          <h3>Email</h3>
             <input
               type="email"
-              placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -108,9 +102,9 @@ const LoginPage: React.FC = () => {
             />
           </div>
           <div className="input-group">
+          <h3>Password</h3>
             <input
               type={showPassword ? 'text' : 'password'}
-              placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -138,7 +132,11 @@ const LoginPage: React.FC = () => {
         <h3>New Here?</h3>
         <p>Sign up and discover and have a sporting chance to be more</p>
         <button onClick={handleSignUp} className="sign-up-button" disabled={isLoading}>Sign Up</button>
+        <a href="/reset-password" onClick={(e) => {e.preventDefault(); navigate("/reset-password"); }} className="reset-password-link">
+            Click here to reset password
+        </a>
       </div>
+    </div>
     </div>
   );
 };

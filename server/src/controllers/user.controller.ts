@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import { models } from '../db';
 import { UUID } from 'crypto';
+import { Op } from 'sequelize';
 
 interface RegisterRequest {
   firstName: string;
@@ -50,7 +51,19 @@ interface RegisterRequest {
   medicalInformation: string;
   agreeToTerms: boolean;
   user_type: string;
+  level: number[]
 }
+
+// format phone numbers as strings
+// sets 0000000000 if bad input is provided
+const formatPhoneNumber = (phone: { areaCode: string; prefix: string; lineNumber: string }) => {
+  let phoneStr = `${phone.areaCode}${phone.prefix}${phone.lineNumber}`;
+  if (phoneStr && phoneStr.length !== 10) {
+    return "000000000"
+  }
+
+return `${phone.areaCode}${phone.prefix}${phone.lineNumber}`;
+};
 
 export const register = async (req: Request<{}, {}, RegisterRequest>, res: Response) => {
   try {
@@ -78,7 +91,8 @@ export const register = async (req: Request<{}, {}, RegisterRequest>, res: Respo
       physician,
       medicalInformation,
       agreeToTerms,
-      user_type
+      user_type,
+      level
     } = req.body;
 
     // required fields
@@ -95,11 +109,6 @@ export const register = async (req: Request<{}, {}, RegisterRequest>, res: Respo
     }
 
     const password_hash = await bcrypt.hash(password, 10);
-
-    // format phone numbers as strings
-    const formatPhoneNumber = (phone: { areaCode: string; prefix: string; lineNumber: string }) => {
-      return `${phone.areaCode}${phone.prefix}${phone.lineNumber}`;
-    };
 
     const user = await models.User.create({
       user_id: crypto.randomUUID(),
@@ -132,7 +141,8 @@ export const register = async (req: Request<{}, {}, RegisterRequest>, res: Respo
       medical_information: medicalInformation,
       user_type: user_type,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      level: level
     });
 
     // return data
@@ -141,7 +151,8 @@ export const register = async (req: Request<{}, {}, RegisterRequest>, res: Respo
       first_name: user.first_name,
       last_name: user.last_name,
       email: user.email,
-      user_type: user.user_type
+      user_type: user.user_type,
+      level: user.level
     };
 
     res.status(201).json({
@@ -178,10 +189,6 @@ export const updateProfile = async (req: Request<{ userId: string }, {}, Partial
       password_hash = await bcrypt.hash(updates.password, 10);
     }
 
-    const formatPhoneNumber = (phone: { areaCode: string; prefix: string; lineNumber: string }) => {
-      return `${phone.areaCode}${phone.prefix}${phone.lineNumber}`;
-    };
-
     const updateData: any = {
       ...(updates.firstName && { first_name: updates.firstName }),
       ...(updates.middleInitial && { middle_initial: updates.middleInitial }),
@@ -214,7 +221,8 @@ export const updateProfile = async (req: Request<{ userId: string }, {}, Partial
         physician_phone: formatPhoneNumber(updates.physician.phone)
       }),
       ...(updates.medicalInformation && { medical_information: updates.medicalInformation }),
-      updated_at: new Date()
+      updated_at: new Date(),
+      ...(updates.level ? { level: updates.level } : { level: [7] }),
     };
 
     // update user
@@ -232,7 +240,8 @@ export const updateProfile = async (req: Request<{ userId: string }, {}, Partial
       first_name: updatedUser.first_name,
       last_name: updatedUser.last_name,
       email: updatedUser.email,
-      user_type: updatedUser.user_type
+      user_type: updatedUser.user_type,
+      level: updatedUser.level
     };
 
     res.json({
@@ -296,7 +305,11 @@ export const getProfile = async (req: Request<{ userId: string }>, res: Response
           lineNumber: phoneStr.substring(6)
         };
       }
-      return null;
+      return {
+        areaCode: "000",
+          prefix: "000",
+          lineNumber: "000"
+      };
     };
 
     // format in same interface paradigm
@@ -335,7 +348,8 @@ export const getProfile = async (req: Request<{ userId: string }>, res: Response
       medicalInformation: user.medical_information,
       user_type: user.user_type,
       profileCreatedAt: user.profile_created_at,
-      updatedAt: user.updatedAt
+      updatedAt: user.updatedAt,
+      level: user.level
     };
 
     res.json({
@@ -349,27 +363,36 @@ export const getProfile = async (req: Request<{ userId: string }>, res: Response
   }
 };
 
-
 interface User {
   user_id: UUID;
   first_name: string;
   last_name: string;
   email: string;
   user_type: string;
+  level: number[];
 }
 
 export const getUsers = async (req: Request, res: Response) => {
   try {
     const user_type = req.query.user_type as string | undefined;
-    const where: { user_type?: string } = {};
+    const levelQuery = req.query.level as string | undefined; 
+    const where: any = {};
     
     if (user_type) {
       where.user_type = user_type;
+    } else {
+      where.user_type = { [Op.ne]: 'admin' }; // hide admin lol
+    }
+    
+    if (levelQuery) {
+      const levels = levelQuery.split(',').map(Number);
+      where.level = { [Op.overlap]: levels };
     }
 
     const users = await models.User.findAll({ 
       where,
-      attributes: ['user_id', 'first_name', 'last_name', 'email', 'user_type']
+      attributes: ['user_id', 'first_name', 'last_name', 'email', 'user_type', 'level'],
+      order: [['first_name', 'ASC']],
     });
 
     const formattedUsers: User[] = users.map(user => ({
@@ -377,7 +400,8 @@ export const getUsers = async (req: Request, res: Response) => {
       first_name: user.first_name,
       last_name: user.last_name,
       email: user.email,
-      user_type: user.user_type
+      user_type: user.user_type,
+      level: user.level
     }));
 
     return res.status(200).json({
@@ -393,3 +417,152 @@ export const getUsers = async (req: Request, res: Response) => {
     });
   }
 };
+
+
+interface RegisterInstructorRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  phone: string;
+  user_type: string;
+  golf_experience: string;
+  level: number[];
+}
+
+export const registerInstructor = async (req: Request<{}, {}, RegisterInstructorRequest>, res: Response) => {
+  try {
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      phone,
+      user_type,
+      golf_experience,
+      level
+    } = req.body;
+
+    // Check if email is already registered
+    const existingUser = await models.User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email already registered' });
+    }
+
+    const password_hash = await bcrypt.hash(password, 10);
+
+    // Create user with dummy placeholders
+    const user = await models.User.create({
+      user_id: crypto.randomUUID(),
+      profile_created_at: new Date(),
+      password_hash,
+      first_name: firstName,
+      last_name: lastName,
+      street: 'N/A',
+      city: 'N/A',
+      state: 'N/A',
+      zip_code: '00000',
+      phone:phone,
+      email,
+      gender: 'N/A',
+      dob: '1900-01-01',
+      height: 'N/A',
+      handedness: 'N/A',
+      referral_source: 'N/A',
+      referral_name: '',
+      golf_experience: golf_experience,
+      previous_lessons: 'no',
+      lesson_duration: 'N/A',
+      previous_instructor: '',
+      emergency_contact_name: '',
+      emergency_contact_phone: '',
+      emergency_contact_relationship: '',
+      physician_name: '',
+      physician_phone: '',
+      medical_information: 'N/A',
+      user_type,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+
+      level: level
+    });
+
+    // Return user data
+    const userData = {
+      user_id: user.user_id,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+      phone: user.phone,
+      user_type: user.user_type,
+      golf_experience: user.golf_experience,
+      level: level
+    };
+
+    res.status(201).json({
+      success: true,
+      user: userData,
+      message: 'Instructor registration successful'
+    });
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+export const getInstructorsNameList = async (req: Request, res: Response) => {
+  try {
+    // Fetch all users with user_type 'instructor'
+    const instructors = await models.User.findAll({
+      where: { user_type: 'instructor' },
+      attributes: ['user_id', 'first_name', 'last_name']
+    });
+
+    const formattedInstructors = instructors.map(instructor => ({
+      id: instructor.user_id,
+      firstName: instructor.first_name,
+      lastName: instructor.last_name
+    }));
+
+    return res.status(200).json({
+      success: true,
+      instructors: formattedInstructors
+    });
+  } catch (error) {
+    console.error('Get instructors error:', error);
+    return res.status(500).json({
+      message: 'Internal server error'
+    });
+  }
+};
+
+// return full name and level of user
+export const getUserFeedbackInfo = async (req: Request<{ userId: string }>, res: Response) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await models.User.findOne({
+      where: { user_id: userId },
+      attributes: ['first_name', 'last_name', 'level']
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const fullName = `${user.first_name} ${user.last_name}`;
+
+    return res.status(200).json({
+      success: true,
+      info: {
+        name: fullName,
+        level: user.level,
+      },
+    });
+  } catch (error) {
+    console.error('Get user info for feedback error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+

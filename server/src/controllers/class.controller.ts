@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { models } from '../db';
 import { UUID } from 'crypto';
+import { Op } from 'sequelize';
 
 interface ClassAttributes {
   class_id: UUID;
@@ -215,16 +216,23 @@ export const getClass = async (req: Request<{ classId: string }>, res: Response)
 // Get all classes controller
 export const getClasses = async (req: Request, res: Response) => {
   try {
-    const { instructor, startDate, endDate } = req.query;
+    // const { instructor, startDate, endDate, level } = req.query;
+    const instructor = req.query.instructor as string | undefined;
+    const levelQuery = req.query.level as string | undefined;
     const where: any = {};
     
     if (instructor) {
       where.instructor = instructor;
     }
 
+    if (levelQuery) {
+      const levels = levelQuery.split(',').map(Number);
+      where.level = { [Op.in]: levels };
+    }
+
     const classes = await models.Class.findAll({ 
       where,
-      order: [['start', 'ASC']]
+      order: [['start', 'DESC']]
     });
 
     const formattedClasses = classes.map(classRecord => ({

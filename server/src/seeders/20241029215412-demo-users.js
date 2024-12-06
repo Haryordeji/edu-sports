@@ -37,7 +37,8 @@ module.exports = {
         user_type: 'admin',
         profile_created_at: now,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
+        level: [0,1,2]
       },
 
       // Instructors
@@ -71,7 +72,8 @@ module.exports = {
         user_type: 'instructor',
         profile_created_at: now,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
+        level: [1,2]
       },
       {
         user_id: '550e8400-e29b-41d4-a716-446655440009',
@@ -103,7 +105,8 @@ module.exports = {
         user_type: 'instructor',
         profile_created_at: now,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
+        level: [3,4]
       },
       {
         user_id: '550e8400-e29b-41d4-a716-446655440010',
@@ -135,7 +138,8 @@ module.exports = {
         user_type: 'instructor',
         profile_created_at: now,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
+        level: [5,6]
       },
       {
         user_id: '550e8400-e29b-41d4-a716-446655440011',
@@ -167,7 +171,8 @@ module.exports = {
         user_type: 'instructor',
         profile_created_at: now,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
+        level: [1,2]
       },
       {
         user_id: '550e8400-e29b-41d4-a716-446655440012',
@@ -199,7 +204,8 @@ module.exports = {
         user_type: 'instructor',
         profile_created_at: now,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
+        level: [0,2]
       },
 
 
@@ -234,7 +240,8 @@ module.exports = {
         user_type: 'golfer',
         profile_created_at: now,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
+        level: [0]
       },
       {
         user_id: '550e8400-e29b-41d4-a716-446655440003',
@@ -266,7 +273,8 @@ module.exports = {
         user_type: 'golfer',
         profile_created_at: now,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
+        level: [1]
       },
       {
         user_id: '550e8400-e29b-41d4-a716-446655440004',
@@ -298,7 +306,8 @@ module.exports = {
         user_type: 'golfer',
         profile_created_at: now,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
+        level: [2]
       },
       {
         user_id: '550e8400-e29b-41d4-a716-446655440005',
@@ -330,7 +339,8 @@ module.exports = {
         user_type: 'golfer',
         profile_created_at: now,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
+        level: [5]
       },
       {
         user_id: '550e8400-e29b-41d4-a716-446655440006',
@@ -362,7 +372,8 @@ module.exports = {
         user_type: 'golfer',
         profile_created_at: now,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
+        level: [3]
       },
       {
         user_id: '550e8400-e29b-41d4-a716-446655440007',
@@ -394,7 +405,8 @@ module.exports = {
         user_type: 'golfer',
         profile_created_at: now,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
+        level: [1]
       },
       {
         user_id: '550e8400-e29b-41d4-a716-446655440008',
@@ -426,7 +438,8 @@ module.exports = {
         user_type: 'golfer',
         profile_created_at: now,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
+        level: [4]
       }
     ], {});
   },
