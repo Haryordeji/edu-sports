@@ -113,18 +113,6 @@ const EditProfile: React.FC = () => {
     });
   };
 
-  const handleLevelChangeForRadio = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    const levelIndex = Number(value);
-  
-    setFormData((prevState) => {
-      if (!prevState) return null;
-      return {
-        ...prevState,
-        level: [levelIndex],
-      };
-    });
-  };
 
   const handleEmergencyContactPhoneChange = (
     field: keyof PhoneNumber, // Adjusted to match PhoneNumber keys
