@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import instance from '../utils/axios';
 import { EventResponse, Event } from './WeeklyCalendar';
 import { useNavigate } from 'react-router-dom';
+import './global.css';
 
 interface ClassFormData {
   title: string;
@@ -186,113 +187,111 @@ const ScheduleEditor = () => {
       ))}
     </div>
       
-      {isScheduleModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal">
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
-            <h2 className="text-xl font-semibold mb-4">
-              {editingClassId ? 'Edit Class' : 'Create New Class'}
-            </h2>
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Title</label>
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Start Time</label>
-                <input
-                  type="datetime-local"
-                  name="start"
-                  value={formData.start}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">End Time</label>
-                <input
-                  type="datetime-local"
-                  name="end"
-                  value={formData.end}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Location</label>
-                <input
-                  type="text"
-                  name="location"
-                  value={formData.location}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Instructor</label>
-                <select
-                  name="instructor"
-                  value={formData.instructor}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
-                  required
-                >
-                  <option value="">Select an instructor</option>
-                  {instructors.map((instructor) => (
-                    <option key={instructor.id} value={`${instructor.firstName} ${instructor.lastName}`}>
-                      {instructor.firstName} {instructor.lastName}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Level</label>
-                <select
-                  name="level"
-                  value={formData.level}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
-                  required
-                >
-                  <option value={1}>Level 1</option>
-                  <option value={2}>Level 2</option>
-                  <option value={3}>Level 3</option>
-                  <option value={4}>Level 4</option>
-                  <option value={5}>Level 5</option>
-                </select>
-              </div>
-              <div className="flex justify-end space-x-4">
-                <button
-                  type="button"
-                  onClick={resetForm}
-                  className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                >
-                  {editingClassId ? 'Update Class' : 'Create Class'}
-                </button>
-              </div>
-            </form>
-          </div>
+    {isScheduleModalOpen && (
+  <div className="modal-overlay">
+    <div className="schedule-modal">
+      <div className="schedule-modal-header">
+        <h2 className="schedule-modal-title">
+          {editingClassId ? 'Edit Class' : 'Create New Class'}
+        </h2>
+      </div>
+      <form onSubmit={handleSubmit} className="schedule-modal-form">
+        <div className="form-field">
+          <label className="form-label">Title</label>
+          <input
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleInputChange}
+            className="form-input"
+            required
+          />
         </div>
+        <div className="form-field">
+          <label className="form-label">Start Time</label>
+          <input
+            type="datetime-local"
+            name="start"
+            value={formData.start}
+            onChange={handleInputChange}
+            className="form-input"
+            required
+          />
         </div>
+        <div className="form-field">
+          <label className="form-label">End Time</label>
+          <input
+            type="datetime-local"
+            name="end"
+            value={formData.end}
+            onChange={handleInputChange}
+            className="form-input"
+            required
+          />
         </div>
-      )}
+        <div className="form-field">
+          <label className="form-label">Location</label>
+          <input
+            type="text"
+            name="location"
+            value={formData.location}
+            onChange={handleInputChange}
+            className="form-input"
+            required
+          />
+        </div>
+        <div className="form-field">
+          <label className="form-label">Instructor</label>
+          <select
+            name="instructor"
+            value={formData.instructor}
+            onChange={handleInputChange}
+            className="form-select"
+            required
+          >
+            <option value="">Select an instructor</option>
+            {instructors.map((instructor) => (
+              <option key={instructor.id} value={`${instructor.firstName} ${instructor.lastName}`}>
+                {instructor.firstName} {instructor.lastName}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="form-field">
+          <label className="form-label">Level</label>
+          <select
+            name="level"
+            value={formData.level}
+            onChange={handleInputChange}
+            className="form-select"
+            required
+          >
+            <option value={1}>Level 1</option>
+            <option value={2}>Level 2</option>
+            <option value={3}>Level 3</option>
+            <option value={4}>Level 4</option>
+            <option value={5}>Level 5</option>
+          </select>
+        </div>
+        <div className="modal-footer">
+          <button
+            type="button"
+            onClick={resetForm}
+            className="modal-btn cancel-btn"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="modal-btn submit-btn"
+          >
+            {editingClassId ? 'Update Class' : 'Create Class'}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
     </div>
   );
 };
