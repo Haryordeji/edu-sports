@@ -138,6 +138,7 @@ const ScheduleEditor = () => {
 
   return (
     <div className="schedule-management-container">
+      <div className="class-cards-container">
       <div className="schedule-header">
         <button
           onClick={() => setScheduleModalOpen(true)}
@@ -146,8 +147,6 @@ const ScheduleEditor = () => {
           + Create New Class
         </button>
       </div>
-
-      <div className="class-cards-container">
       {classes.map((classItem) => (
         <div key={classItem.class_id} className="class-card">
           <h3 className="class-title">{classItem.title}</h3>
