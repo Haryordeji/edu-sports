@@ -498,6 +498,40 @@ const EditProfile: React.FC = () => {
                 required
               />
             </div>
+            {/* Contact Information */}
+            <div className="section-group">
+                    <h3 className="section-title">Contact Information</h3>
+                    <div className="phone-input">
+                      <label>Phone</label>
+                      <div className="phone-parts">
+                        <input
+                          type="text"
+                          value={formData.Phone?.areaCode || ''}
+                          onChange={(e) => handlePhoneChange('areaCode', e.target.value)}
+                          maxLength={3}
+                          placeholder="Area Code"
+                          required
+                        />
+                        <input
+                          type="text"
+                          value={formData.Phone?.prefix || ''}
+                          onChange={(e) => handlePhoneChange('prefix', e.target.value)}
+                          maxLength={3}
+                          placeholder="Prefix"
+                          required
+                        />
+                        <input
+                          type="text"
+                          value={formData.Phone?.lineNumber || ''}
+                          onChange={(e) => handlePhoneChange('lineNumber', e.target.value)}
+                          maxLength={4}
+                          placeholder="Line Number"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
             {/* Golf Information */}
             <div className="section-group">
                     <h3 className="section-title">Golf Information</h3>
