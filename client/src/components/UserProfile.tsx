@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import instance from '../utils/axios';
 import { GolfLevels, RegistrationFormData } from '../interfaces';
 import './global.css';
@@ -11,13 +12,35 @@ interface ProfileResponse {
   user: RegistrationFormData
 }
 
+interface LocationState {
+  fromEditPage?: boolean;
+}
+
+
 const UserProfile: React.FC = () => {
   const { id } = useParams();
   const [profile, setProfile] = useState<any>(null);
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = useLocation(); // Access location
+  const { state } = location as unknown as { state: LocationState };
+
+  const fromEditPage = location.state?.fromEditPage || false;
+
+  const handleBackClick = () => {
+    if (fromEditPage) {
+      // Skip going back to the edit page and navigate directly to profile
+      navigate(-2);
+    } else {
+      const previousPageExists = window.history.length > 2;
+      if (previousPageExists) {
+        navigate(-1);
+      } else {
+        navigate(`/profile/${id}`);
+      }
+    }
+  };
 
 
   useEffect(() => {
@@ -88,15 +111,10 @@ const UserProfile: React.FC = () => {
     storedUserType = storedUser.user_type
   }
 
-  const queryParams = new URLSearchParams(location.search);
-  const src = queryParams.get('src'); 
-
   return (
     <div className="user-profile-wrapper">
       <div className="user-profile-container">
-      <button
-        onClick={() => navigate(new URLSearchParams(location.search).has('src') ? -2 : -1)}
-        className="back-button">          
+      <button onClick={handleBackClick} className="back-button">
         ← Back
       </button>
         
