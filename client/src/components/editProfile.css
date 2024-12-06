@@ -1,3 +1,6 @@
+:root{
+  --primary-green: #B4E5AF;
+}
 .edit-profile-container {
     min-height: 100vh;
     background: #F0F0F0;
@@ -140,14 +143,6 @@
     width: 1.2rem;
     height: 1.2rem;
     border: 2px solid var(--primary-green);
-  }
-  
-  .emergency-section {
-    background: #fafff2;
-    padding: 1.5rem;
-    border-radius: 8px;
-    margin-top: 2rem;
-    border: 1px solid var(--primary-green);
   }
   
   .emergency-section h3 {
