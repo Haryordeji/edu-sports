@@ -36,7 +36,7 @@ app.post('/api/login', async (req: Request, res: Response) => {
 app.post('/api/registerInstructor', authenticate, async (req: Request, res: Response) => {
   await userController.registerInstructor(req, res);
 });
-app.post('/api/register',authenticate, async (req: Request, res: Response) => {
+app.post('/api/register', async (req: Request, res: Response) => {
   await userController.register(req, res);
 });
 
