@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import instance from '../utils/axios';
 import { GolfLevels, RegistrationFormData } from '../interfaces';
@@ -17,6 +17,8 @@ const UserProfile: React.FC = () => {
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
+
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -86,12 +88,17 @@ const UserProfile: React.FC = () => {
     storedUserType = storedUser.user_type
   }
 
+  const queryParams = new URLSearchParams(location.search);
+  const src = queryParams.get('src'); 
+
   return (
     <div className="user-profile-wrapper">
       <div className="user-profile-container">
-        <button onClick={() => navigate(-1)} className="back-button">
-          ← Back
-        </button>
+      <button
+        onClick={() => navigate(new URLSearchParams(location.search).has('src') ? -2 : -1)}
+        className="back-button">          
+        ← Back
+      </button>
         
         {(storedUserId === id || storedUserType === "admin") && (
           <button

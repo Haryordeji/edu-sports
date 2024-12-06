@@ -163,7 +163,7 @@ const EditProfile: React.FC = () => {
     try {
       if (formData) {
         await instance.put(`/users/${id}`, formData, { withCredentials: true });
-        navigate(`/profile/${id}`); // Navigate back to the user profile after saving changes
+        navigate(`/profile/${id}/?src=edit`);
       }
     } catch (err) {
       setError('Failed to save profile data');
