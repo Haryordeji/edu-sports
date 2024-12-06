@@ -273,7 +273,9 @@ const FeedbackManager: React.FC = () => {
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '1rem' }}>
       <button onClick={() => navigate(-1)} style={styles.button}>← Back</button>
-      <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1F2937' }}>{feedbackInfo?.name}'s Feedback</h2>
+      <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1F2937' }}>
+        {feedbackInfo?.name}'s Feedback ({feedbacks.length})
+      </h2>
       {message && <p style={{ color: 'red', margin: '1rem 0' }}>{message}</p>}
       <button
         onClick={() => {
