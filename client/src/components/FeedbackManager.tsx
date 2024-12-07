@@ -383,7 +383,7 @@ const FeedbackManager: React.FC = () => {
       {expandedFeedback && (
         <div className="modal-overlay">
           <div className="modal">
-            <button onClick={() => {setExpandedFeedback(null); setCommentContent('')}} className="back-button">✕</button>
+            <button onClick={() => {setExpandedFeedback(null); setCommentContent('')}} className="close-btn">✕</button>
             <p><strong>Class:</strong> {expandedFeedback.class}</p>
             <p><strong>Instructor:</strong> {expandedFeedback.instructor_name}</p>
             <p><strong>Created At:</strong> {new Date(expandedFeedback.createdAt).toLocaleString()}</p>
@@ -472,17 +472,7 @@ const FeedbackManager: React.FC = () => {
       {isAddingOrEditing && (
         <div className="modal-overlay">
           <div className="modal">
-            <span
-              className="close-btn"
-              onClick={() => {
-                setIsAddingOrEditing(false);
-                setEditingFeedbackId(null);
-                setSelectedClass('');
-                setNoteContent('');
-              }}
-            >
-              &times;
-            </span>
+          <button onClick={() => {setIsAddingOrEditing(false); setEditingFeedbackId(null); setSelectedClass(''); setNoteContent(''); }} className="close-btn">✕</button>
             <h3>{editingFeedbackId ? 'Edit Feedback' : 'Add New Feedback'}</h3>
             <form onSubmit={handleSaveFeedback}>
               <div>
