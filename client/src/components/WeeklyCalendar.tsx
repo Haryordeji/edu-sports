@@ -33,6 +33,9 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ levelProp }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [defaultView, setDefaultView] = useState("");
 
+  const storedUserJson = localStorage.getItem('user');
+  const userType = storedUserJson ? JSON.parse(storedUserJson).user_type : '';
+
   useEffect(() => {
     const updateDefaultView = () => {
       const isMobile = window.innerWidth < 760; 
@@ -148,6 +151,18 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ levelProp }) => {
           </div>
         )}
       </Modal>
+      {userType === 'golfer' && (
+        <div style={{
+          marginTop: '20px',
+          padding: '15px',
+          borderTop: '1px solid #ddd',
+          textAlign: 'center',
+          fontSize: '14px',
+          color: '#666'
+        }}>
+          <p>If attending lessons at Willingboro location, please use the following link to register: <a href="http://willingbororec.com/" target="_blank" rel="noopener noreferrer">http://willingbororec.com/</a></p>
+        </div>
+      )}
     </div>
   );
 };
