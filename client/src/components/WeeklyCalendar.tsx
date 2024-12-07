@@ -65,11 +65,15 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ levelProp }) => {
           withCredentials: true
         });
         const { data } = response;
-        const parsedEvents = data.classes.map((event: any) => ({
-          ...event,
-          start: new Date(event.start),
-          end: new Date(event.end),
-        }));
+        const parsedEvents = data.classes.map((event: any) => {
+          const startDate = moment.utc(event.start).local().toDate();
+          const endDate = moment.utc(event.end).local().toDate();
+          return { ...event,
+            start: startDate,
+            end: endDate,
+          };
+        });
+
         setEvents(parsedEvents);
         setError(null);
       } catch (error) {
@@ -79,7 +83,7 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ levelProp }) => {
     };
 
     fetchEvents();
-  }, []);
+  }, [levelProp]);
 
   const handleEventSelect = (event: Event) => {
     setSelectedEvent(event);
@@ -99,6 +103,9 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ levelProp }) => {
     </div>
   );
 
+  const minTime = moment().set({ hour: 9, minute: 0 }).toDate();
+  const maxTime = moment().set({ hour: 18, minute: 0 }).toDate();
+
   return (
     <div style={{ height: '500px' }}>
       {error && (
@@ -117,8 +124,8 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ levelProp }) => {
       }}
       views={[Views.DAY, Views.WEEK, Views.AGENDA]}
       defaultView={"day"}
-      min={new Date(2024, 10, 8, 9, 0)}
-      max={new Date(2024, 10, 8, 18, 0)}
+      min={minTime}
+      max={maxTime}
       onSelectEvent={handleEventSelect}
       className="custom-calendar"
     />
