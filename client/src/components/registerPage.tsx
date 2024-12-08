@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './registerPage.css';
 import { RegistrationFormData } from '../interfaces';
+import { FormErrors } from '../interfaces/formErrors';
+import * as validation from '../utils/validation';
 import instance from '../utils/axios';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -56,6 +58,9 @@ const RegistrationPage: React.FC = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [phoneError, setPhoneError] = useState('');
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
+  const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
+  const [stepsCompleted, setStepsCompleted] = useState<{ [key: number]: boolean }>({});
 
   const states = [
     'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
@@ -77,6 +82,65 @@ const RegistrationPage: React.FC = () => {
     }
     setPhoneError('');
     return true;
+  };
+
+  const validateField = (name: string, value: any) => {
+    let error = '';
+    
+    switch (name) {
+      case 'email':
+        const emailResult = validation.validateEmail(value);
+        error = emailResult.message;
+        break;
+      case 'password':
+        const passwordResult = validation.validatePassword(value);
+        error = passwordResult.message;
+        break;
+      case 'firstName':
+        const firstNameResult = validation.validateName(value, 'First name');
+        error = firstNameResult.message;
+        break;
+      case 'lastName':
+        const lastNameResult = validation.validateName(value, 'Last name');
+        error = lastNameResult.message;
+        break;
+      case 'middleInitial':
+        const middleInitialResult = validation.validateMiddleInitial(value);
+        error = middleInitialResult.message;
+        break;
+      case 'dateOfBirth':
+        const dobResult = validation.validateDateOfBirth(value);
+        error = dobResult.message;
+        break;
+      case 'address':
+        const addressResult = validation.validateAddress(value);
+        error = addressResult.message;
+        break;
+      case 'city':
+        const cityResult = validation.validateCity(value);
+        error = cityResult.message;
+        break;
+      case 'zipCode':
+        const zipResult = validation.validateZipCode(value);
+        error = zipResult.message;
+        break;
+      // Add other field validations here
+    }
+
+    setFormErrors(prev => ({
+      ...prev,
+      [name]: error
+    }));
+
+    return !error;
+  };
+
+  const handleBlur = (fieldName: string) => {
+    setTouched(prev => ({
+      ...prev,
+      [fieldName]: true
+    }));
+    validateField(fieldName, formData[fieldName as keyof RegistrationFormData]);
   };
 
   const handleInputChange = (
@@ -167,36 +231,134 @@ const RegistrationPage: React.FC = () => {
     }));
   };
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  try {
-    const response = await instance.post('/register', formData, {
-      withCredentials: true,
-    });
-    const {data} = response;
-    console.log('Registration successful:', data);
-    setShowSuccessPopup(true);
-    
-    // redirect to login after 3 seconds
-    setTimeout(() => {
-      navigate('/');
-    }, 3000);
-  } catch (error) {
-    console.error('Registration failed:', error);
-  } 
-};
+  const validateStep = (step: number): boolean => {
+    switch (step) {
+      case 1: // Account Creation
+        const emailValid = validation.validateEmail(formData.email).isValid;
+        const passwordValid = validation.validatePassword(formData.password).isValid;
+        return emailValid && passwordValid;
 
-const SuccessPopup = () => (
-  <div className="popup-overlay">
-    <div className="popup-content">
-      <div className="success-icon">✓</div>
-      <h2>Registration Successful!</h2>
-      <p>Your account has been created successfully.</p>
-      <p>You will be redirected to the login page in a moment.</p>
-      <p>Please use your email and password to sign in.</p>
+      case 2: // Personal Information
+        const lastNameValid = validation.validateName(formData.lastName, 'Last name').isValid;
+        const firstNameValid = validation.validateName(formData.firstName, 'First name').isValid;
+        const middleInitialValid = formData.middleInitial ? validation.validateMiddleInitial(formData.middleInitial).isValid : true;
+        const dobValid = validation.validateDateOfBirth(formData.dateOfBirth).isValid;
+        const heightValid = formData.height !== '';
+        return lastNameValid && firstNameValid && middleInitialValid && dobValid && heightValid;
+
+      case 3: // Contact Details
+        const addressValid = validation.validateAddress(formData.address).isValid;
+        const cityValid = validation.validateCity(formData.city).isValid;
+        const stateValid = formData.state !== '';
+        const zipValid = validation.validateZipCode(formData.zipCode).isValid;
+        const phoneValid = validation.validatePhone(formData.Phone).isValid;
+        return addressValid && cityValid && stateValid && zipValid && phoneValid;
+
+      case 4: // Golf Experience
+        // Golf experience fields are optional
+        return true;
+
+      case 5: // Medical Information
+        const emergencyNameValid = validation.validateName(formData.emergencyContact.name, 'Emergency contact name').isValid;
+        const emergencyPhoneValid = validation.validatePhone(formData.emergencyContact.phone).isValid;
+        const emergencyRelationValid = validation.validateRelationship(formData.emergencyContact.relationship).isValid;
+        const physicianNameValid = validation.validateName(formData.physician.name, 'Physician name').isValid;
+        const physicianPhoneValid = validation.validatePhone(formData.physician.phone).isValid;
+        return emergencyNameValid && emergencyPhoneValid && emergencyRelationValid && 
+               physicianNameValid && physicianPhoneValid;
+
+      case 6: // Review & Submit
+        return formData.agreeToTerms;
+
+      default:
+        return false;
+    }
+  };
+
+  const handleNextStep = () => {
+    const isCurrentStepValid = validateStep(currentStep);
+    if (!isCurrentStepValid) {
+      // Mark all fields in current step as touched to show validation errors
+      const stepFields = getFieldsForStep(currentStep);
+      const newTouched = { ...touched };
+      stepFields.forEach(field => {
+        newTouched[field] = true;
+      });
+      setTouched(newTouched);
+      return;
+    }
+
+    setStepsCompleted(prev => ({
+      ...prev,
+      [currentStep]: true
+    }));
+    setCurrentStep(prev => prev + 1);
+  };
+
+  const getFieldsForStep = (step: number): string[] => {
+    switch (step) {
+      case 1:
+        return ['email', 'password'];
+      case 2:
+        return ['firstName', 'lastName', 'middleInitial', 'dateOfBirth', 'height'];
+      case 3:
+        return ['address', 'city', 'state', 'zipCode', 'Phone'];
+      case 4:
+        return ['golfExperience', 'handedness'];
+      case 5:
+        return ['emergencyContact.name', 'emergencyContact.phone', 'emergencyContact.relationship',
+                'physician.name', 'physician.phone'];
+      case 6:
+        return ['agreeToTerms'];
+      default:
+        return [];
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validate all steps before submission
+    for (let step = 1; step <= 6; step++) {
+      if (!validateStep(step)) {
+        setCurrentStep(step);
+        const stepFields = getFieldsForStep(step);
+        const newTouched = { ...touched };
+        stepFields.forEach(field => {
+          newTouched[field] = true;
+        });
+        setTouched(newTouched);
+        return;
+      }
+    }
+
+    try {
+      const response = await instance.post('/register', formData, {
+        withCredentials: true,
+      });
+      const {data} = response;
+      console.log('Registration successful:', data);
+      setShowSuccessPopup(true);
+      
+      setTimeout(() => {
+        navigate('/');
+      }, 3000);
+    } catch (error) {
+      console.error('Registration failed:', error);
+    } 
+  };
+
+  const SuccessPopup = () => (
+    <div className="popup-overlay">
+      <div className="popup-content">
+        <div className="success-icon">✓</div>
+        <h2>Registration Successful!</h2>
+        <p>Your account has been created successfully.</p>
+        <p>You will be redirected to the login page in a moment.</p>
+        <p>Please use your email and password to sign in.</p>
+      </div>
     </div>
-  </div>
-);
+  );
 
   const renderCreateAccount = () => (
     <>
@@ -214,8 +376,10 @@ const SuccessPopup = () => (
             name="email"
             value={formData.email}
             onChange={handleInputChange}
+            onBlur={() => handleBlur('email')}
             required
           />
+          {touched.email && formErrors.email && <p className="error-message">{formErrors.email}</p>}
         </div>
         
         <div className="input-group">
@@ -226,6 +390,7 @@ const SuccessPopup = () => (
               name="password"
               value={formData.password}
               onChange={handleInputChange}
+              onBlur={() => handleBlur('password')}
               required
             />
             <button
@@ -236,7 +401,8 @@ const SuccessPopup = () => (
               {showPassword ? "Hide" : "Show"}
             </button>
           </div>
-          <p className="input-hint">Password must be at least 8 characters long</p>
+          <p className="input-hint">Password must be at least 8 characters long and must contain at least one uppercase letter, one lowercase letter, and one number.</p>
+          {touched.password && formErrors.password && <p className="error-message">{formErrors.password}</p>}
         </div>
       </div>
     </>
@@ -252,8 +418,10 @@ const SuccessPopup = () => (
             name="lastName"
             value={formData.lastName}
             onChange={handleInputChange}
+            onBlur={() => handleBlur('lastName')}
             required
           />
+          {touched.lastName && formErrors.lastName && <p className="error-message">{formErrors.lastName}</p>}
         </div>
         <div className="input-group">
           <h4>First Name</h4>
@@ -262,18 +430,22 @@ const SuccessPopup = () => (
             name="firstName"
             value={formData.firstName}
             onChange={handleInputChange}
+            onBlur={() => handleBlur('firstName')}
             required
           />
+          {touched.firstName && formErrors.firstName && <p className="error-message">{formErrors.firstName}</p>}
         </div>
         <div className="input-group small">
-          <h4>Middle Initial</h4>
+          <h4 className="optional">Middle Initial</h4>
           <input
             type="text"
             name="middleInitial"
             value={formData.middleInitial}
             onChange={handleInputChange}
+            onBlur={() => handleBlur('middleInitial')}
             maxLength={1}
           />
+          {touched.middleInitial && formErrors.middleInitial && <p className="error-message">{formErrors.middleInitial}</p>}
         </div>
       </div>
 
@@ -304,8 +476,10 @@ const SuccessPopup = () => (
               name="dateOfBirth"
               value={formData.dateOfBirth}
               onChange={handleInputChange}
+              onBlur={() => handleBlur('dateOfBirth')}
               required
             />
+            {touched.dateOfBirth && formErrors.dateOfBirth && <p className="error-message">{formErrors.dateOfBirth}</p>}
           </div>
           <div className="input-group">
             <h4>Height</h4>
@@ -367,8 +541,10 @@ const SuccessPopup = () => (
             name="address"
             value={formData.address}
             onChange={handleInputChange}
+            onBlur={() => handleBlur('address')}
             required
           />
+          {touched.address && formErrors.address && <p className="error-message">{formErrors.address}</p>}
         </div>
         <div className="city-state-zip">
           <div className="input-group">
@@ -378,8 +554,10 @@ const SuccessPopup = () => (
               name="city"
               value={formData.city}
               onChange={handleInputChange}
+              onBlur={() => handleBlur('city')}
               required
             />
+            {touched.city && formErrors.city && <p className="error-message">{formErrors.city}</p>}
           </div>
           <div className="input-group small">
             <h4>State</h4>
@@ -404,9 +582,11 @@ const SuccessPopup = () => (
               name="zipCode"
               value={formData.zipCode}
               onChange={handleInputChange}
+              onBlur={() => handleBlur('zipCode')}
               required
               maxLength={5}
             />
+            {touched.zipCode && formErrors.zipCode && <p className="error-message">{formErrors.zipCode}</p>}
           </div>
         </div>
       </div>
@@ -737,46 +917,46 @@ const SuccessPopup = () => (
           />
         <h2 className="progress-title">Your Progress</h2>
         <ul className="progress-list">
-        <li 
-            className={`progress-item ${currentStep >= 1 ? 'completed' : ''} ${currentStep === 1 ? 'active' : ''}`}
+          <li 
+            className={`progress-item ${stepsCompleted[1] ? 'completed' : ''} ${currentStep === 1 ? 'active' : ''}`}
             onClick={() => currentStep >= 1 && setCurrentStep(1)}
-            >
-            <span className="progress-indicator">✓</span>
+          >
+            <span className="progress-indicator">{stepsCompleted[1] ? '✓' : '1'}</span>
             Create Account
           </li>
           <li 
-            className={`progress-item ${currentStep >= 2 ? 'completed' : ''} ${currentStep === 2 ? 'active' : ''}`}
+            className={`progress-item ${stepsCompleted[2] ? 'completed' : ''} ${currentStep === 2 ? 'active' : ''}`}
             onClick={() => currentStep >= 2 && setCurrentStep(2)}
           >
-            <span className="progress-indicator">✓</span>
+            <span className="progress-indicator">{stepsCompleted[2] ? '✓' : '2'}</span>
             Personal Information
           </li>
           <li 
-            className={`progress-item ${currentStep >= 3 ? 'completed' : ''} ${currentStep === 3 ? 'active' : ''}`}
+            className={`progress-item ${stepsCompleted[3] ? 'completed' : ''} ${currentStep === 3 ? 'active' : ''}`}
             onClick={() => currentStep >= 3 && setCurrentStep(3)}
           >
-            <span className="progress-indicator">✓</span>
+            <span className="progress-indicator">{stepsCompleted[3] ? '✓' : '3'}</span>
             Contact Details
           </li>
           <li 
-            className={`progress-item ${currentStep >= 4 ? 'completed' : ''} ${currentStep === 4 ? 'active' : ''}`}
+            className={`progress-item ${stepsCompleted[4] ? 'completed' : ''} ${currentStep === 4 ? 'active' : ''}`}
             onClick={() => currentStep >= 4 && setCurrentStep(4)}
           >
-            <span className="progress-indicator">✓</span>
+            <span className="progress-indicator">{stepsCompleted[4] ? '✓' : '4'}</span>
             Golf Experience
           </li>
           <li 
-            className={`progress-item ${currentStep >= 5 ? 'completed' : ''} ${currentStep === 5 ? 'active' : ''}`}
+            className={`progress-item ${stepsCompleted[5] ? 'completed' : ''} ${currentStep === 5 ? 'active' : ''}`}
             onClick={() => currentStep >= 5 && setCurrentStep(5)}
           >
-            <span className="progress-indicator">✓</span>
+            <span className="progress-indicator">{stepsCompleted[5] ? '✓' : '5'}</span>
             Medical Information
           </li>
           <li 
-            className={`progress-item ${currentStep >= 6 ? 'completed' : ''} ${currentStep === 6 ? 'active' : ''}`}
+            className={`progress-item ${stepsCompleted[6] ? 'completed' : ''} ${currentStep === 6 ? 'active' : ''}`}
             onClick={() => currentStep >= 6 && setCurrentStep(6)}
           >
-            <span className="progress-indicator">✓</span>
+            <span className="progress-indicator">{stepsCompleted[6] ? '✓' : '6'}</span>
             Review Terms & Submit
           </li>
         </ul>
@@ -810,7 +990,7 @@ const SuccessPopup = () => (
                 <button 
                   type="button" 
                   className="nav-button next-button"
-                  onClick={() => setCurrentStep(prev => prev + 1)}
+                  onClick={handleNextStep}
                 >
                   Next
                 </button>

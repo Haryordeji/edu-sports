@@ -46,6 +46,18 @@
   font-size: 16px;
   cursor: pointer;
   transition: color 0.2s ease;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.progress-item:hover {
+  opacity: 1;
+}
+
+.progress-item.completed,
+.progress-item.active {
+  opacity: 1;
 }
 
 .progress-item.completed {
@@ -63,24 +75,25 @@
 }
 
 .progress-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  margin-right: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f5f5f5;
+  margin-right: 8px;
+  background-color: #e0e0e0;
   color: #666;
+  font-size: 14px;
 }
 
 .progress-item.completed .progress-indicator {
-  background: #B4E5AF;
+  background-color: #4CAF50;
   color: white;
 }
 
 .progress-item.active .progress-indicator {
-  background: #4CAF50;
+  background-color: #2196F3;
   color: white;
 }
 
@@ -114,6 +127,34 @@
   font-size: 14px;
   margin-bottom: 2rem;
   text-align: right;
+}
+
+.input-group h4::after {
+  content: "*";
+  color: #ff0000;
+  margin-left: 4px;
+}
+
+.input-group h4.optional::after {
+  content: "";
+}
+
+.error-message {
+  color: #ff0000;
+  font-size: 12px;
+  margin-top: 4px;
+  margin-bottom: 0;
+}
+
+.input-group input.error,
+.input-group select.error {
+  border-color: #ff0000;
+}
+
+.required-field-note {
+  color: #ff0000;
+  font-size: 14px;
+  margin-bottom: 20px;
 }
 
 /* navigation buttons */
@@ -258,12 +299,6 @@ input[type="date"],
 select {
   width: 100%;
   box-sizing: border-box;
-}
-
-.error-message {
-  color: #dc3545;
-  font-size: 0.875rem;
-  margin-top: 5px;
 }
 
 select {
