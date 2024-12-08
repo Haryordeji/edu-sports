@@ -44,7 +44,11 @@ const ScheduleEditor = () => {
       const response = await instance.get<EventResponse>('/classes', { withCredentials: true });
       const { data } = response;
       if (data.success) {
-        setClasses(data.classes.reverse());
+        // Sort classes by creation time (newest first)
+        const sortedClasses = data.classes.sort((a, b) => {
+          return new Date(b.start).getTime() - new Date(a.start).getTime();
+        });
+        setClasses(sortedClasses);
       }
     } catch (error) {
       console.error('Error fetching classes:', error);
