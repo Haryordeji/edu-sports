@@ -135,26 +135,40 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ levelProp }) => {
         onRequestClose={closeModal}
         contentLabel="Event Details"
         ariaHideApp={false}
+        className="class-card event-modal"
+        overlayClassName="modal-overlay"
         style={{
           content: {
-            width: '400px',
-            height: '300px',
+            padding: '1.5rem',
+            width: '90%',
+            maxWidth: '450px',
             margin: 'auto',
-            padding: '20px',
-            borderRadius: '10px',
-          },
-          overlay: {
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          },
+            fontFamily: 'Inter, sans-serif'
+          }
         }}
       >
         {selectedEvent && (
           <div>
-            <h2>{selectedEvent.title}</h2>
-            <p><strong>Instructor:</strong> {selectedEvent.instructor}</p>
-            <p><strong>Time:</strong> {moment(selectedEvent.start).format('h:mm a')} - {moment(selectedEvent.end).format('h:mm a')}</p>
-            <p><strong>Location:</strong> {selectedEvent.location}</p>
-            <p><strong>Level:</strong> {selectedEvent.level}</p>
+            <div className="class-title" style={{ paddingRight: '2.5rem', marginBottom: '1rem', fontFamily: 'Inter, sans-serif', fontWeight: 600 }}>{selectedEvent.title}</div>
+            <div className="class-info" style={{ fontFamily: 'Inter, sans-serif' }}>
+              <div className="info-row">
+                <span className="info-label">Instructor:</span>
+                <span>{selectedEvent.instructor}</span>
+              </div>
+              <div className="info-row">
+                <span className="info-label">Time:</span>
+                <span>{moment(selectedEvent.start).format('h:mm a')} - {moment(selectedEvent.end).format('h:mm a')}</span>
+              </div>
+              <div className="info-row">
+                <span className="info-label">Location:</span>
+                <span>{selectedEvent.location}</span>
+              </div>
+              <div className="info-row">
+                <span className="info-label">Level:</span>
+                <span>{selectedEvent.level}</span>
+              </div>
+            </div>
+            <button onClick={closeModal} className="close-btn">&times;</button>
           </div>
         )}
       </Modal>
