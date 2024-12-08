@@ -468,6 +468,16 @@ const EditProfile: React.FC = () => {
               />
             </div>
             <div className="input-group">
+                      <label htmlFor="middleInitial">Middle Name</label>
+                      <input
+                        type="text"
+                        id="middleInitial"
+                        name="middleInitial"
+                        value={formData.middleInitial || ''}
+                        onChange={(e) => handleNameChange('middleInitial', e.target.value)}
+                      />
+              </div>
+            <div className="input-group">
               <label htmlFor="lastName">Last Name</label>
               <input
                 type="text"
