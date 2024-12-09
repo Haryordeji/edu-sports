@@ -273,8 +273,8 @@ const ScheduleEditor = () => {
             required
           >
             <option value="">Select an instructor</option>
-            // if instructor in list has level that matches class level, display in dropdown
-            {instructors.filter((instructor) => instructor.level.includes(formData.level)).map((instructor) => (
+            {/* if instructor in list has level that matches class level, display in dropdown */}
+            {instructors.filter((instructor) => instructor?.level?.includes(formData.level)).map((instructor) => (
               <option key={instructor.id} value={`${instructor.firstName} ${instructor.lastName}`}>
                 {instructor.firstName} {instructor.lastName}
               </option>
