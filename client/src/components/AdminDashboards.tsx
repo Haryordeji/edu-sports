@@ -82,10 +82,17 @@ const AdminDashboard: React.FC = () => {
   };
 
   const UserList = ({ userType, users }: { userType: string; users: User[] }) => {
-    const [isCollapsed, setIsCollapsed] = useState(false);
+    // Use localStorage to maintain collapse state
+    const storageKey = `${userType.toLowerCase()}SectionCollapsed`;
+    const [isCollapsed, setIsCollapsed] = useState(() => {
+      const stored = localStorage.getItem(storageKey);
+      return stored ? JSON.parse(stored) : true;
+    });
   
     const toggleCollapse = () => {
-      setIsCollapsed((prev) => !prev);
+      const newState = !isCollapsed;
+      setIsCollapsed(newState);
+      localStorage.setItem(storageKey, JSON.stringify(newState));
     };
   
     // Group users by level
