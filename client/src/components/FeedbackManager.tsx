@@ -375,90 +375,112 @@ const FeedbackManager: React.FC = () => {
       </div>
 
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '1rem' }}>
-      {expandedFeedback && (
+            {expandedFeedback && (
         <div className="modal-overlay">
-          <div className="modal">
-            <button onClick={() => {setExpandedFeedback(null); setCommentContent('')}} className="close-btn">✕</button>
-            <p><strong>Class:</strong> {expandedFeedback.class}</p>
-            <p><strong>Instructor:</strong> {expandedFeedback.instructor_name}</p>
-            <p><strong>Created At:</strong> {new Date(expandedFeedback.createdAt).toLocaleString()}</p>
-            <p><strong>Feedback: </strong></p>
-            <div
-              className = "feedback-content"
-              dangerouslySetInnerHTML={{
-                    __html: DOMPurify.sanitize(expandedFeedback.note_content),
-                  }}
+          <div className="feedback-modal">
+            <button 
+              onClick={() => {setExpandedFeedback(null); setCommentContent('')}} 
+              className="close-btn"
             >
+              ×
+            </button>
+            
+            <div className="feedback-header">
+              <h2>{expandedFeedback.class}</h2>
             </div>
-            <h4>Comments:</h4>
 
-            {editingCommentId === null && (
-            <div>
-            <ReactQuill
-              id="new-comment"
-              placeholder="Add a comment..."
-              value={commentContent}
-              onChange={(value) => setCommentContent(DOMPurify.sanitize(value.trim()))}
-              style={{ height: "200px", paddingBottom: "2rem" }}
-              
-            />
-              <button className='submit-button' onClick={handleAddComment} disabled={isLoading}>
-                {isLoading ? 'Adding...' : 'Add Comment'}
-              </button>
+            <div className="feedback-meta">
+              <p><strong>Instructor:</strong> {expandedFeedback.instructor_name}</p>
+              <p><strong>Date:</strong> {new Date(expandedFeedback.createdAt).toLocaleString()}</p>
             </div>
-          )}
-          
-            <div>
-              {comments.length === 0 ? (
-                <p>No comments yet.</p>
-              ) : (
-                comments.map((comment) => (
-                  <div key={comment.comment_id} style={{ borderBottom: '1px solid #ccc', marginBottom: '1rem' }}>
-                    <p><strong>{comment.author_name}</strong> on {new Date(comment.createdAt).toLocaleString()}</p>
+
+            <div className="feedback-content">
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(expandedFeedback.note_content),
+                }}
+              />
+            </div>
+
+            <div className="comments-section">
+              <h3 className="comments-header">Comments</h3>
+              
+              {editingCommentId === null && (
+                <div className="comment-box">
+                  <ReactQuill
+                    className="quill-editor"
+                    placeholder="Add a comment..."
+                    value={commentContent}
+                    onChange={(value) => setCommentContent(DOMPurify.sanitize(value.trim()))}
+                  />
+                  <button 
+                    className="action-btn submit-btn"
+                    onClick={handleAddComment} 
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'Adding...' : 'Add Comment'}
+                  </button>
+                </div>
+              )}
+
+              <div className="comments-list">
+                {comments.map((comment) => (
+                  <div key={comment.comment_id} className="comment-item">
+                    <div className="comment-meta">
+                      <span className="comment-author">{comment.author_name}</span>
+                      <span>{new Date(comment.createdAt).toLocaleString()}</span>
+                    </div>
+
                     {editingCommentId === comment.comment_id ? (
                       <div>
-                    <ReactQuill
-                      id="edit-commit"
-                      placeholder="edit comment"
-                      value={commentContent}
-                      onChange={(value) => setCommentContent(DOMPurify.sanitize(value.trim()))}
-                      style={{ height: "200px", paddingBottom: '2rem' }}
-                      
-                    />
-                        <button onClick={handleSaveComment} disabled={isLoading}>
-                          {isLoading ? 'Saving...' : 'Save'}
-                        </button>
-                        <button onClick={handleCancelEditComment}>Cancel</button>
+                        <ReactQuill
+                          className="quill-editor"
+                          value={commentContent}
+                          onChange={(value) => setCommentContent(DOMPurify.sanitize(value.trim()))}
+                        />
+                        <div className="comment-actions">
+                          <button 
+                            className="action-btn submit-btn"
+                            onClick={handleSaveComment} 
+                            disabled={isLoading}
+                          >
+                            {isLoading ? 'Saving...' : 'Save'}
+                          </button>
+                          <button 
+                            className="action-btn cancel-btn"
+                            onClick={handleCancelEditComment}
+                          >
+                            Cancel
+                          </button>
+                        </div>
                       </div>
                     ) : (
-                      <div> 
+                      <>
                         <div
-                          className = "comment-content"
                           dangerouslySetInnerHTML={{
-                                __html: DOMPurify.sanitize(comment.content),
-                              }}
-                        >
+                            __html: DOMPurify.sanitize(comment.content),
+                          }}
+                        />
+                        <div className="comment-actions">
+                          <button 
+                            className="action-btn edit-btn"
+                            onClick={() => handleEditComment(comment)}
+                          >
+                            Edit
+                          </button>
+                          <button 
+                            className="action-btn delete-btn"
+                            onClick={() => handleDeleteComment(comment.comment_id)}
+                          >
+                            Delete
+                          </button>
                         </div>
-                        {editingCommentId === null && (
-                          <div style={{paddingBottom: "0.5rem"}}>
-                        <button className='submit-button' style = {{marginRight: '0.5rem'}} onClick={() => handleEditComment(comment)}>Edit</button>
-                        <button 
-                          className="delete-button"
-                          onClick={() => handleDeleteComment(comment.comment_id)}
-                        >
-                          Delete
-                        </button>
-                          </div>
-                        )}
-                      </div>
-                      
+                      </>
                     )}
                   </div>
-                ))
-              )}
+                ))}
+              </div>
             </div>
-          
-
           </div>
         </div>
       )}
@@ -526,16 +548,6 @@ const FeedbackManager: React.FC = () => {
       )}
     </div>
   );
-};
-
-const styles = {
-  button: {
-    padding: '0.5rem 1rem',
-    fontSize: '0.875rem',
-    borderRadius: '0.375rem',
-    cursor: 'pointer',
-    transition: 'background-color 0.2s',
-  },
 };
 
 export default FeedbackManager;

@@ -147,6 +147,7 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ levelProp }) => {
           }
         }}
       >
+        <button onClick={closeModal} className="close-btn">&times;</button>
         {selectedEvent && (
           <div>
             <div className="class-title" style={{ paddingRight: '2.5rem', marginBottom: '1rem', fontFamily: 'Inter, sans-serif', fontWeight: 600 }}>{selectedEvent.title}</div>
@@ -168,7 +169,6 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ levelProp }) => {
                 <span>{selectedEvent.level}</span>
               </div>
             </div>
-            <button onClick={closeModal} className="close-btn">&times;</button>
           </div>
         )}
       </Modal>

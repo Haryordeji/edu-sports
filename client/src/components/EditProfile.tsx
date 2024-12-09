@@ -929,14 +929,6 @@ const EditProfile: React.FC = () => {
     <div className="edit-profile-container">
       <div className="edit-profile-wrapper">
         <div className="profile-header">
-          <div className="logo-section">
-            <img
-              src="/swing2tee_logo.png"
-              alt="Swing 2 Tee Logo"
-              onClick={() => navigate(0)}
-            />
-            <h1 className="header-title">Edu-Sports Academy</h1>
-          </div>
           <button
             onClick={() => {
               if (isSubmitted) {
