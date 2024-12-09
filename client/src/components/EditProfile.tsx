@@ -692,7 +692,7 @@ const EditProfile: React.FC = () => {
         </div>
 
         {/* Contact Information */}
-        <div className="section-group">
+        <div className="input-group">
           <h3 className="section-title">Contact Details</h3>
           <div className="phone-input">
             <label>Phone</label>
@@ -732,25 +732,25 @@ const EditProfile: React.FC = () => {
             <label htmlFor="golf-levels" style={{ fontWeight: 'bold', marginBottom: '0.5rem', display: 'block', color: '#2e362e' }}>
               Levels Teaching:
             </label>
-            <div id="golf-levels" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
-              {Object.entries(GolfLevels)
-                .filter(([key, value]) => isNaN(Number(key)) && Number(value) !== 7)
-                .map(([label, value]) => (
-                  <div key={value} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <input
-                      type="checkbox"
-                      id={`level-${value}`}
-                      name="level"
-                      value={value}
-                      checked={formData.level.includes(Number(value))}
-                      onChange={(e) => handleCheckboxChange(e, Number(value))}
-                    />
-                    <label htmlFor={`level-${value}`} style={{ cursor: 'pointer' }}>
-                      {label}
-                    </label>
-                  </div>
-                ))}
-            </div>
+            <div className="checkbox-grid">
+          {Object.entries(GolfLevels)
+            .filter(([key, value]) => isNaN(Number(key)) && Number(value) !== 7)
+            .map(([label, value]) => (
+              <div key={value} className="checkbox-option">
+                <input
+                  type="checkbox"
+                  id={`level-${value}`}
+                  name="level"
+                  value={value}
+                  checked={formData.level.includes(Number(value))}
+                  onChange={(e) => handleCheckboxChange(e, Number(value))}
+                />
+                <label htmlFor={`level-${value}`}>
+                  {label}
+                </label>
+              </div>
+            ))}
+        </div>
           </div>
           <label htmlFor="golf-levels" style={{ fontWeight: 'bold', marginTop: '0.5rem', marginBottom: '0.5rem', display: 'block', color: '#2e362e' }}>
             Teaching Certification:
@@ -822,7 +822,7 @@ const EditProfile: React.FC = () => {
                 </div>
 
                 {/* Contact Information */}
-                <div className="section-group">
+                <div className="input-group">
                   <h3 className="section-title">Contact Details</h3>
                   <div className="phone-input">
                     <label>Phone</label>
@@ -862,25 +862,25 @@ const EditProfile: React.FC = () => {
                     <label htmlFor="golf-levels" style={{ fontWeight: 'bold', marginBottom: '0.5rem', display: 'block', color: '#2e362e' }}>
                       Levels Teaching:
                     </label>
-                    <div id="golf-levels" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
-                      {Object.entries(GolfLevels)
-                        .filter(([key, value]) => isNaN(Number(key)) && Number(value) !== 7)
-                        .map(([label, value]) => (
-                          <div key={value} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <input
-                              type="checkbox"
-                              id={`level-${value}`}
-                              name="level"
-                              value={value}
-                              checked={formData.level.includes(Number(value))}
-                              onChange={(e) => handleCheckboxChange(e, Number(value))}
-                            />
-                            <label htmlFor={`level-${value}`} style={{ cursor: 'pointer' }}>
-                              {label}
-                            </label>
-                          </div>
-                        ))}
-                    </div>
+                    <div className="checkbox-grid">
+                    {Object.entries(GolfLevels)
+                      .filter(([key, value]) => isNaN(Number(key)) && Number(value) !== 7)
+                      .map(([label, value]) => (
+                        <div key={value} className="checkbox-option">
+                          <input
+                            type="checkbox"
+                            id={`level-${value}`}
+                            name="level"
+                            value={value}
+                            checked={formData.level.includes(Number(value))}
+                            onChange={(e) => handleCheckboxChange(e, Number(value))}
+                          />
+                          <label htmlFor={`level-${value}`}>
+                            {label}
+                          </label>
+                        </div>
+                      ))}
+                  </div>
                   </div>
                   
                   <div className="input-group" style={{ marginTop: '1rem' }}>

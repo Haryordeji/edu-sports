@@ -206,3 +206,25 @@
       padding: 1rem;
     }
   }
+  .checkbox-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+  
+  .checkbox-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .checkbox-option label {
+    cursor: pointer;
+    color: inherit;  /* To prevent the green color from .input-group label */
+  }
+  
+  .checkbox-option input[type="checkbox"] {
+    width: 1.2rem;
+    height: 1.2rem;
+    border: 2px solid var(--primary-green);
+  }
