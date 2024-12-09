@@ -17,6 +17,7 @@ interface Instructor {
   id: string;
   firstName: string;
   lastName: string;
+  level: number[];
 }
 
 const ScheduleEditor = () => {
@@ -30,7 +31,7 @@ const ScheduleEditor = () => {
     end: '',
     location: '',
     instructor: '',
-    level: 1
+    level: -1
   });
   const [instructors, setInstructors] = useState<Instructor[]>([]);
 
@@ -244,6 +245,25 @@ const ScheduleEditor = () => {
           />
         </div>
         <div className="form-field">
+          <label className="form-label">Level</label>
+          <select
+            name="level"
+            value={formData.level}
+            onChange={handleInputChange}
+            className="form-select"
+            required
+          >
+            <option value="" selected>Select a level</option>
+            <option value={0}>Wee Golfer</option>
+            <option value={1}>Academy Golfer Level 1</option>
+            <option value={2}>Academy Golfer Level 2</option>
+            <option value={3}>Club Golfer Level 3</option>
+            <option value={4}>Club Golfer Level 4</option>
+            <option value={5}>Tour Golfer Level 5</option>
+            <option value={6}>Tour Golfer Level 6</option>
+          </select>
+        </div>
+        <div className="form-field">
           <label className="form-label">Instructor</label>
           <select
             name="instructor"
@@ -253,27 +273,12 @@ const ScheduleEditor = () => {
             required
           >
             <option value="">Select an instructor</option>
-            {instructors.map((instructor) => (
+            // if instructor in list has level that matches class level, display in dropdown
+            {instructors.filter((instructor) => instructor.level.includes(formData.level)).map((instructor) => (
               <option key={instructor.id} value={`${instructor.firstName} ${instructor.lastName}`}>
                 {instructor.firstName} {instructor.lastName}
               </option>
             ))}
-          </select>
-        </div>
-        <div className="form-field">
-          <label className="form-label">Level</label>
-          <select
-            name="level"
-            value={formData.level}
-            onChange={handleInputChange}
-            className="form-select"
-            required
-          >
-            <option value={1}>Level 1</option>
-            <option value={2}>Level 2</option>
-            <option value={3}>Level 3</option>
-            <option value={4}>Level 4</option>
-            <option value={5}>Level 5</option>
           </select>
         </div>
         <div className="modal-footer">

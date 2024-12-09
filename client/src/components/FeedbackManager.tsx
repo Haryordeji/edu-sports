@@ -78,11 +78,6 @@ const FeedbackManager: React.FC = () => {
     fetchData();
   }, [golfer_id]);
 
-  // fail-safe in case, feedbackInfo is not set yet
-  useEffect(() => {
-    classes.filter(cl => cl.level != feedbackInfo?.level[0])
-  }, [feedbackInfo])
-
   const fetchUserFullName = async () => {
     try {
       const response = await instance.get(`/users/feedbackinfo/${golfer_id}`);
@@ -486,7 +481,8 @@ const FeedbackManager: React.FC = () => {
                   <option value="" disabled>
                     Select a class
                   </option>
-                  {classes.map((cls) => (
+                  // filter classes based on feedbackinfo level
+                  {classes.filter(cl => cl.level == feedbackInfo?.level[0]).map((cls) => (
                     <option key={cls.class_id} value={cls.class_id}>
                       {cls.title}
                     </option>

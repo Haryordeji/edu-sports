@@ -515,13 +515,14 @@ export const getInstructorsNameList = async (req: Request, res: Response) => {
     // Fetch all users with user_type 'instructor'
     const instructors = await models.User.findAll({
       where: { user_type: 'instructor' },
-      attributes: ['user_id', 'first_name', 'last_name']
+      attributes: ['user_id', 'first_name', 'last_name', 'level']
     });
 
     const formattedInstructors = instructors.map(instructor => ({
       id: instructor.user_id,
       firstName: instructor.first_name,
-      lastName: instructor.last_name
+      lastName: instructor.last_name,
+      level: instructor.level
     }));
 
     return res.status(200).json({
