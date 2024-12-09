@@ -100,25 +100,6 @@ const EditProfile: React.FC = () => {
         : null
     );
   };
-  
-
-  const handleLevelChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { checked, value } = event.target;
-    const levelIndex = Number(value);
-
-    setFormData((prevState) => {
-        if (!prevState) return null;
-        const currentLevels = prevState.level ?? []; 
-        const updatedLevels = checked
-            ? [...currentLevels, levelIndex]
-            : currentLevels.filter((level) => level !== levelIndex);
-        return {
-            ...prevState,
-            level: updatedLevels,
-        };
-    });
-  };
-
 
   const handleEmergencyContactPhoneChange = (
     field: keyof PhoneNumber, // Adjusted to match PhoneNumber keys
@@ -139,6 +120,20 @@ const EditProfile: React.FC = () => {
         : null
     );
   };
+
+  const handleLevelChangeForRadio = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    const levelIndex = Number(value);
+  
+    setFormData((prevState) => {
+      if (!prevState) return null;
+      return {
+        ...prevState,
+        level: [levelIndex],
+      };
+    });
+  };
+
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>, levelValue: number) => {
     setFormData((prevData) => {
       if (!prevData || !prevData.level) return prevData; // Ensure prevData and level are not null
@@ -356,6 +351,25 @@ const EditProfile: React.FC = () => {
                   {/* Golf Information */}
                   <div className="input-group">
                     <h3 className="section-title">Golf Experience</h3>
+                    <label>Select Golf Level(s):</label>
+
+                    <div className="radio-group">
+                      {Object.keys(GolfLevels)
+                        .filter((key) => isNaN(Number(key)) && key !== "Unassigned")
+                        .map((level, index) => (
+                          <label key={index} className="radio-option">
+                            <input
+                              type="radio"
+                              name="golf-level"
+                              value={index}
+                              checked={formData.level?.[0] === index}
+                              onChange={handleLevelChangeForRadio}
+                              required
+                            />
+                            {level}
+                          </label>
+                        ))}
+                    </div>
                     <label>Any Previous Golf Experience?</label>
                     <div className="radio-group">
                     {[
@@ -744,6 +758,7 @@ const EditProfile: React.FC = () => {
                   value={value}
                   checked={formData.level.includes(Number(value))}
                   onChange={(e) => handleCheckboxChange(e, Number(value))}
+                  required
                 />
                 <label htmlFor={`level-${value}`}>
                   {label}
