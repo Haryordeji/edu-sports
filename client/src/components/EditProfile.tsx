@@ -50,6 +50,10 @@ const EditProfile: React.FC = () => {
     setFormData((prev) => (prev ? { ...prev, [name]: value } : null));
   };
 
+  const handleBooleanInputChange = (name: string, value: string) => {
+    setFormData((prev) => (prev ? { ...prev, [name]: value === "true" } : null));
+  };
+
   const handleQuillInputChange = (value: any) => {
     value = DOMPurify.sanitize(value);
     setFormData((prevData) => {
@@ -227,11 +231,53 @@ const EditProfile: React.FC = () => {
                         required
                       />
                     </div>
+
+                    <div className="input-group">
+                      <label>Gender</label>
+                      <div className="radio-group">
+                        {['male', 'female', 'other'].map((gender) => (
+                          <label key={gender} className="radio-option">
+                            <input
+                              type="radio"
+                              name="gender"
+                              value={gender}
+                              checked={formData.gender === gender}
+                              onChange={handleInputChange}
+                            />
+                            {gender.charAt(0).toUpperCase() + gender.slice(1)}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="input-group">
+                      <label>Date of Birth</label>
+                      <input
+                        type="date"
+                        name="dateOfBirth"
+                        value={formData.dateOfBirth}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+
+                    <div className="input-group">
+                      <label>Height</label>
+                      <input
+                        type="text"
+                        name="height"
+                        value={formData.height}
+                        onChange={handleInputChange}
+                        placeholder="5'10''"
+                      />
+                    </div>
+
+                    
                   </div>
     
                   {/* Contact Information */}
                   <div className="section-group">
-                    <h3 className="section-title">Contact Information</h3>
+                    <h3 className="section-title">Contact Details</h3>
                     <div className="input-group">
                       <label>Address</label>
                       <input
@@ -276,7 +322,7 @@ const EditProfile: React.FC = () => {
                         />
                       </div>
                     </div>
-                    <div className="phone-input">
+                    <div className="input-group">
                       <label>Phone</label>
                       <div className="phone-parts">
                         <input
@@ -308,33 +354,31 @@ const EditProfile: React.FC = () => {
                   </div>
     
                   {/* Golf Information */}
-                  <div className="section-group">
-                    <h3 className="section-title">Golf Information</h3>
+                  <div className="input-group">
+                    <h3 className="section-title">Golf Experience</h3>
+                    <label>Any Previous Golf Experience?</label>
                     <div className="radio-group">
-                      <label>Golf Experience</label>
-                      <div className="experience-options">
-                        {[
-                          { value: 'none', label: 'None' },
-                          { value: 'veryLittle', label: 'Very Little' },
-                          { value: 'moderate', label: 'Moderate' },
-                          { value: 'aLot', label: 'A Lot' },
-                        ].map((option) => (
-                          <label key={option.value} className="radio-option">
-                            <input
-                              type="radio"
-                              name="golfExperience"
-                              value={option.value}
-                              checked={formData.golfExperience === option.value}
-                              onChange={handleInputChange}
-                            />
-                            {option.label}
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="handedness-group">
-                      <label>Handedness</label>
-                      <div className="radio-options">
+                    {[
+                      { value: 'none', label: 'None' },
+                      { value: 'veryLittle', label: 'Very Little' },
+                      { value: 'moderate', label: 'Moderate' },
+                      { value: 'aLot', label: 'A Lot' },
+                    ].map((option) => (
+                      <label key={option.value} className="radio-option">
+                        <input
+                          type="radio"
+                          name="golfExperience"
+                          value={option.value}
+                          checked={formData.golfExperience === option.value}
+                          onChange={handleInputChange}
+                        />
+                        {option.label}
+                      </label>
+                    ))}
+                  </div>
+                  <div className="input-group">
+                      <label>How did you hear about us?</label>
+                      <div className="radio-group">
                         <label className="radio-option">
                           <input
                             type="radio"
@@ -357,53 +401,199 @@ const EditProfile: React.FC = () => {
                         </label>
                       </div>
                     </div>
-                  </div>
-    
-                  {/* Personal Details */}
-                  <div className="section-group">
-                    <h3 className="section-title">Personal Details</h3>
-                    <div className="gender-group">
-                      <label>Gender</label>
-                      <div className="radio-options">
-                        {['male', 'female', 'other'].map((gender) => (
-                          <label key={gender} className="radio-option">
+                    <div className="input-group">
+                        <label>Have you taken lessons before?</label>
+                        <div className="radio-group">
+                          <label className="radio-option">
                             <input
                               type="radio"
-                              name="gender"
-                              value={gender}
-                              checked={formData.gender === gender}
-                              onChange={handleInputChange}
+                              name="previousLessons"
+                              value="true"
+                              checked={formData.previousLessons === true}
+                              onChange={(e) => handleBooleanInputChange(e.target.name, e.target.value)}
                             />
-                            {gender.charAt(0).toUpperCase() + gender.slice(1)}
+                            Yes
                           </label>
-                        ))}
+                          <label className="radio-option">
+                            <input
+                              type="radio"
+                              name="previousLessons"
+                              value="false"
+                              checked={formData.previousLessons === false}
+                              onChange={(e) => handleBooleanInputChange(e.target.name, e.target.value)}
+                            />
+                            No
+                          </label>
+                        </div>
                       </div>
+
+                      {formData.previousLessons && (
+                        <>
+                          <div className="input-group">
+                            <label>Lesson Duration</label>
+                            <input
+                              type="text"
+                              name="lessonDuration"
+                              value={formData.lessonDuration || ''}
+                              onChange={handleInputChange}
+                              placeholder="e.g., 6 months"
+                            />
+                          </div>
+                          <div className="input-group">
+                            <label>Previous Instructor</label>
+                            <input
+                              type="text"
+                              name="previousInstructor"
+                              value={formData.previousInstructor || ''}
+                              onChange={handleInputChange}
+                              placeholder="Instructor's name"
+                            />
+                          </div>
+                        </>
+                      )}
+                    {/* Referral Information */}
+                    <div className="section-group">
+                      <h3 className="section-title">Referral Information</h3>
+                      <div className="input-group">
+                        <label>How did you hear about us?</label>
+                        <select
+                          name="heardFrom"
+                          value={formData.heardFrom?.source || ''}
+                          onChange={(e) => {
+                            const updatedFormData: RegistrationFormData = {
+                              ...formData,
+                              heardFrom: {
+                                ...formData.heardFrom,
+                                source: e.target.value as "" | "event" | "media" | "school" | "internet" | "friend"
+                              }
+                            };
+                            setFormData(updatedFormData);
+                          }}
+                        >
+                          <option value="">Select an option</option>
+                          <option value="friend">Friend</option>
+                          <option value="internet">Internet</option>
+                          <option value="media">Media</option>
+                          <option value="school">School</option>
+                          <option value="event">Event</option>
+                        </select>
+                      </div>
+                      
+                      {formData.heardFrom?.source && formData.heardFrom.source !== 'internet' && formData.heardFrom.source !== 'media' && (
+                        <div className="input-group">
+                          <label>Referral Name</label>
+                          <input
+                            type="text"
+                            name="referralName"
+                            value={formData.heardFrom?.name || ''}
+                            onChange={(e) => {
+                              const updatedFormData: RegistrationFormData = {
+                                ...formData,
+                                heardFrom: {
+                                  ...formData.heardFrom,
+                                  name: e.target.value
+                                }
+                              };
+                              setFormData(updatedFormData);
+                            }}
+                            placeholder="Name of person who referred you"
+                          />
+                        </div>
+                      )}
                     </div>
-                    <div className="input-group">
-                      <label>Date of Birth</label>
-                      <input
-                        type="date"
-                        name="dateOfBirth"
-                        value={formData.dateOfBirth}
-                        onChange={handleInputChange}
-                        required
-                      />
                     </div>
-                    <div className="input-group">
-                      <label>Height</label>
-                      <input
-                        type="text"
-                        name="height"
-                        value={formData.height}
-                        onChange={handleInputChange}
-                        placeholder="5'10''"
-                      />
-                    </div>
-                  </div>
+    
+                  
     
                   {/* Emergency Contact Section */}
-                  <div className="emergency-section">
-                    <h3>Emergency Contact</h3>
+                    <div className="section-group">
+                      <h3 className="section-title">Emergency Contact</h3>
+                      <div className="input-group">
+                        <label>Emergency Contact Name</label>
+                        <input
+                          type="text"
+                          name="emergencyContactName"
+                          value={formData.emergencyContact?.name || ''}
+                          onChange={(e) => setFormData(prev => 
+                            prev ? {
+                              ...prev,
+                              emergencyContact: {
+                                ...prev.emergencyContact,
+                                name: e.target.value
+                              }
+                            } : null
+                          )}
+                          required
+                        />
+                      </div>
+                      
+                      <div className="input-group">
+                        <label>Relationship</label>
+                        <input
+                          type="text"
+                          name="emergencyContactRelationship"
+                          value={formData.emergencyContact?.relationship || ''}
+                          onChange={(e) => setFormData(prev => 
+                            prev ? {
+                              ...prev,
+                              emergencyContact: {
+                                ...prev.emergencyContact,
+                                relationship: e.target.value
+                              }
+                            } : null
+                          )}
+                          required
+                        />
+                      </div>
+                      
+                      <div className="input-group">
+                        <label>Emergency Contact Phone</label>
+                        <div className="phone-parts">
+                          <input
+                            type="text"
+                            value={formData.emergencyContact?.phone?.areaCode || ''}
+                            onChange={(e) => handleEmergencyContactPhoneChange('areaCode', e.target.value)}
+                            maxLength={3}
+                            placeholder="Area Code"
+                            required
+                          />
+                          <input
+                            type="text"
+                            value={formData.emergencyContact?.phone?.prefix || ''}
+                            onChange={(e) => handleEmergencyContactPhoneChange('prefix', e.target.value)}
+                            maxLength={3}
+                            placeholder="Prefix"
+                            required
+                          />
+                          <input
+                            type="text"
+                            value={formData.emergencyContact?.phone?.lineNumber || ''}
+                            onChange={(e) => handleEmergencyContactPhoneChange('lineNumber', e.target.value)}
+                            maxLength={4}
+                            placeholder="Line Number"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Medical Information */}
+                    <div className="section-group">
+                      <h3 className="section-title">Medical Information</h3>
+                      <div className="input-group">
+                        <label>Medical Information</label>
+                        <ReactQuill
+                          value={formData.medicalInformation || ''}
+                          onChange={(value) => setFormData(prev => 
+                            prev ? {
+                              ...prev,
+                              medicalInformation: value
+                            } : null
+                          )}
+                          placeholder="Please provide any relevant medical information..."
+                        />
+                      </div>
+                    </div>
                     <div className="input-group">
                       <label>Physician's Name</label>
                       <input
@@ -414,7 +604,7 @@ const EditProfile: React.FC = () => {
                         required
                       />
                     </div>
-                    <div className="phone-input">
+                    <div className="input-group">
                       <label>Physician Phone</label>
                       <div className="phone-parts">
                         <input
@@ -443,7 +633,7 @@ const EditProfile: React.FC = () => {
                         />
                       </div>
                     </div>
-                  </div>
+                    
                 </form>
               )}
             </div>
@@ -454,125 +644,127 @@ const EditProfile: React.FC = () => {
     if (profile.user_type.toLowerCase() === 'admin') {
       return (
         <>
-          <div className="section-group">
-            <h3 className="section-title">Admin Information</h3>
-            <div className="input-group">
-              <label htmlFor="firstName">First Name</label>
-              <input
-                type="text"
-                id="firstName"
-                name="firstName"
-                value={formData.firstName || ''}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div className="input-group">
-                      <label htmlFor="middleInitial">Middle Name</label>
-                      <input
-                        type="text"
-                        id="middleInitial"
-                        name="middleInitial"
-                        value={formData.middleInitial || ''}
-                        onChange={(e) => handleNameChange('middleInitial', e.target.value)}
-                      />
-              </div>
-            <div className="input-group">
-              <label htmlFor="lastName">Last Name</label>
-              <input
-                type="text"
-                id="lastName"
-                name="lastName"
-                value={formData.lastName || ''}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div className="input-group">
-              <label>Email</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            {/* Contact Information */}
-            <div className="section-group">
-                    <h3 className="section-title">Contact Information</h3>
-                    <div className="phone-input">
-                      <label>Phone</label>
-                      <div className="phone-parts">
-                        <input
-                          type="text"
-                          value={formData.Phone?.areaCode || ''}
-                          onChange={(e) => handlePhoneChange('areaCode', e.target.value)}
-                          maxLength={3}
-                          placeholder="Area Code"
-                          required
-                        />
-                        <input
-                          type="text"
-                          value={formData.Phone?.prefix || ''}
-                          onChange={(e) => handlePhoneChange('prefix', e.target.value)}
-                          maxLength={3}
-                          placeholder="Prefix"
-                          required
-                        />
-                        <input
-                          type="text"
-                          value={formData.Phone?.lineNumber || ''}
-                          onChange={(e) => handlePhoneChange('lineNumber', e.target.value)}
-                          maxLength={4}
-                          placeholder="Line Number"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
+          {/* Admin Information Section */}
+        <div className="section-group">
+          <h3 className="section-title">Admin Information</h3>
+          <div className="input-group">
+            <label htmlFor="firstName">First Name</label>
+            <input
+              type="text"
+              id="firstName"
+              name="firstName"
+              value={formData.firstName || ''}
+              onChange={(e) => handleNameChange('firstName', e.target.value)}
+              required
+            />
+          </div>
+          <div className="input-group">
+            <label htmlFor="middleInitial">Middle Name</label>
+            <input
+              type="text"
+              id="middleInitial"
+              name="middleInitial"
+              value={formData.middleInitial || ''}
+              onChange={(e) => handleNameChange('middleInitial', e.target.value)}
+            />
+          </div>
+          <div className="input-group">
+            <label htmlFor="lastName">Last Name</label>
+            <input
+              type="text"
+              id="lastName"
+              name="lastName"
+              value={formData.lastName || ''}
+              onChange={(e) => handleNameChange('lastName', e.target.value)}
+              required
+            />
+          </div>
+          <div className="input-group">
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+        </div>
 
-            {/* Golf Information */}
-            <div className="section-group">
-                    <h3 className="section-title">Golf Information</h3>
-                    <div>
-                    <label htmlFor="golf-levels" style={{ fontWeight: 'bold', marginBottom: '0.5rem', display: 'block', color: '#2e362e' }}>
-                      Levels Teaching:
-                    </label>
-                    <div id="golf-levels" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
-                      {Object.entries(GolfLevels)
-                        .filter(([key, value]) => isNaN(Number(key)) && Number(value) !== 7)
-                        .map(([label, value])  => (
-                          <div key={value} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <input
-                              type="checkbox"
-                              id={`level-${value}`}
-                              name="level"
-                              value={value}
-                              checked={formData.level.includes(Number(value))}
-                              onChange={(e) => handleCheckboxChange(e, Number(value))}
-                            />
-                            <label htmlFor={`level-${value}`} style={{ cursor: 'pointer' }}>
-                              {label}
-                            </label>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                  <label htmlFor="golf-levels" style={{ fontWeight: 'bold', marginTop: '0.5rem', marginBottom: '0.5rem', display: 'block', color: '#2e362e' }}>
-                      Teaching Certification:
-                    </label>
-                  <div className='new-instructor-quill'>
-                  <ReactQuill
-                    id="experience"
-                    placeholder="Experience and Certifications"
-                    value={formData?.golfExperience || ''} // Ensure golfExperience exists
-                    onChange={handleQuillInputChange}
-                    style={{ height: "200px" }}
-                  />
-            </div>
+        {/* Contact Information */}
+        <div className="section-group">
+          <h3 className="section-title">Contact Details</h3>
+          <div className="phone-input">
+            <label>Phone</label>
+            <div className="phone-parts">
+              <input
+                type="text"
+                value={formData.Phone?.areaCode || ''}
+                onChange={(e) => handlePhoneChange('areaCode', e.target.value)}
+                maxLength={3}
+                placeholder="Area Code"
+                required
+              />
+              <input
+                type="text"
+                value={formData.Phone?.prefix || ''}
+                onChange={(e) => handlePhoneChange('prefix', e.target.value)}
+                maxLength={3}
+                placeholder="Prefix"
+                required
+              />
+              <input
+                type="text"
+                value={formData.Phone?.lineNumber || ''}
+                onChange={(e) => handlePhoneChange('lineNumber', e.target.value)}
+                maxLength={4}
+                placeholder="Line Number"
+                required
+              />
             </div>
           </div>
+        </div>
+
+        {/* Golf Information */}
+        <div className="section-group">
+          <h3 className="section-title">Golf Experience</h3>
+          <div>
+            <label htmlFor="golf-levels" style={{ fontWeight: 'bold', marginBottom: '0.5rem', display: 'block', color: '#2e362e' }}>
+              Levels Teaching:
+            </label>
+            <div id="golf-levels" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+              {Object.entries(GolfLevels)
+                .filter(([key, value]) => isNaN(Number(key)) && Number(value) !== 7)
+                .map(([label, value]) => (
+                  <div key={value} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <input
+                      type="checkbox"
+                      id={`level-${value}`}
+                      name="level"
+                      value={value}
+                      checked={formData.level.includes(Number(value))}
+                      onChange={(e) => handleCheckboxChange(e, Number(value))}
+                    />
+                    <label htmlFor={`level-${value}`} style={{ cursor: 'pointer' }}>
+                      {label}
+                    </label>
+                  </div>
+                ))}
+            </div>
+          </div>
+          <label htmlFor="golf-levels" style={{ fontWeight: 'bold', marginTop: '0.5rem', marginBottom: '0.5rem', display: 'block', color: '#2e362e' }}>
+            Teaching Certification:
+          </label>
+          <div className='new-instructor-quill'>
+            <ReactQuill
+              id="experience"
+              placeholder="Experience and Certifications"
+              value={formData?.golfExperience || ''} 
+              onChange={handleQuillInputChange}
+              style={{ height: "200px" }}
+            />
+          </div>
+        </div>
         </>
       );
     }
@@ -583,87 +775,97 @@ const EditProfile: React.FC = () => {
               {formData && (
                 <form onSubmit={handleSubmit}>
                   {/* Personal Information */}
-                  <div className="section-group">
-                    <h3 className="section-title">Personal Information</h3>
-                    <div className="input-group">
-                      <label htmlFor="firstName">First Name</label>
+                <div className="section-group">
+                  <h3 className="section-title">Personal Information</h3>
+                  <div className="input-group">
+                    <label htmlFor="firstName">First Name</label>
+                    <input
+                      type="text"
+                      id="firstName"
+                      name="firstName"
+                      value={formData.firstName || ''}
+                      onChange={(e) => handleNameChange('firstName', e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="input-group">
+                    <label htmlFor="middleInitial">Middle Name</label>
+                    <input
+                      type="text"
+                      id="middleInitial"
+                      name="middleInitial"
+                      value={formData.middleInitial || ''}
+                      onChange={(e) => handleNameChange('middleInitial', e.target.value)}
+                    />
+                  </div>
+                  <div className="input-group">
+                    <label htmlFor="lastName">Last Name</label>
+                    <input
+                      type="text"
+                      id="lastName"
+                      name="lastName"
+                      value={formData.lastName || ''}
+                      onChange={(e) => handleNameChange('lastName', e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="input-group">
+                    <label>Email</label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Contact Information */}
+                <div className="section-group">
+                  <h3 className="section-title">Contact Details</h3>
+                  <div className="phone-input">
+                    <label>Phone</label>
+                    <div className="phone-parts">
                       <input
                         type="text"
-                        id="firstName"
-                        name="firstName"
-                        value={formData.firstName || ''}
-                        onChange={(e) => handleNameChange('firstName', e.target.value)}
+                        value={formData.Phone?.areaCode || ''}
+                        onChange={(e) => handlePhoneChange('areaCode', e.target.value)}
+                        maxLength={3}
+                        placeholder="Area Code"
                         required
                       />
-                    </div>
-                    <div className="input-group">
-                      <label htmlFor="middleInitial">Middle Name</label>
                       <input
                         type="text"
-                        id="middleInitial"
-                        name="middleInitial"
-                        value={formData.middleInitial || ''}
-                        onChange={(e) => handleNameChange('middleInitial', e.target.value)}
+                        value={formData.Phone?.prefix || ''}
+                        onChange={(e) => handlePhoneChange('prefix', e.target.value)}
+                        maxLength={3}
+                        placeholder="Prefix"
+                        required
                       />
-                    </div>
-                    <div className="input-group">
-                      <label htmlFor="lastName">Last Name</label>
                       <input
                         type="text"
-                        id="lastName"
-                        name="lastName"
-                        value={formData.lastName || ''}
-                        onChange={(e) => handleNameChange('lastName', e.target.value)}
+                        value={formData.Phone?.lineNumber || ''}
+                        onChange={(e) => handlePhoneChange('lineNumber', e.target.value)}
+                        maxLength={4}
+                        placeholder="Line Number"
                         required
                       />
                     </div>
                   </div>
-    
-                  {/* Contact Information */}
-                  <div className="section-group">
-                    <h3 className="section-title">Contact Information</h3>
-                    <div className="phone-input">
-                      <label>Phone</label>
-                      <div className="phone-parts">
-                        <input
-                          type="text"
-                          value={formData.Phone?.areaCode || ''}
-                          onChange={(e) => handlePhoneChange('areaCode', e.target.value)}
-                          maxLength={3}
-                          placeholder="Area Code"
-                          required
-                        />
-                        <input
-                          type="text"
-                          value={formData.Phone?.prefix || ''}
-                          onChange={(e) => handlePhoneChange('prefix', e.target.value)}
-                          maxLength={3}
-                          placeholder="Prefix"
-                          required
-                        />
-                        <input
-                          type="text"
-                          value={formData.Phone?.lineNumber || ''}
-                          onChange={(e) => handlePhoneChange('lineNumber', e.target.value)}
-                          maxLength={4}
-                          placeholder="Line Number"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
-    
-                  {/* Golf Information */}
-                  <div className="section-group">
-                    <h3 className="section-title">Golf Information</h3>
-                    <div>
+                </div>
+
+                {/* Instructor Information */}
+                <div className="section-group">
+                  <h3 className="section-title">Golf Experience</h3>
+                  <div>
                     <label htmlFor="golf-levels" style={{ fontWeight: 'bold', marginBottom: '0.5rem', display: 'block', color: '#2e362e' }}>
                       Levels Teaching:
                     </label>
                     <div id="golf-levels" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
                       {Object.entries(GolfLevels)
                         .filter(([key, value]) => isNaN(Number(key)) && Number(value) !== 7)
-                        .map(([label, value])  => (
+                        .map(([label, value]) => (
                           <div key={value} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                             <input
                               type="checkbox"
@@ -680,19 +882,21 @@ const EditProfile: React.FC = () => {
                         ))}
                     </div>
                   </div>
-                  <label htmlFor="golf-levels" style={{ fontWeight: 'bold', marginTop: '0.5rem', marginBottom: '0.5rem', display: 'block', color: '#2e362e' }}>
-                      Teaching Certification:
+                  
+                  <div className="input-group" style={{ marginTop: '1rem' }}>
+                    <label htmlFor="golf-levels" style={{ fontWeight: 'bold', marginBottom: '0.5rem', display: 'block', color: '#2e362e' }}>
+                      Teaching Certification & Experience:
                     </label>
-                  <div className='new-instructor-quill'>
-
-                  <ReactQuill
-                    id="experience"
-                    placeholder="Experience and Certifications"
-                    value={formData?.golfExperience || ''} // Ensure golfExperience exists
-                    onChange={handleQuillInputChange}
-                    style={{ height: "200px" }}
-                  />
-                </div>
+                    <div className='new-instructor-quill'>
+                      <ReactQuill
+                        id="experience"
+                        placeholder="Enter your golf teaching certifications and experience..."
+                        value={formData?.golfExperience || ''}
+                        onChange={handleQuillInputChange}
+                        style={{ height: "200px" }}
+                      />
+                    </div>
+                  </div>
                 </div>
                 </form>
               )}
@@ -732,7 +936,6 @@ const EditProfile: React.FC = () => {
           </button>
         </div>
         <div className="form-section">
-          <h2 className="section-title">Edit Profile</h2>
           <form onSubmit={handleSubmit}>
             {renderFormByUserType()}
             <button type="submit" className="save-button">
