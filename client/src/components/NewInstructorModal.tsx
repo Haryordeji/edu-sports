@@ -97,7 +97,8 @@ const NewInstructorModal: React.FC<NewInstructorModalProps> = ({ onClose, onSucc
   };
 
   const handleQuillInputChange = (value: string) => {
-    setFormData(prev => ({ ...prev, golf_experience: value }));
+    value = DOMPurify.sanitize(value);
+    setFormData(prev => ({ ...prev, golf_experience: value.trim() }));
   };
 
   const validateForm = () => {

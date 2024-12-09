@@ -4,6 +4,7 @@ import instance from '../utils/axios';
 import { GolfLevels, RegistrationFormData, PhoneNumber } from '../interfaces';
 import "./editProfile.css";
 import ReactQuill from 'react-quill';
+import DOMPurify from 'dompurify';
 
 interface ProfileResponse {
   success: boolean;
@@ -50,9 +51,10 @@ const EditProfile: React.FC = () => {
   };
 
   const handleQuillInputChange = (value: any) => {
+    value = DOMPurify.sanitize(value);
     setFormData((prevData) => {
       if (!prevData) return null; // Check for null
-      return { ...prevData, golfExperience: value }; // Corrected property name
+      return { ...prevData, golfExperience: value.trim() }; // Corrected property name
     });
   };
 

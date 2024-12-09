@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import instance from '../utils/axios';
 import './global.css';
+import ReactQuill from 'react-quill';
+import DOMPurify from 'dompurify';
 
 interface Feedback {
   feedback_id: string;
@@ -199,13 +201,21 @@ const GolferFeedbackManager: React.FC = () => {
             <p><strong>Class:</strong> {expandedFeedback.class}</p>
             <p><strong>Instructor:</strong> {expandedFeedback.instructor_name}</p>
             <p><strong>Created At:</strong> {new Date(expandedFeedback.createdAt).toLocaleString()}</p>
-            <p>{expandedFeedback.note_content}</p>
+            <div
+              className = "feedback-content"
+              dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(expandedFeedback.note_content),
+                  }}
+            >
+            </div>
             <h4>Comments:</h4>
-            <textarea
-              value={commentContent}
-              onChange={(e) => setCommentContent(e.target.value)}
+            <ReactQuill
+              id="new-comment"
               placeholder="Add a comment..."
-              style={{ width: '100%', margin: '1rem 0', padding: '0.5rem' }}
+              value={commentContent}
+              onChange={(value) => setCommentContent(DOMPurify.sanitize(value.trim()))}
+              style={{ height: "200px", paddingBottom: "2rem" }}
+              
             />
             <button onClick={handleAddComment} disabled={isLoading}>
               {isLoading ? 'Adding...' : 'Add Comment'}
@@ -219,11 +229,14 @@ const GolferFeedbackManager: React.FC = () => {
                     <p><strong>{comment.author_name}</strong> on {new Date(comment.createdAt).toLocaleString()}</p>
                     {editingCommentId === comment.comment_id ? (
                       <div>
-                        <textarea
-                          value={commentContent}
-                          onChange={(e) => setCommentContent(e.target.value)}
-                          style={{ width: '100%', margin: '0.5rem 0' }}
-                        />
+                    <ReactQuill
+                      id="edit-commit"
+                      placeholder="edit comment"
+                      value={commentContent}
+                      onChange={(value) => setCommentContent(DOMPurify.sanitize(value.trim()))}
+                      style={{ height: "200px", paddingBottom: '2rem' }}
+                      
+                    />
                         <button onClick={handleSaveComment} disabled={isLoading}>
                           {isLoading ? 'Saving...' : 'Save'}
                         </button>
@@ -231,7 +244,13 @@ const GolferFeedbackManager: React.FC = () => {
                       </div>
                     ) : (
                       <div>
-                        <p>{comment.content}</p>
+                        <div
+                          className = "comment-content"
+                          dangerouslySetInnerHTML={{
+                                __html: DOMPurify.sanitize(comment.content),
+                              }}
+                        >
+                        </div>
                         <button onClick={() => handleEditComment(comment)}>Edit</button>
                         <button 
                           onClick={() => handleDeleteComment(comment.comment_id)}

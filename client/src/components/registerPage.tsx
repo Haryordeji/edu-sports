@@ -227,7 +227,7 @@ const RegistrationPage: React.FC = () => {
   const handleQuillInputChange = (value: string) => {
     setFormData(prev => ({
       ...prev,
-      medicalInformation: DOMPurify.sanitize(value)
+      medicalInformation: DOMPurify.sanitize(value.trim())
     }));
   };
 

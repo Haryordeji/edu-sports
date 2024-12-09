@@ -403,7 +403,7 @@ const FeedbackManager: React.FC = () => {
               id="new-comment"
               placeholder="Add a comment..."
               value={commentContent}
-              onChange={(value) => setCommentContent(value.trim())}
+              onChange={(value) => setCommentContent(DOMPurify.sanitize(value.trim()))}
               style={{ height: "200px", paddingBottom: "2rem" }}
               
             />
@@ -426,7 +426,7 @@ const FeedbackManager: React.FC = () => {
                       id="edit-commit"
                       placeholder="edit comment"
                       value={commentContent}
-                      onChange={(value) => setCommentContent(value.trim())}
+                      onChange={(value) => setCommentContent(DOMPurify.sanitize(value.trim()))}
                       style={{ height: "200px", paddingBottom: '2rem' }}
                       
                     />
@@ -498,7 +498,7 @@ const FeedbackManager: React.FC = () => {
                 id="feedback-box"
                 placeholder="Write your feedback here"
                 value={noteContent}
-                onChange={(value) => setNoteContent(value.trim())}
+                onChange={(value) => setNoteContent(DOMPurify.sanitize(value.trim()))}
                 style={{ height: "200px" }}
               />
               </div>
