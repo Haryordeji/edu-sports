@@ -106,11 +106,27 @@ const AdminDashboard: React.FC = () => {
         });
         return acc;
       }, {} as { [key: string]: User[] });
+
+    const levelOrder = [
+      "Unassigned",
+      "Wee Golfer",
+      "Academy Golfer Level 1",
+      "Academy Golfer Level 2",
+      "Club Golfer Level 3",
+      "Club Golfer Level 4",
+      "Tour Golfer Level 5",
+      "Tour Golfer Level 6"
+    ];
+
+    // Sort the entries based on the defined order
+    const sortedLevels = Object.entries(usersByLevel).sort(([a], [b]) => {
+      return levelOrder.indexOf(a) - levelOrder.indexOf(b);
+    });
   
-      const totalCount = Object.values(usersByLevel).reduce((uniqueUsers, users) => {
-        users.forEach((user) => uniqueUsers.add(user.user_id));
-        return uniqueUsers;
-      }, new Set<string>()).size;
+    const totalCount = Object.values(usersByLevel).reduce((uniqueUsers, users) => {
+      users.forEach((user) => uniqueUsers.add(user.user_id));
+      return uniqueUsers;
+    }, new Set<string>()).size;
       
   
     return (
@@ -145,7 +161,7 @@ const AdminDashboard: React.FC = () => {
               padding: "1rem",
             }}
           >
-            {Object.entries(usersByLevel).map(([levelName, levelUsers]) => (
+            {sortedLevels.map(([levelName, levelUsers]) => (
               <div key={levelName} style={{ marginLeft: "1rem" }}>
                 <h3 style={{ 
                   marginBottom: "0.5rem", 
