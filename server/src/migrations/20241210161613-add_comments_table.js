@@ -7,15 +7,25 @@ module.exports = {
         type: Sequelize.UUID,
         primaryKey: true,
         allowNull: false,
-        defaultValue:  Sequelize.UUIDV4
+        defaultValue: Sequelize.UUIDV4
       },
       feedback_id: {
         type: Sequelize.UUID,
-        allowNull: false
+        allowNull: false,
+        references: {
+          model: 'feedback',
+          key: 'feedback_id'
+        },
+        onDelete: 'CASCADE'
       },
       author_id: {
         type: Sequelize.UUID,
-        allowNull: false
+        allowNull: false,
+        references: {
+          model: 'users',
+          key: 'user_id'
+        },
+        onDelete: 'CASCADE'
       },
       content: {
         type: Sequelize.TEXT,
@@ -23,15 +33,12 @@ module.exports = {
       },
       createdAt: {
         type: Sequelize.DATE,
-        allowNull: true,
-        defaultValue: Sequelize.NOW
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       updatedAt: {
         type: Sequelize.DATE,
-        allowNull: true,
-        defaultValue: Sequelize.NOW
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
-    }, {
     });
   },
 

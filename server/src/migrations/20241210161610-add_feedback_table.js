@@ -7,19 +7,34 @@ module.exports = {
         type: Sequelize.UUID,
         primaryKey: true,
         allowNull: false,
-        defaultValue:  Sequelize.UUIDV4
+        defaultValue: Sequelize.UUIDV4
       },
       instructor_id: {
         type: Sequelize.UUID,
-        allowNull: false
+        allowNull: false,
+        references: {
+          model: 'users',
+          key: 'user_id'
+        },
+        onDelete: 'CASCADE'
       },
       golfer_id: {
         type: Sequelize.UUID,
-        allowNull: false
+        allowNull: false,
+        references: {
+          model: 'users',
+          key: 'user_id'
+        },
+        onDelete: 'CASCADE'
       },
       class_id: {
         type: Sequelize.UUID,
-        allowNull: false
+        allowNull: false,
+        references: {
+          model: 'classes',
+          key: 'class_id'
+        },
+        onDelete: 'CASCADE'
       },
       note_content: {
         type: Sequelize.TEXT,
@@ -27,13 +42,11 @@ module.exports = {
       },
       createdAt: {
         type: Sequelize.DATE,
-        allowNull: true,
-        defaultValue: Sequelize.NOW
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       updatedAt: {
         type: Sequelize.DATE,
-        allowNull: true,
-        defaultValue: Sequelize.NOW
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
     });
   },
