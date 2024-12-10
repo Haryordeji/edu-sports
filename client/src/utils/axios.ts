@@ -1,12 +1,13 @@
 import axios from 'axios';
-
+axios.defaults.withCredentials = true;
 const instance = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
   timeout:10000,
+  withCredentials: true,
   headers: {
+    'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/json'
   },
-  withCredentials: true
 });
 
 instance.interceptors.request.use(

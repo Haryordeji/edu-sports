@@ -33,6 +33,9 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ levelProp }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [defaultView, setDefaultView] = useState("");
 
+  const storedUserJson = localStorage.getItem('user');
+  const userType = storedUserJson ? JSON.parse(storedUserJson).user_type : '';
+
   useEffect(() => {
     const updateDefaultView = () => {
       const isMobile = window.innerWidth < 760; 
@@ -62,11 +65,15 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ levelProp }) => {
           withCredentials: true
         });
         const { data } = response;
-        const parsedEvents = data.classes.map((event: any) => ({
-          ...event,
-          start: new Date(event.start),
-          end: new Date(event.end),
-        }));
+        const parsedEvents = data.classes.map((event: any) => {
+          const startDate = moment.utc(event.start).local().toDate();
+          const endDate = moment.utc(event.end).local().toDate();
+          return { ...event,
+            start: startDate,
+            end: endDate,
+          };
+        });
+
         setEvents(parsedEvents);
         setError(null);
       } catch (error) {
@@ -76,7 +83,7 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ levelProp }) => {
     };
 
     fetchEvents();
-  }, []);
+  }, [levelProp]);
 
   const handleEventSelect = (event: Event) => {
     setSelectedEvent(event);
@@ -96,6 +103,9 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ levelProp }) => {
     </div>
   );
 
+  const minTime = moment().set({ hour: 9, minute: 0 }).toDate();
+  const maxTime = moment().set({ hour: 18, minute: 0 }).toDate();
+
   return (
     <div style={{ height: '500px' }}>
       {error && (
@@ -114,8 +124,8 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ levelProp }) => {
       }}
       views={[Views.DAY, Views.WEEK, Views.AGENDA]}
       defaultView={"day"}
-      min={new Date(2024, 10, 8, 9, 0)}
-      max={new Date(2024, 10, 8, 18, 0)}
+      min={minTime}
+      max={maxTime}
       onSelectEvent={handleEventSelect}
       className="custom-calendar"
     />
@@ -125,29 +135,55 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ levelProp }) => {
         onRequestClose={closeModal}
         contentLabel="Event Details"
         ariaHideApp={false}
+        className="class-card event-modal"
+        overlayClassName="modal-overlay"
         style={{
           content: {
-            width: '400px',
-            height: '300px',
+            padding: '1.5rem',
+            width: '90%',
+            maxWidth: '450px',
             margin: 'auto',
-            padding: '20px',
-            borderRadius: '10px',
-          },
-          overlay: {
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          },
+            fontFamily: 'Inter, sans-serif'
+          }
         }}
       >
+        <button onClick={closeModal} className="close-btn">&times;</button>
         {selectedEvent && (
           <div>
-            <h2>{selectedEvent.title}</h2>
-            <p><strong>Instructor:</strong> {selectedEvent.instructor}</p>
-            <p><strong>Time:</strong> {moment(selectedEvent.start).format('h:mm a')} - {moment(selectedEvent.end).format('h:mm a')}</p>
-            <p><strong>Location:</strong> {selectedEvent.location}</p>
-            <p><strong>Level:</strong> {selectedEvent.level}</p>
+            <div className="class-title" style={{ paddingRight: '2.5rem', marginBottom: '1rem', fontFamily: 'Inter, sans-serif', fontWeight: 600 }}>{selectedEvent.title}</div>
+            <div className="class-info" style={{ fontFamily: 'Inter, sans-serif' }}>
+              <div className="info-row">
+                <span className="info-label">Instructor:</span>
+                <span>{selectedEvent.instructor}</span>
+              </div>
+              <div className="info-row">
+                <span className="info-label">Time:</span>
+                <span>{moment(selectedEvent.start).format('h:mm a')} - {moment(selectedEvent.end).format('h:mm a')}</span>
+              </div>
+              <div className="info-row">
+                <span className="info-label">Location:</span>
+                <span>{selectedEvent.location}</span>
+              </div>
+              <div className="info-row">
+                <span className="info-label">Level:</span>
+                <span>{selectedEvent.level}</span>
+              </div>
+            </div>
           </div>
         )}
       </Modal>
+      {userType === 'golfer' && (
+        <div style={{
+          marginTop: '20px',
+          padding: '15px',
+          borderTop: '1px solid #ddd',
+          textAlign: 'center',
+          fontSize: '14px',
+          color: '#666'
+        }}>
+          <p>If attending lessons at Willingboro location, please use the following link to register: <a href="http://willingbororec.com/" target="_blank" rel="noopener noreferrer">http://willingbororec.com/</a></p>
+        </div>
+      )}
     </div>
   );
 };

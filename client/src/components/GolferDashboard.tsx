@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import ProfileDropdown from './ProfileDropdown';
 import WeeklyCalendar from './WeeklyCalendar';
 import './global.css';
@@ -40,9 +40,11 @@ const GolferDashboard: React.FC = () => {
             padding: '1rem', 
           }}
         >
-          <div className="logo">
-            <img src="/swing2tee_logo.png" alt="Swing 2 Tee Logo" />
-          </div>
+               <div className="logo" onClick={() => handleTabChange("schedule")}>
+          <Link to={`/golfer/dashboard/${storedUserId}/?tab=schedule`}>
+             <img src='/swing2tee_logo.png' alt="Swing 2 Tee Logo" />
+          </Link>
+        </div>
           <div className="profile">
             <ProfileDropdown user_id={storedUserId} user_type={storedUserType} />
           </div>

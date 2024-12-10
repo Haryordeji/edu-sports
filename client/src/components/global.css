@@ -1,5 +1,12 @@
  /*
  This CSS is imported to more than one component */
+.body {
+  font-family: 'Inter', Arial;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #111827;
+}
 
 :root{
   --primary-green: #B4E5AF;
@@ -11,12 +18,12 @@
     width: 100%;
     margin: 0;
     padding: 0;
-    border: 1px solid #B4E5AF;
+    border: 1px solid var(--primary-green);
   }
   
   .dashboard-header {
     background: #FFFFFF;
-    border-bottom: 1px solid #B4E5AF;
+    border-bottom: 1px solid var(--primary-green);
     height: 180px;
   }
   
@@ -35,7 +42,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    border-top: 1px solid #B4E5AF;
+    border-top: 1px solid var(--primary-green);
   }
   
   .nav-links {
@@ -78,6 +85,11 @@
   font-size: 1.25rem;
   font-weight: 600;
   color: #0e5f04;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 .dropdown-toggle {
   font-size: 1.2rem;
@@ -152,7 +164,6 @@
   background: none;
   border: none;
   color: #000;
-  font-family: 'Inter', sans-serif;
   font-size: 16px;
   cursor: pointer;
   padding: 0.5rem 0;
@@ -213,7 +224,7 @@
   color: #000;
   margin-bottom: 1.5rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid #B4E5AF;
+  border-bottom: 2px solid var(--primary-green);
 }
 
 .info-group {
@@ -390,7 +401,7 @@
   width: 90%;
   height: 36px;
   padding: 0 1.5rem;
-  background: #B4E5AF;
+  background: var(--primary-green)F;
   border: 1px solid #000000;
   border-radius: 20px;
   font-family: 'Roboto', sans-serif;
@@ -602,20 +613,23 @@
 }
 
 .modal-overlay {
+  font-family: 'Inter', sans-serif;
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.2); /* Lighter overlay for focus */
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; /* Changed from center to flex-start */
+  overflow-y: auto; /* Enable scrolling on overlay */
+  padding: 2rem 1rem; /* Add padding to keep content from touching edges */
   z-index: 1000;
-  overflow-y: auto; /* Allow scrolling for the overlay */
 }
 
 .modal {
+  position: relative;
   background: #FFFFFF;
   padding: 1.5rem;
   border-radius: 0.375rem;
@@ -625,16 +639,6 @@
   max-width: 500px;
   max-height: 90vh; 
   overflow-y: auto; 
-}
-
-.close-btn {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  background: transparent;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
 }
 
 textarea {
@@ -657,7 +661,7 @@ textarea {
 }
 
 .modal input {
-    border: 1px solid var(--primary-green); /* Matches calendar border styles */
+    border: 1px solid var(--primary-green);
     border-radius: 0.375rem;
     padding: 0.5rem;
     font-size: 16px;
@@ -666,7 +670,7 @@ textarea {
 }
 
 .modal input::placeholder {
-    color: #6B7280; /* Neutral placeholder color */
+    color: #6B7280;
 }
 
 .modal .modal-buttons {
@@ -828,51 +832,323 @@ textarea {
 
 /* these styles are suppossed to be for AdminDashboard.tsx
 in the academy buttons. */
+/* Updated User Card Styles */
+.user-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: white;
+  border-radius: 8px;
+  border: 1px solid #E5E7EB;
+  margin-bottom: 0.5rem;
+  transition: all 0.2s ease-in-out;
+}
 
-/*  
-.action-button {
+.user-card:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  background-color: #fafff2;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.user-name {
+  font-weight: 500;
+  color: #111827;
+}
+
+.user-email {
+  font-size: 0.875rem;
+  color: #6B7280;
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+}
+
+.user-email:hover {
+  color: #0e5f04;
+}
+
+.user-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.action-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  white-space: nowrap;
+}
+
+.view-btn {
+  color: #0e5f04;
+  border: 1px solid #0e5f04;
+  background: transparent;
+}
+
+.view-btn:hover {
+  background-color: var(--primary-green);
+  color: #0e5f04;
+}
+
+.delete-btn {
+  color: #dc2626;
+  border: 1px solid #dc2626;
+  background: transparent;
+}
+
+.delete-btn:hover {
+  background-color: #fee2e2;
+}
+
+.level-header {
+  color: #0e5f04;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 1.5rem 0 1rem;
+  padding-left: 1rem;
+}
+/* these styles are for the feedback modal in FeedbackManager.tsx
+ and other components that use that type of modal */
+ .feedback-modal {
+  max-width: 800px;
+  width: 95%;
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  position: relative;
+  margin: 2rem auto;
+  font-family: 'Inter', sans-serif;
+  max-height: calc(100vh - 4rem); 
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.feedback-modal::-webkit-scrollbar {
+  width: 8px;
+}
+
+.feedback-modal::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.feedback-modal::-webkit-scrollbar-thumb {
+  background: var(--primary-green);
+  border-radius: 4px;
+}
+
+.feedback-header {
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--primary-green);
+  padding-bottom: 1rem;
+}
+
+.feedback-meta {
+  margin-bottom: 2rem;
+}
+
+.feedback-meta p {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.feedback-meta strong {
+  color: #0e5f04;
+  margin-right: 0.5rem;
+}
+
+.feedback-content {
+  background: #fafff2;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  border: 1px solid var(--primary-green);
+}
+
+.comments-section {
+  margin-top: 2rem;
+}
+
+.comments-header {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #0e5f04;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--primary-green);
+}
+
+.comment-box {
+  margin-bottom: 2rem;
+}
+
+.quill-editor {
+  background: white;
+  border: 1px solid var(--primary-green);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.ql-toolbar {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  border-bottom: 1px solid var(--primary-green) !important;
+  background: #fafff2;
+}
+
+.ql-container {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  min-height: 150px;
+}
+
+.comment-item {
+  background: #fafff2;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  border: 1px solid var(--primary-green);
+}
+
+.comment-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.comment-author {
+  font-weight: 600;
+  color: #0e5f04;
+}
+
+.comment-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.action-btn {
   padding: 0.5rem 1rem;
   border-radius: 6px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
   border: 1px solid;
-  background: transparent;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.875rem;
-  gap: 1.5rem;
 }
 
-.view-profile-btn {
+.edit-btn {
   color: #0e5f04;
+  background: transparent;
   border-color: #0e5f04;
-  gap: 0.5rem;
 }
 
-.view-profile-btn:hover {
+.edit-btn:hover {
+  background: var(--primary-green);
+  color: white;
+}
+
+.submit-btn {
   background: var(--primary-green);
   color: #0e5f04;
+  border: none;
 }
 
-.delete-btn {
-  color: #DC2626;
-  border-color: #DC2626;
+.submit-btn:hover {
+  background: #98d89b;
 }
 
-.delete-btn:hover {
-  background: #FEE2E2;
+.cancel-btn {
+  background: transparent;
+  color: #666;
+  border-color: #ccc;
 }
 
-@media (max-width: 640px) {
-  .user-card-actions {
+.cancel-btn:hover {
+  background: #f5f5f5;
+}
+
+.close-btn {
+  top: 0.5rem;
+  right: 0.5rem;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: #000;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  transition: all 0.2s ease;
+  z-index: 2;
+  float: right;
+  margin-bottom: 1rem;
+}
+
+.close-btn:hover {
+  opacity: 0.7;
+  color: white;
+  background: var(--primary-green);
+  border-radius: 50%;
+
+}
+.feedback-content {
+  word-break: break-word; 
+}
+
+.quill-editor {
+  max-height: 300px; 
+  overflow-y: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .user-card {
     flex-direction: column;
-    width: 100%;
+    align-items: flex-start;
+    gap: 1rem;
   }
 
-  .action-button {
+  .modal-overlay {
+    padding: 1rem;
+  }
+
+  .feedback-modal {
+    margin: 1rem auto;
+    padding: 1.5rem;
+    max-height: calc(100vh - 2rem);
+  }
+
+  .user-actions {
     width: 100%;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .action-btn {
+    flex: 1;
     text-align: center;
+    min-width: calc(50% - 0.5rem);
   }
 }
 
-*/
+@media (max-width: 480px) {
+  .user-actions {
+    flex-direction: column;
+  }
+
+  .action-btn {
+    width: 100%;
+  }
+}

@@ -44,8 +44,8 @@ const LoginPage: React.FC = () => {
       const { data } = response;
 
       if (data.success) {
-        // Store only user data in localStorage
         localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('token', data.token);
         
         // Navigate based on user type
         switch (data.user.user_type) {
