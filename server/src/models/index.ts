@@ -1,7 +1,5 @@
 import { UserModelInit } from './user.model';
 import { ClassModelInit } from './class.model';
-import { ClassInstructorModelInit } from './class_instructor.model';
-import { ClassRegistrationModelInit } from './class_registration.model';
 import { CommentModelInit } from './comment.model';
 import { FeedbackModelInit } from './feedback.model';
 import { Sequelize } from 'sequelize';
@@ -9,67 +7,73 @@ import { Sequelize } from 'sequelize';
 export const initModels = (sequelize: Sequelize) => {
   const User = UserModelInit(sequelize);
   const Class = ClassModelInit(sequelize);
-  const ClassInstructor = ClassInstructorModelInit(sequelize);
-  const ClassRegistration = ClassRegistrationModelInit(sequelize);
   const Feedback = FeedbackModelInit(sequelize);
   const Comment = CommentModelInit(sequelize);
 
-  // Define relationships
-  ClassInstructor.belongsTo(User, { foreignKey: 'instructor_id' });
-  ClassInstructor.belongsTo(Class, { foreignKey: 'class_id' });
+  // Feedback to User relationships
+Feedback.belongsTo(User, {
+  foreignKey: 'golfer_id',
+  as: 'golfer',
+  onDelete: 'CASCADE',
+});
 
-  ClassRegistration.belongsTo(User, { foreignKey: 'user_id' });
-  ClassRegistration.belongsTo(Class, { foreignKey: 'class_id' });
+Feedback.belongsTo(User, {
+  foreignKey: 'instructor_id',
+  as: 'instructor',
+  onDelete: 'CASCADE',
+});
 
-  // Feedback is associated with a golfer and a class
-  // Comments are associated with feedback
-  Feedback.belongsTo(User, {
-    foreignKey: 'golfer_id',
-    as: 'golfer',
-  });
+// User to Feedback relationships
+User.hasMany(Feedback, {
+  foreignKey: 'golfer_id',
+  as: 'golferFeedbacks',
+  onDelete: 'CASCADE',
+});
 
-  User.hasMany(Feedback, {
-    foreignKey: 'golfer_id',
-    as: 'feedbacks',
-    onDelete: 'CASCADE',
-  });
+User.hasMany(Feedback, {
+  foreignKey: 'instructor_id',
+  as: 'instructorFeedbacks',
+  onDelete: 'CASCADE',
+});
 
-  Feedback.belongsTo(Class, {
-    foreignKey: 'class_id',
-    as: 'class',
-  });
+// Feedback to Class relationships
+Feedback.belongsTo(Class, {
+  foreignKey: 'class_id',
+  as: 'class',
+  onDelete: 'CASCADE',
+});
 
-  Class.hasMany(Feedback, {
-    foreignKey: 'class_id',
-    as: 'feedbacks',
-    onDelete: 'CASCADE', 
-  });
+Class.hasMany(Feedback, {
+  foreignKey: 'class_id',
+  as: 'feedbacks',
+  onDelete: 'CASCADE',
+});
 
-  Feedback.hasMany(Comment, {
-    foreignKey: 'feedback_id',
-    as: 'comments',
-    onDelete: 'CASCADE', 
-  });
+// Feedback to Comment relationships
+Feedback.hasMany(Comment, {
+  foreignKey: 'feedback_id',
+  as: 'comments',
+  onDelete: 'CASCADE',
+});
 
-  Comment.belongsTo(Feedback, {
-    foreignKey: 'feedback_id',
-    as: 'feedback',
-  });
+Comment.belongsTo(Feedback, {
+  foreignKey: 'feedback_id',
+  as: 'feedback',
+  onDelete: 'CASCADE',
+});
 
-  Feedback.belongsTo(User, {
-    foreignKey: 'instructor_id',
-    as: 'instructor_name',
-  });
+// Comment to User relationships
+Comment.belongsTo(User, {
+  foreignKey: 'author_id',
+  as: 'author',
+  onDelete: 'CASCADE',
+});
 
-  Comment.belongsTo(User, {
-    foreignKey: 'author_id',
-    as: 'author_name'
-  });
+User.hasMany(Comment, {
+  foreignKey: 'author_id',
+  as: 'authoredComments',
+  onDelete: 'CASCADE',
+});
 
-  User.hasMany(Feedback, {
-    foreignKey: 'instructor_id',
-    as: 'instructedFeedbacks',
-  });
-
-  return { User, Class, ClassInstructor, ClassRegistration, Comment, Feedback };
+  return { User, Class, Comment, Feedback };
 };
