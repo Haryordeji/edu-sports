@@ -36,7 +36,7 @@ export const addFeedback = async (req: Request, res: Response) => {
         },
         {
           model: models.User,
-          as: 'instructor_name',
+          as: 'instructor',
           attributes: ['first_name', 'last_name'],
         },
       ],
@@ -55,8 +55,8 @@ export const addFeedback = async (req: Request, res: Response) => {
         feedback_id: feedbackDetails.feedback_id,
         note_content: feedbackDetails.note_content,
         class: feedbackDetails.class?.title || 'Unknown Class',
-        instructor_name: feedbackDetails.instructor_name
-          ? `${feedbackDetails.instructor_name.first_name} ${feedbackDetails.instructor_name.last_name}`
+        instructor_name: feedbackDetails.instructor
+          ? `${feedbackDetails.instructor.first_name} ${feedbackDetails.instructor.last_name}`
           : 'Unknown Instructor',
         createdAt: feedbackDetails.createdAt,
         updatedAt: feedbackDetails.updatedAt,
@@ -86,7 +86,7 @@ export const getFeedbackForStudent = async (req: Request<{ golferId: string }>, 
         },
         {
           model: models.User,
-          as: 'instructor_name', 
+          as: 'instructor', 
           attributes: ['first_name', 'last_name'], 
         },
       ],
@@ -105,8 +105,8 @@ export const getFeedbackForStudent = async (req: Request<{ golferId: string }>, 
       note_content: feedback.note_content,
       class: feedback.class?.title || 'Unknown Class',
       class_id: feedback.class?.class_id,
-      instructor_name: feedback.instructor_name
-        ? `${feedback.instructor_name.first_name} ${feedback.instructor_name.last_name}`
+      instructor_name: feedback.instructor
+        ? `${feedback.instructor.first_name} ${feedback.instructor.last_name}`
         : 'Unknown Instructor',
       createdAt: feedback.createdAt,
       updatedAt: feedback.updatedAt,
@@ -182,7 +182,7 @@ export const updateFeedback = async (req: Request<{ feedbackId: string }>, res: 
         },
         {
           model: models.User,
-          as: 'instructor_name',
+          as: 'instructor',
           attributes: ['first_name', 'last_name'],
         },
       ],
@@ -194,8 +194,8 @@ export const updateFeedback = async (req: Request<{ feedbackId: string }>, res: 
         feedback_id: updatedFeedback.feedback_id,
         note_content: updatedFeedback.note_content,
         class: updatedFeedback.class?.title || 'Unknown Class',
-        instructor_name: updatedFeedback.instructor_name
-          ? `${updatedFeedback.instructor_name.first_name} ${updatedFeedback.instructor_name.last_name}`
+        instructor_name: updatedFeedback.instructor
+          ? `${updatedFeedback.instructor.first_name} ${updatedFeedback.instructor.last_name}`
           : 'Unknown Instructor',
         createdAt: updatedFeedback.createdAt,
         updatedAt: updatedFeedback.updatedAt,

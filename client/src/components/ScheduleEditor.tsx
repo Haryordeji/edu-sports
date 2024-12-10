@@ -20,6 +20,14 @@ interface Instructor {
   lastName: string;
   level: number[];
 }
+const formatLocalDateTime = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+};
 
 const ScheduleEditor = () => {
   const navigate = useNavigate();
@@ -85,12 +93,13 @@ const ScheduleEditor = () => {
   };
 
   const handleEdit = (classItem: Event) => {
-    const formatDateForInput = (date: Date) => new Date(date).toISOString().slice(0, 16);
+    const startLocal = formatLocalDateTime(new Date(classItem.start));
+    const endLocal = formatLocalDateTime(new Date(classItem.end));
 
     setFormData({
       title: classItem.title,
-      start: formatDateForInput(classItem.start),
-      end: formatDateForInput(classItem.end),
+      start: startLocal,
+      end: endLocal,
       location: classItem.location,
       instructor: classItem.instructor,
       level: classItem.level
@@ -114,18 +123,21 @@ const ScheduleEditor = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const startDate = new Date(formData.start);
+    const endDate = new Date(formData.end);
 
+    const adjustedFormData = {
+      ...formData,
+      start: startDate.toISOString(),
+      end: endDate.toISOString(),
+    };
+  
     try {
-      let response;
-      if (editingClassId) {
-        response = await instance.put(`/classes/${editingClassId}`, formData, { withCredentials: true });
-      } else {
-        response = await instance.post('/classes', formData, { withCredentials: true });
-      }
-
-      const { data } = response;
-
-      if (data.success) {
+      const response = editingClassId
+        ? await instance.put(`/classes/${editingClassId}`, adjustedFormData, { withCredentials: true })
+        : await instance.post('/classes', adjustedFormData, { withCredentials: true });
+  
+      if (response.data.success) {
         fetchClasses();
         resetForm();
       }

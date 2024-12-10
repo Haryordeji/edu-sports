@@ -1,3 +1,5 @@
+// feedback.model.ts
+
 import { UUID } from 'crypto';
 import { DataTypes, Model, Optional, Sequelize } from 'sequelize';
 
