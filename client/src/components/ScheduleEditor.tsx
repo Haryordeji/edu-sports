@@ -3,6 +3,7 @@ import instance from '../utils/axios';
 import { EventResponse, Event } from './WeeklyCalendar';
 import { useNavigate } from 'react-router-dom';
 import './global.css';
+import { GolfLevels } from '../interfaces';
 
 interface ClassFormData {
   title: string;
@@ -170,7 +171,7 @@ const ScheduleEditor = () => {
             </div>
             <div className="info-row">
               <span className="info-label">Level:</span>
-              <span>{classItem.level}</span>
+              <span>{GolfLevels[classItem.level]}</span>
             </div>
           </div>
           <div className="class-actions">
