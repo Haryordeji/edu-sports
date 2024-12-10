@@ -42,7 +42,7 @@ export const login = async (req: Request<{}, {}, LoginRequest>, res: Response) =
   const userData = {
     user_id: user.user_id,
     email: user.email,
-    user_type: user.user_type as UserRole, // Now TypeScript knows this is safe
+    user_type: user.user_type as UserRole,
     level: user.level
   };
 
