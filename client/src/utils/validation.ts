@@ -1,13 +1,13 @@
 export const VALIDATION_PATTERNS = {
   EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-  PASSWORD: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
-  NAME: /^[A-Za-zÀ-ÿ'\-\s]+$/,
+  PASSWORD: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
+  NAME: /^[A-Za-zÀ-ÿ'\-\s.]+$/,
   MIDDLE_INITIAL: /^[A-Za-z]$/,
   ZIPCODE: /^\d{5}$/,
   PHONE_PART: /^\d+$/,
   ADDRESS: /^[A-Za-z0-9\s#,\-\.\/]+$/,
   CITY: /^[A-Za-zÀ-ÿ\s\-]+$/,
-  RELATIONSHIP: /^[A-Za-zÀ-ÿ\s]+$/
+  RELATIONSHIP: /^[A-Za-zÀ-ÿ\s.]+$/
 };
 
 export interface ValidationError {
@@ -55,7 +55,7 @@ export const validateName = (name: string, fieldName: string): ValidationError =
     return { isValid: false, message: `${fieldName} must not exceed 50 characters` };
   }
   if (!VALIDATION_PATTERNS.NAME.test(name)) {
-    return { isValid: false, message: `${fieldName} can only contain letters, hyphens, and apostrophes` };
+    return { isValid: false, message: `${fieldName} can only contain letters, hyphens, apostrophes, and dots` };
   }
   return { isValid: true, message: '' };
 };
@@ -150,7 +150,7 @@ export const validateRelationship = (relationship: string): ValidationError => {
     return { isValid: false, message: 'Relationship must not exceed 50 characters' };
   }
   if (!VALIDATION_PATTERNS.RELATIONSHIP.test(relationship)) {
-    return { isValid: false, message: 'Relationship can only contain letters and spaces' };
+    return { isValid: false, message: 'Relationship can only contain letters, spaces, and dots' };
   }
   return { isValid: true, message: '' };
 };
