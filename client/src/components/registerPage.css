@@ -224,15 +224,18 @@ input:focus, textarea:focus {
 .name-group .input-group {
   flex: 1;
 }
-
 .phone-parts {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .phone-parts input {
-  width: 60px;
+  width: 4rem !important; 
   text-align: center;
+}
+
+.phone-parts input:last-child {
+  width: 5rem !important; 
 }
 
 .password-input-container {

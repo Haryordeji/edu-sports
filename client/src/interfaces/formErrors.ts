@@ -1,4 +1,7 @@
 export interface FormErrors {
+  [key: string]: string | undefined | {
+    [key: string]: string | undefined;
+  };
   email?: string;
   password?: string;
   firstName?: string;
