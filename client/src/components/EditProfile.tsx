@@ -362,7 +362,7 @@ const EditProfile: React.FC = () => {
     // If there are any validation errors, prevent submission
     if (!isValid) {
       // Optionally show an error message to the user
-      alert('Please fix all validation errors before saving.');
+      alert('Please fix errors before saving your changes.');
       return;
     }
 
@@ -1043,27 +1043,33 @@ const EditProfile: React.FC = () => {
                 type="text"
                 value={formData.Phone?.areaCode || ''}
                 onChange={(e) => handlePhoneChange('areaCode', e.target.value)}
+                onBlur={() => handleBlur('Phone')}
                 maxLength={3}
-                placeholder="Area Code"
+                placeholder="000"
                 required
               />
               <input
                 type="text"
                 value={formData.Phone?.prefix || ''}
                 onChange={(e) => handlePhoneChange('prefix', e.target.value)}
+                onBlur={() => handleBlur('Phone')}
                 maxLength={3}
-                placeholder="Prefix"
+                placeholder="000"
                 required
               />
               <input
                 type="text"
                 value={formData.Phone?.lineNumber || ''}
                 onChange={(e) => handlePhoneChange('lineNumber', e.target.value)}
+                onBlur={() => handleBlur('Phone')}
                 maxLength={4}
-                placeholder="Line Number"
+                placeholder="0000"
                 required
               />
             </div>
+            {touched.Phone && formErrors.Phone && 
+              <p className="error-message">{getErrorMessage(formErrors.Phone)}</p>
+            }
           </div>
         </div>
 
@@ -1190,27 +1196,33 @@ const EditProfile: React.FC = () => {
                         type="text"
                         value={formData.Phone?.areaCode || ''}
                         onChange={(e) => handlePhoneChange('areaCode', e.target.value)}
+                        onBlur={() => handleBlur('Phone')}
                         maxLength={3}
-                        placeholder="Area Code"
+                        placeholder="000"
                         required
                       />
                       <input
                         type="text"
                         value={formData.Phone?.prefix || ''}
                         onChange={(e) => handlePhoneChange('prefix', e.target.value)}
+                        onBlur={() => handleBlur('Phone')}
                         maxLength={3}
-                        placeholder="Prefix"
+                        placeholder="000"
                         required
                       />
                       <input
                         type="text"
                         value={formData.Phone?.lineNumber || ''}
                         onChange={(e) => handlePhoneChange('lineNumber', e.target.value)}
+                        onBlur={() => handleBlur('Phone')}
                         maxLength={4}
-                        placeholder="Line Number"
+                        placeholder="0000"
                         required
                       />
                     </div>
+                    {touched.Phone && formErrors.Phone && 
+                      <p className="error-message">{getErrorMessage(formErrors.Phone)}</p>
+                    }
                   </div>
                 </div>
 

@@ -133,7 +133,7 @@ const NewInstructorModal: React.FC<NewInstructorModalProps> = ({ onClose, onSucc
     e.preventDefault();
     
     if (!validateForm()) {
-      setError('Please fix the errors before submitting');
+      setError('Please fix all errors before submitting');
       return;
     }
 
