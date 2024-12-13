@@ -63,7 +63,14 @@ const EditProfile: React.FC = () => {
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
 
-  
+  const states = [
+    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+    'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
+    'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
+    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+  ];
+
   // Get stored user type
   const storedUserJson = localStorage.getItem('user');
   const storedUser = storedUserJson ? JSON.parse(storedUserJson) : null;
@@ -87,7 +94,7 @@ const EditProfile: React.FC = () => {
   }, [id]);
 
   // Input handlers
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => (prev ? { ...prev, [name]: value } : null));
   };
@@ -464,13 +471,52 @@ const EditProfile: React.FC = () => {
 
                     <div className="input-group">
                       <label>Height</label>
-                      <input
-                        type="text"
-                        name="height"
-                        value={formData.height}
-                        onChange={handleInputChange}
-                        placeholder="5'10''"
-                      />
+                      <div className="height-selection">
+                        <select
+                          name="height"
+                          value={formData?.height?.split("'")[0] || ""}
+                          onChange={(e) => {
+                            if (formData) {
+                              const feet = e.target.value;
+                              const inches = formData.height?.split("'")[1]?.replace('"', '') || "0";
+                              setFormData({
+                                ...formData,
+                                height: `${feet}'${inches}"`
+                              });
+                            }
+                          }}
+                          required
+                        >
+                          <option value="">Feet</option>
+                          {Array.from({ length: 5 }, (_, i) => i + 2).map((feet) => (
+                            <option key={feet} value={feet}>
+                              {feet}'
+                            </option>
+                          ))}
+                        </select>
+                        <select
+                          name="height-inches"
+                          value={formData?.height?.split("'")[1]?.replace('"', '') || ""}
+                          onChange={(e) => {
+                            if (formData) {
+                              const feet = formData.height?.split("'")[0] || "5";
+                              const inches = e.target.value;
+                              setFormData({
+                                ...formData,
+                                height: `${feet}'${inches}"`
+                              });
+                            }
+                          }}
+                          required
+                        >
+                          <option value="">Inches</option>
+                          {Array.from({ length: 12 }, (_, i) => i).map((inch) => (
+                            <option key={inch} value={inch}>
+                              {inch}"
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
 
                     
@@ -510,15 +556,20 @@ const EditProfile: React.FC = () => {
                       </div>
                       <div className="input-group">
                         <label>State</label>
-                        <input
-                          type="text"
+                        <select
                           name="state"
                           value={formData.state}
                           onChange={handleInputChange}
                           onBlur={() => handleBlur('state')}
                           required
-                          maxLength={2}
-                        />
+                        >
+                          <option value="">Select State</option>
+                          {states.map((state) => (
+                            <option key={state} value={state}>
+                              {state}
+                            </option>
+                          ))}
+                        </select>
                         {touched.state && formErrors.state && 
                           <p className="error-message">{formErrors.state}</p>
                         }
