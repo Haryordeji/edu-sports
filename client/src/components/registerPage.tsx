@@ -154,15 +154,16 @@ const RegistrationPage: React.FC = () => {
     }
 
     setFormErrors(prev => {
-      const newErrors = { ...prev } as FormErrors;
+      const newErrors = { ...prev };
       if (name.includes('.')) {
         const [section, field] = name.split('.');
+        const sectionErrors = (newErrors[section] as { [key: string]: string }) || {};
         newErrors[section] = {
-          ...((newErrors[section] as { [key: string]: string | undefined }) || {}),
-          [field]: error
+          ...sectionErrors,
+          [field]: error || ''
         };
       } else {
-        newErrors[name] = error;
+        newErrors[name] = error || '';
       }
       return newErrors;
     });

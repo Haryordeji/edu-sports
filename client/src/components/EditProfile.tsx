@@ -5,12 +5,52 @@ import { GolfLevels, RegistrationFormData, PhoneNumber } from '../interfaces';
 import "./editProfile.css";
 import ReactQuill from 'react-quill';
 import DOMPurify from 'dompurify';
+import * as validation from '../utils/validation';
+import { FormErrors } from '../interfaces/formErrors';
+
+// Helper type to access nested properties
+type NestedValue = {
+  emergencyContact?: {
+    name?: string;
+    relationship?: string;
+  };
+  physician?: {
+    name?: string;
+  };
+};
+
+const getNestedValue = (obj: RegistrationFormData, path: string): any => {
+  if (path.includes('.')) {
+    const [section, field] = path.split('.');
+    const sectionData = obj[section as keyof RegistrationFormData];
+    
+    // Type guard for nested objects
+    if (sectionData && typeof sectionData === 'object') {
+      // Handle specific nested structures
+      if (section === 'emergencyContact') {
+        return (sectionData as RegistrationFormData['emergencyContact'])[field as keyof RegistrationFormData['emergencyContact']];
+      }
+      if (section === 'physician') {
+        return (sectionData as RegistrationFormData['physician'])[field as keyof RegistrationFormData['physician']];
+      }
+    }
+    return undefined;
+  }
+  return obj[path as keyof RegistrationFormData];
+};
 
 interface ProfileResponse {
   success: boolean;
   user: RegistrationFormData;
 }
 
+// Add this helper function after the imports and before the component
+const getErrorMessage = (error: string | { [key: string]: string } | undefined): string => {
+  if (!error) return '';
+  if (typeof error === 'string') return error;
+  // If it's an object, return the first error message found
+  return Object.values(error)[0] || '';
+};
 
 const EditProfile: React.FC = () => {
   const { id } = useParams();
@@ -20,6 +60,8 @@ const EditProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
+  const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
 
   
   // Get stored user type
@@ -167,8 +209,156 @@ const EditProfile: React.FC = () => {
   };
   
 
+  const validateField = (name: string, value: any) => {
+    let error = '';
+    
+    switch (name) {
+      case 'email':
+        const emailResult = validation.validateEmail(value);
+        error = emailResult.message;
+        break;
+
+      case 'firstName':
+        const firstNameResult = validation.validateName(value, 'First name');
+        error = firstNameResult.message;
+        break;
+
+      case 'lastName':
+        const lastNameResult = validation.validateName(value, 'Last name');
+        error = lastNameResult.message;
+        break;
+
+      case 'middleInitial':
+        const middleInitialResult = validation.validateMiddleInitial(value);
+        error = middleInitialResult.message;
+        break;
+
+      case 'dateOfBirth':
+        const dobResult = validation.validateDateOfBirth(value);
+        error = dobResult.message;
+        break;
+
+      case 'address':
+        const addressResult = validation.validateAddress(value);
+        error = addressResult.message;
+        break;
+
+      case 'city':
+        const cityResult = validation.validateCity(value);
+        error = cityResult.message;
+        break;
+
+      case 'zipCode':
+        const zipResult = validation.validateZipCode(value);
+        error = zipResult.message;
+        break;
+
+      case 'emergencyContact.name':
+        if (typeof value === 'string') {
+          const emergencyContactNameResult = validation.validateName(value, 'Emergency contact name');
+          error = emergencyContactNameResult.message;
+        }
+        break;
+
+      case 'emergencyContact.relationship':
+        if (typeof value === 'string') {
+          const relationshipResult = validation.validateRelationship(value);
+          error = relationshipResult.message;
+        }
+        break;
+
+      case 'physician.name':
+        if (typeof value === 'string') {
+          const physicianNameResult = validation.validateName(value, 'Physician name');
+          error = physicianNameResult.message;
+        }
+        break;
+
+      case 'Phone':
+        if (formData?.Phone) {
+          const phoneResult = validation.validatePhone(formData.Phone);
+          error = phoneResult.message;
+        }
+        break;
+
+      case 'emergencyContact.phone':
+        if (formData?.emergencyContact?.phone) {
+          const emergencyPhoneResult = validation.validatePhone(formData.emergencyContact.phone);
+          error = emergencyPhoneResult.message;
+        }
+        break;
+
+      case 'physician.phone':
+        if (formData?.physician?.phone) {
+          const physicianPhoneResult = validation.validatePhone(formData.physician.phone);
+          error = physicianPhoneResult.message;
+        }
+        break;
+    }
+
+    setFormErrors(prev => {
+      const newErrors = { ...prev };
+      if (name.includes('.')) {
+        const [section, field] = name.split('.');
+        newErrors[section] = {
+          ...((newErrors[section] as { [key: string]: string }) || {}),
+          [field]: error || ''
+        };
+      } else {
+        newErrors[name] = error || '';
+      }
+      return newErrors;
+    });
+
+    return !error;
+  };
+
+  const handleBlur = (fieldName: string) => {
+    setTouched(prev => ({
+      ...prev,
+      [fieldName]: true
+    }));
+    if (formData) {
+      validateField(fieldName, formData[fieldName as keyof RegistrationFormData]);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Define all fields that need validation
+    const allFields = [
+      'firstName', 'lastName', 'middleInitial', 'dateOfBirth', 'address', 
+      'city', 'state', 'zipCode', 'Phone', 'email',
+      'emergencyContact.name', 'emergencyContact.relationship', 'emergencyContact.phone',
+      'physician.name', 'physician.phone'
+    ];
+    
+    // Mark all fields as touched to show any validation errors
+    const newTouched = { ...touched };
+    allFields.forEach(field => {
+      newTouched[field] = true;
+    });
+    setTouched(newTouched);
+
+    // Validate all fields
+    let isValid = true;
+    allFields.forEach(field => {
+      if (formData) {
+        const fieldValue = getNestedValue(formData, field);
+        if (!validateField(field, fieldValue)) {
+          isValid = false;
+        }
+      }
+    });
+
+    // If there are any validation errors, prevent submission
+    if (!isValid) {
+      // Optionally show an error message to the user
+      alert('Please fix all validation errors before saving.');
+      return;
+    }
+
     try {
       if (formData) {
         await instance.put(`/users/${id}`, formData, { withCredentials: true });
@@ -202,8 +392,12 @@ const EditProfile: React.FC = () => {
                         name="firstName"
                         value={formData.firstName || ''}
                         onChange={(e) => handleNameChange('firstName', e.target.value)}
+                        onBlur={() => handleBlur('firstName')}
                         required
                       />
+                      {touched.firstName && formErrors.firstName && 
+                        <p className="error-message">{formErrors.firstName}</p>
+                      }
                     </div>
                     <div className="input-group">
                       <label htmlFor="middleInitial">Middle Name</label>
@@ -213,7 +407,11 @@ const EditProfile: React.FC = () => {
                         name="middleInitial"
                         value={formData.middleInitial || ''}
                         onChange={(e) => handleNameChange('middleInitial', e.target.value)}
+                        onBlur={() => handleBlur('middleInitial')}
                       />
+                      {touched.middleInitial && formErrors.middleInitial && 
+                        <p className="error-message">{formErrors.middleInitial}</p>
+                      }
                     </div>
                     <div className="input-group">
                       <label htmlFor="lastName">Last Name</label>
@@ -223,8 +421,12 @@ const EditProfile: React.FC = () => {
                         name="lastName"
                         value={formData.lastName || ''}
                         onChange={(e) => handleNameChange('lastName', e.target.value)}
+                        onBlur={() => handleBlur('lastName')}
                         required
                       />
+                      {touched.lastName && formErrors.lastName && 
+                        <p className="error-message">{formErrors.lastName}</p>
+                      }
                     </div>
 
                     <div className="input-group">
@@ -252,8 +454,12 @@ const EditProfile: React.FC = () => {
                         name="dateOfBirth"
                         value={formData.dateOfBirth}
                         onChange={handleInputChange}
+                        onBlur={() => handleBlur('dateOfBirth')}
                         required
                       />
+                      {touched.dateOfBirth && formErrors.dateOfBirth && 
+                        <p className="error-message">{formErrors.dateOfBirth}</p>
+                      }
                     </div>
 
                     <div className="input-group">
@@ -280,8 +486,12 @@ const EditProfile: React.FC = () => {
                         name="address"
                         value={formData.address}
                         onChange={handleInputChange}
+                        onBlur={() => handleBlur('address')}
                         required
                       />
+                      {touched.address && formErrors.address && 
+                        <p className="error-message">{formErrors.address}</p>
+                      }
                     </div>
                     <div className="address-details">
                       <div className="input-group">
@@ -291,8 +501,12 @@ const EditProfile: React.FC = () => {
                           name="city"
                           value={formData.city}
                           onChange={handleInputChange}
+                          onBlur={() => handleBlur('city')}
                           required
                         />
+                        {touched.city && formErrors.city && 
+                          <p className="error-message">{formErrors.city}</p>
+                        }
                       </div>
                       <div className="input-group">
                         <label>State</label>
@@ -301,9 +515,13 @@ const EditProfile: React.FC = () => {
                           name="state"
                           value={formData.state}
                           onChange={handleInputChange}
+                          onBlur={() => handleBlur('state')}
                           required
                           maxLength={2}
                         />
+                        {touched.state && formErrors.state && 
+                          <p className="error-message">{formErrors.state}</p>
+                        }
                       </div>
                       <div className="input-group">
                         <label>Zip Code</label>
@@ -312,9 +530,13 @@ const EditProfile: React.FC = () => {
                           name="zipCode"
                           value={formData.zipCode}
                           onChange={handleInputChange}
+                          onBlur={() => handleBlur('zipCode')}
                           required
                           maxLength={5}
                         />
+                        {touched.zipCode && formErrors.zipCode && 
+                          <p className="error-message">{formErrors.zipCode}</p>
+                        }
                       </div>
                     </div>
                     <div className="input-group">
@@ -324,27 +546,33 @@ const EditProfile: React.FC = () => {
                           type="text"
                           value={formData.Phone?.areaCode || ''}
                           onChange={(e) => handlePhoneChange('areaCode', e.target.value)}
+                          onBlur={() => handleBlur('Phone')}
                           maxLength={3}
-                          placeholder="Area Code"
+                          placeholder="000"
                           required
                         />
                         <input
                           type="text"
                           value={formData.Phone?.prefix || ''}
                           onChange={(e) => handlePhoneChange('prefix', e.target.value)}
+                          onBlur={() => handleBlur('Phone')}
                           maxLength={3}
-                          placeholder="Prefix"
+                          placeholder="000"
                           required
                         />
                         <input
                           type="text"
                           value={formData.Phone?.lineNumber || ''}
                           onChange={(e) => handlePhoneChange('lineNumber', e.target.value)}
+                          onBlur={() => handleBlur('Phone')}
                           maxLength={4}
-                          placeholder="Line Number"
+                          placeholder="0000"
                           required
                         />
                       </div>
+                      {touched.Phone && formErrors.Phone && 
+                        <p className="error-message">{getErrorMessage(formErrors.Phone)}</p>
+                      }
                     </div>
                   </div>
     
@@ -528,17 +756,24 @@ const EditProfile: React.FC = () => {
                           type="text"
                           name="emergencyContactName"
                           value={formData.emergencyContact?.name || ''}
-                          onChange={(e) => setFormData(prev => 
-                            prev ? {
-                              ...prev,
-                              emergencyContact: {
-                                ...prev.emergencyContact,
-                                name: e.target.value
-                              }
-                            } : null
-                          )}
+                          onChange={(e) => {
+                            setFormData(prev => 
+                              prev ? {
+                                ...prev,
+                                emergencyContact: {
+                                  ...prev.emergencyContact,
+                                  name: e.target.value
+                                }
+                              } : null
+                            );
+                            validateField('emergencyContact.name', e.target.value);
+                          }}
+                          onBlur={() => handleBlur('emergencyContact.name')}
                           required
                         />
+                        {touched['emergencyContact.name'] && formErrors.emergencyContact?.name && 
+                          <p className="error-message">{formErrors.emergencyContact.name}</p>
+                        }
                       </div>
                       
                       <div className="input-group">
@@ -547,17 +782,24 @@ const EditProfile: React.FC = () => {
                           type="text"
                           name="emergencyContactRelationship"
                           value={formData.emergencyContact?.relationship || ''}
-                          onChange={(e) => setFormData(prev => 
-                            prev ? {
-                              ...prev,
-                              emergencyContact: {
-                                ...prev.emergencyContact,
-                                relationship: e.target.value
-                              }
-                            } : null
-                          )}
+                          onChange={(e) => {
+                            setFormData(prev => 
+                              prev ? {
+                                ...prev,
+                                emergencyContact: {
+                                  ...prev.emergencyContact,
+                                  relationship: e.target.value
+                                }
+                              } : null
+                            );
+                            validateField('emergencyContact.relationship', e.target.value);
+                          }}
+                          onBlur={() => handleBlur('emergencyContact.relationship')}
                           required
                         />
+                        {touched['emergencyContact.relationship'] && formErrors.emergencyContact?.relationship && 
+                          <p className="error-message">{formErrors.emergencyContact.relationship}</p>
+                        }
                       </div>
                       
                       <div className="input-group">
@@ -567,27 +809,33 @@ const EditProfile: React.FC = () => {
                             type="text"
                             value={formData.emergencyContact?.phone?.areaCode || ''}
                             onChange={(e) => handleEmergencyContactPhoneChange('areaCode', e.target.value)}
+                            onBlur={() => handleBlur('emergencyContact.phone')}
                             maxLength={3}
-                            placeholder="Area Code"
+                            placeholder="000"
                             required
                           />
                           <input
                             type="text"
                             value={formData.emergencyContact?.phone?.prefix || ''}
                             onChange={(e) => handleEmergencyContactPhoneChange('prefix', e.target.value)}
+                            onBlur={() => handleBlur('emergencyContact.phone')}
                             maxLength={3}
-                            placeholder="Prefix"
+                            placeholder="000"
                             required
                           />
                           <input
                             type="text"
                             value={formData.emergencyContact?.phone?.lineNumber || ''}
                             onChange={(e) => handleEmergencyContactPhoneChange('lineNumber', e.target.value)}
+                            onBlur={() => handleBlur('emergencyContact.phone')}
                             maxLength={4}
-                            placeholder="Line Number"
+                            placeholder="0000"
                             required
                           />
                         </div>
+                        {touched['emergencyContact.phone'] && formErrors.emergencyContact?.phone && 
+                          <p className="error-message">{getErrorMessage(formErrors.emergencyContact.phone)}</p>
+                        }
                       </div>
                     </div>
 
@@ -614,9 +862,16 @@ const EditProfile: React.FC = () => {
                         type="text"
                         name="name"
                         value={formData.physician?.name || ''}
-                        onChange={(e) => handlePhysicianNameChange(e.target.value)}
+                        onChange={(e) => {
+                          handlePhysicianNameChange(e.target.value);
+                          validateField('physician.name', e.target.value);
+                        }}
+                        onBlur={() => handleBlur('physician.name')}
                         required
                       />
+                      {touched['physician.name'] && formErrors.physician?.name && 
+                        <p className="error-message">{formErrors.physician.name}</p>
+                      }
                     </div>
                     <div className="input-group">
                       <label>Physician Phone</label>
@@ -625,27 +880,33 @@ const EditProfile: React.FC = () => {
                           type="text"
                           value={formData.physician?.phone?.areaCode || ''}
                           onChange={(e) => handlePhysicianContactPhoneChange('areaCode', e.target.value)}
+                          onBlur={() => handleBlur('physician.phone')}
                           maxLength={3}
-                          placeholder="Area Code"
+                          placeholder="000"
                           required
                         />
                         <input
                           type="text"
                           value={formData.physician?.phone?.prefix || ''}
                           onChange={(e) => handlePhysicianContactPhoneChange('prefix', e.target.value)}
+                          onBlur={() => handleBlur('physician.phone')}
                           maxLength={3}
-                          placeholder="Prefix"
+                          placeholder="000"
                           required
                         />
                         <input
                           type="text"
                           value={formData.physician?.phone?.lineNumber || ''}
                           onChange={(e) => handlePhysicianContactPhoneChange('lineNumber', e.target.value)}
+                          onBlur={() => handleBlur('physician.phone')}
                           maxLength={4}
-                          placeholder="Line Number"
+                          placeholder="0000"
                           required
                         />
                       </div>
+                      {touched['physician.phone'] && formErrors.physician?.phone && 
+                        <p className="error-message">{getErrorMessage(formErrors.physician.phone)}</p>
+                      }
                     </div>
                     
                 </form>
@@ -669,8 +930,12 @@ const EditProfile: React.FC = () => {
               name="firstName"
               value={formData.firstName || ''}
               onChange={(e) => handleNameChange('firstName', e.target.value)}
+              onBlur={() => handleBlur('firstName')}
               required
             />
+            {touched.firstName && formErrors.firstName && 
+              <p className="error-message">{formErrors.firstName}</p>
+            }
           </div>
           <div className="input-group">
             <label htmlFor="middleInitial">Middle Name</label>
@@ -680,7 +945,11 @@ const EditProfile: React.FC = () => {
               name="middleInitial"
               value={formData.middleInitial || ''}
               onChange={(e) => handleNameChange('middleInitial', e.target.value)}
+              onBlur={() => handleBlur('middleInitial')}
             />
+            {touched.middleInitial && formErrors.middleInitial && 
+              <p className="error-message">{formErrors.middleInitial}</p>
+            }
           </div>
           <div className="input-group">
             <label htmlFor="lastName">Last Name</label>
@@ -690,8 +959,12 @@ const EditProfile: React.FC = () => {
               name="lastName"
               value={formData.lastName || ''}
               onChange={(e) => handleNameChange('lastName', e.target.value)}
+              onBlur={() => handleBlur('lastName')}
               required
             />
+            {touched.lastName && formErrors.lastName && 
+              <p className="error-message">{formErrors.lastName}</p>
+            }
           </div>
           <div className="input-group">
             <label>Email</label>
@@ -700,8 +973,12 @@ const EditProfile: React.FC = () => {
               name="email"
               value={formData.email}
               onChange={handleInputChange}
+              onBlur={() => handleBlur('email')}
               required
             />
+            {touched.email && formErrors.email && 
+              <p className="error-message">{formErrors.email}</p>
+            }
           </div>
         </div>
 
@@ -800,8 +1077,12 @@ const EditProfile: React.FC = () => {
                       name="firstName"
                       value={formData.firstName || ''}
                       onChange={(e) => handleNameChange('firstName', e.target.value)}
+                      onBlur={() => handleBlur('firstName')}
                       required
                     />
+                    {touched.firstName && formErrors.firstName && 
+                      <p className="error-message">{formErrors.firstName}</p>
+                    }
                   </div>
                   <div className="input-group">
                     <label htmlFor="middleInitial">Middle Name</label>
@@ -811,7 +1092,11 @@ const EditProfile: React.FC = () => {
                       name="middleInitial"
                       value={formData.middleInitial || ''}
                       onChange={(e) => handleNameChange('middleInitial', e.target.value)}
+                      onBlur={() => handleBlur('middleInitial')}
                     />
+                    {touched.middleInitial && formErrors.middleInitial && 
+                      <p className="error-message">{formErrors.middleInitial}</p>
+                    }
                   </div>
                   <div className="input-group">
                     <label htmlFor="lastName">Last Name</label>
@@ -821,8 +1106,12 @@ const EditProfile: React.FC = () => {
                       name="lastName"
                       value={formData.lastName || ''}
                       onChange={(e) => handleNameChange('lastName', e.target.value)}
+                      onBlur={() => handleBlur('lastName')}
                       required
                     />
+                    {touched.lastName && formErrors.lastName && 
+                      <p className="error-message">{formErrors.lastName}</p>
+                    }
                   </div>
                   <div className="input-group">
                     <label>Email</label>
@@ -831,8 +1120,12 @@ const EditProfile: React.FC = () => {
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
+                      onBlur={() => handleBlur('email')}
                       required
                     />
+                    {touched.email && formErrors.email && 
+                      <p className="error-message">{formErrors.email}</p>
+                    }
                   </div>
                 </div>
 
