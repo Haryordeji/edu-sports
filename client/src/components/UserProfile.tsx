@@ -31,7 +31,7 @@ const UserProfile: React.FC = () => {
   const handleBackClick = () => {
     if (fromEditPage) {
       // Skip going back to the edit page and navigate directly to profile
-      navigate(-2);
+      navigate(-3);
     } else {
       const previousPageExists = window.history.length > 2;
       if (previousPageExists) {

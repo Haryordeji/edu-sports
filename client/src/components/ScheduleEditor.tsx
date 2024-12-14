@@ -126,6 +126,17 @@ const ScheduleEditor = () => {
     const startDate = new Date(formData.start);
     const endDate = new Date(formData.end);
 
+    // make sure end date is after start date
+    // make sure start day and end day are the same
+    if (startDate.getDate() !== endDate.getDate()) {
+      alert('Start date and end date must be on the same day');
+      return;
+    }
+    if (endDate <= startDate) {
+      alert('End time must be after start time');
+      return;
+    }
+
     const adjustedFormData = {
       ...formData,
       start: startDate.toISOString(),

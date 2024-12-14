@@ -61,6 +61,8 @@ const RegistrationPage: React.FC = () => {
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
   const [stepsCompleted, setStepsCompleted] = useState<{ [key: number]: boolean }>({});
+  const [emergencyPhoneError, setEmergencyPhoneError] = useState('');
+  const [physicianPhoneError, setPhysicianPhoneError] = useState('');
 
   const states = [
     'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
@@ -70,17 +72,22 @@ const RegistrationPage: React.FC = () => {
     'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
   ];
 
-  const validatePhone = (areaCode: string, prefix: string, lineNumber: string): boolean => {
+  const validatePhone = (
+    areaCode: string, 
+    prefix: string, 
+    lineNumber: string,
+    setError: (error: string) => void
+  ): boolean => {
     const phoneRegex = /^\d+$/;
     if (!phoneRegex.test(areaCode) || !phoneRegex.test(prefix) || !phoneRegex.test(lineNumber)) {
-      setPhoneError('Phone number must contain only digits');
+      setError('Phone number must contain only digits');
       return false;
     }
     if (areaCode.length !== 3 || prefix.length !== 3 || lineNumber.length !== 4) {
-      setPhoneError('Please enter a valid phone number');
+      setError('Please enter a valid phone number');
       return false;
     }
-    setPhoneError('');
+    setError('');
     return true;
   };
 
@@ -124,14 +131,43 @@ const RegistrationPage: React.FC = () => {
         const zipResult = validation.validateZipCode(value);
         error = zipResult.message;
         break;
-      // Add other field validations here
+      case 'emergencyContact.name':
+          const emergencyNameResult = validation.validateName(formData.emergencyContact.name, 'Emergency contact name');
+          error = emergencyNameResult.message;
+          break;  
+      case 'emergencyContact.phone':
+          const emergencyPhoneResult = validation.validatePhone(formData.emergencyContact.phone);
+          error = emergencyPhoneResult.message;
+          break;
+      case 'emergencyContact.relationship':
+          const relationshipResult = validation.validateRelationship(formData.emergencyContact.relationship);
+          error = relationshipResult.message;
+          break;
+      case 'physician.name':
+          const physicianNameResult = validation.validateName(formData.physician.name, 'Physician name');
+          error = physicianNameResult.message;
+          break;
+      case 'physician.phone':
+          const physicianPhoneResult = validation.validatePhone(formData.physician.phone);
+          error = physicianPhoneResult.message;
+          break;
     }
 
-    setFormErrors(prev => ({
-      ...prev,
-      [name]: error
-    }));
-
+    setFormErrors(prev => {
+      const newErrors = { ...prev };
+      if (name.includes('.')) {
+        const [section, field] = name.split('.');
+        const sectionErrors = (newErrors[section] as { [key: string]: string }) || {};
+        newErrors[section] = {
+          ...sectionErrors,
+          [field]: error || ''
+        };
+      } else {
+        newErrors[name] = error || '';
+      }
+      return newErrors;
+    });
+  
     return !error;
   };
 
@@ -180,30 +216,43 @@ const RegistrationPage: React.FC = () => {
     part: 'areaCode' | 'prefix' | 'lineNumber',
     value: string
   ) => {
-    // Only allow digits
     const digitsOnly = value.replace(/\D/g, '');
     
     setFormData(prev => {
       if (section === 'emergencyContact.phone') {
+        const newPhone = {
+          ...prev.emergencyContact.phone,
+          [part]: digitsOnly
+        };
+        validatePhone(
+          part === 'areaCode' ? digitsOnly : newPhone.areaCode,
+          part === 'prefix' ? digitsOnly : newPhone.prefix,
+          part === 'lineNumber' ? digitsOnly : newPhone.lineNumber,
+          setEmergencyPhoneError
+        );
         return {
           ...prev,
           emergencyContact: {
             ...prev.emergencyContact,
-            phone: {
-              ...prev.emergencyContact.phone,
-              [part]: digitsOnly
-            }
+            phone: newPhone
           }
         };
       } else if (section === 'physician.phone') {
+        const newPhone = {
+          ...prev.physician.phone,
+          [part]: digitsOnly
+        };
+        validatePhone(
+          part === 'areaCode' ? digitsOnly : newPhone.areaCode,
+          part === 'prefix' ? digitsOnly : newPhone.prefix,
+          part === 'lineNumber' ? digitsOnly : newPhone.lineNumber,
+          setPhysicianPhoneError
+        );
         return {
           ...prev,
           physician: {
             ...prev.physician,
-            phone: {
-              ...prev.physician.phone,
-              [part]: digitsOnly
-            }
+            phone: newPhone
           }
         };
       } else {
@@ -214,7 +263,8 @@ const RegistrationPage: React.FC = () => {
         validatePhone(
           part === 'areaCode' ? digitsOnly : prev.Phone.areaCode,
           part === 'prefix' ? digitsOnly : prev.Phone.prefix,
-          part === 'lineNumber' ? digitsOnly : prev.Phone.lineNumber
+          part === 'lineNumber' ? digitsOnly : prev.Phone.lineNumber,
+          setPhoneError
         );
         return {
           ...prev,
@@ -747,103 +797,122 @@ const RegistrationPage: React.FC = () => {
       <div className="emergency-section">
         <h3>EMERGENCY CONTACT - (Other than Participant/Parent/Legal Guardian)</h3>
         <div className="emergency-contact-group">
-              <div className="input-group">
-                <h4>Name</h4>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.emergencyContact.name}
-                  onChange={(e) => handleInputChange(e, 'emergencyContact', 'name')}
-                  required
-                />
-              </div>
-              
-              <div className="phone-input">
-                <h4>Phone </h4>
-                <div className="phone-parts">
-                  <input
-                    type="text"
-                    value={formData.emergencyContact.phone.areaCode}
-                    onChange={(e) => handlePhoneChange('emergencyContact.phone', 'areaCode', e.target.value)}
-                    maxLength={3}
-                    minLength={3}
-                    required
-                  />
-                  <input
-                    type="text"
-                    value={formData.emergencyContact.phone.prefix}
-                    onChange={(e) => handlePhoneChange('emergencyContact.phone', 'prefix', e.target.value)}
-                    maxLength={3}
-                    minLength={3}
-                    required
-                  />
-                  <input
-                    type="text"
-                    value={formData.emergencyContact.phone.lineNumber}
-                    onChange={(e) => handlePhoneChange('emergencyContact.phone', 'lineNumber', e.target.value)}
-                    maxLength={4}
-                    minLength={4}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="input-group">
-                <h4>Relationship</h4>
-                <input
-                  type="text"
-                  name="relationship"
-                  value={formData.emergencyContact.relationship}
-                  onChange={(e) => handleInputChange(e, 'emergencyContact', 'relationship')}
-                  required
-                />
-              </div>
+          <div className="input-group">
+            <h4>Name</h4>
+            <input
+              type="text"
+              name="name"
+              value={formData.emergencyContact.name}
+              onChange={(e) => handleInputChange(e, 'emergencyContact', 'name')}
+              onBlur={() => handleBlur('emergencyContact.name')}
+              required
+            />
+            {touched['emergencyContact.name'] && formErrors.emergencyContact?.name && 
+              <p className="error-message">{formErrors.emergencyContact.name}</p>
+            }
+          </div>
+          
+          <div className="phone-input">
+            <h4>Phone</h4>
+            <div className="phone-parts">
+              <input
+                type="text"
+                value={formData.emergencyContact.phone.areaCode}
+                onChange={(e) => handlePhoneChange('emergencyContact.phone', 'areaCode', e.target.value)}
+                onBlur={() => handleBlur('emergencyContact.phone')}
+                maxLength={3}
+                minLength={3}
+                required
+              />
+              <input
+                type="text"
+                value={formData.emergencyContact.phone.prefix}
+                onChange={(e) => handlePhoneChange('emergencyContact.phone', 'prefix', e.target.value)}
+                maxLength={3}
+                minLength={3}
+                required
+              />
+              <input
+                type="text"
+                value={formData.emergencyContact.phone.lineNumber}
+                onChange={(e) => handlePhoneChange('emergencyContact.phone', 'lineNumber', e.target.value)}
+                maxLength={4}
+                minLength={4}
+                required
+              />
+            </div>
+            {touched['emergencyContact.phone'] && emergencyPhoneError && 
+              <p className="error-message">{emergencyPhoneError}</p>
+            }
+          </div>
+  
+          <div className="input-group">
+            <h4>Relationship</h4>
+            <input
+              type="text"
+              name="relationship"
+              value={formData.emergencyContact.relationship}
+              onChange={(e) => handleInputChange(e, 'emergencyContact', 'relationship')}
+              onBlur={() => handleBlur('emergencyContact.relationship')}
+              required
+            />
+            {touched['emergencyContact.relationship'] && formErrors.emergencyContact?.relationship && 
+              <p className="error-message">{formErrors.emergencyContact.relationship}</p>
+            }
+          </div>
         </div>
       </div>
-
-        {/* Physician Information */}
-        <div className="physician-group">
-              <div className="input-group">
-                <h4>Physician's Name</h4>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.physician.name}
-                  onChange={(e) => handleInputChange(e, 'physician', 'name')}
-                  required
-                />
-              </div>
-
-              <div className="phone-input">
-                <h4>Phone</h4>
-                <div className="phone-parts">
-                  <input
-                    type="text"
-                    value={formData.physician.phone.areaCode}
-                    onChange={(e) => handlePhoneChange('physician.phone', 'areaCode', e.target.value)}
-                    maxLength={3}
-                    minLength={3}
-                    required
-                  />
-                  <input
-                    type="text"
-                    value={formData.physician.phone.prefix}
-                    onChange={(e) => handlePhoneChange('physician.phone', 'prefix', e.target.value)}
-                    maxLength={3}
-                    minLength={3}
-                    required
-                  />
-                  <input
-                    type="text"
-                    value={formData.physician.phone.lineNumber}
-                    onChange={(e) => handlePhoneChange('physician.phone', 'lineNumber', e.target.value)}
-                    maxLength={4}
-                    minLength={4}
-                    required
-                  />
-                </div>
-              </div>
+  
+      <div className="physician-group">
+        <div className="input-group">
+          <h4>Physician's Name</h4>
+          <input
+            type="text"
+            name="name"
+            value={formData.physician.name}
+            onChange={(e) => handleInputChange(e, 'physician', 'name')}
+            onBlur={() => handleBlur('physician.name')}
+            required
+          />
+          {touched['physician.name'] && formErrors.physician?.name && 
+            <p className="error-message">{formErrors.physician.name}</p>
+          }
         </div>
+  
+        <div className="phone-input">
+          <h4>Phone</h4>
+          <div className="phone-parts">
+            <input
+              type="text"
+              value={formData.physician.phone.areaCode}
+              onChange={(e) => handlePhoneChange('physician.phone', 'areaCode', e.target.value)}
+              onBlur={() => handleBlur('physician.phone')}
+              maxLength={3}
+              minLength={3}
+              required
+            />
+            <input
+              type="text"
+              value={formData.physician.phone.prefix}
+              onChange={(e) => handlePhoneChange('physician.phone', 'prefix', e.target.value)}
+              maxLength={3}
+              minLength={3}
+              required
+            />
+            <input
+              type="text"
+              value={formData.physician.phone.lineNumber}
+              onChange={(e) => handlePhoneChange('physician.phone', 'lineNumber', e.target.value)}
+              maxLength={4}
+              minLength={4}
+              required
+            />
+          </div>
+          {touched['physician.phone'] && physicianPhoneError && 
+            <p className="error-message">{physicianPhoneError}</p>
+          }
+        </div>
+      </div>
 
       <div className="medical-info-group">
         <h4>Relevant Medical Information</h4>

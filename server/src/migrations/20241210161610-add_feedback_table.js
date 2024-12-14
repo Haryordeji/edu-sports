@@ -1,56 +1,57 @@
 'use strict';
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('notes', {
-      note_id: {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable('feedback', {
+      feedback_id: {
         type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
+        allowNull: false,
+        defaultValue: Sequelize.UUIDV4
       },
       instructor_id: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
           model: 'users',
-          key: 'user_id',
+          key: 'user_id'
         },
+        onDelete: 'CASCADE'
       },
       golfer_id: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
           model: 'users',
-          key: 'user_id',
+          key: 'user_id'
         },
+        onDelete: 'CASCADE'
       },
       class_id: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
           model: 'classes',
-          key: 'class_id',
+          key: 'class_id'
         },
+        onDelete: 'CASCADE'
       },
       note_content: {
         type: Sequelize.TEXT,
-        allowNull: false,
-      },
-      created_at: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
+        allowNull: false
       },
       createdAt: {
         type: Sequelize.DATE,
-        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       updatedAt: {
         type: Sequelize.DATE,
-        allowNull: false,
-      },
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      }
     });
   },
-  down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('notes');
+
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable('feedback');
   }
 };

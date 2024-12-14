@@ -55,7 +55,7 @@ export const getCommentsForFeedback = async (req: Request<{ feedbackId: string }
       include: [
         {
           model: models.User,
-          as: 'author_name',
+          as: 'author',
           attributes: ['first_name', 'last_name'],
         },
       ],
@@ -72,8 +72,8 @@ export const getCommentsForFeedback = async (req: Request<{ feedbackId: string }
     const formattedComments = comments.map((comment: any) => ({
       comment_id: comment.comment_id,
       content: comment.content,
-      author_name: comment.author_name
-        ? `${comment.author_name.first_name} ${comment.author_name.last_name}`
+      author_name: comment.author
+        ? `${comment.author.first_name} ${comment.author.last_name}`
         : 'Unknown Author',
       createdAt: comment.createdAt,
     }));

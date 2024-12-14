@@ -1,112 +1,115 @@
 'use strict';
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  async up(queryInterface, Sequelize) {
     await queryInterface.createTable('users', {
       user_id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
+        allowNull: false
       },
       profile_created_at: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
+        type: Sequelize.DATE
       },
       password_hash: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: false
       },
       first_name: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: false
       },
       middle_initial: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       last_name: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: false
       },
       street: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       city: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       state: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       zip_code: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       phone: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       email: {
-        type: Sequelize.STRING,
-        unique: true,
+        type: Sequelize.STRING
       },
       gender: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       dob: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       height: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       handedness: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       referral_source: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       referral_name: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       golf_experience: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       previous_lessons: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       lesson_duration: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       previous_instructor: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       emergency_contact_name: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       emergency_contact_phone: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
+      },
+      emergency_contact_relationship: {
+        type: Sequelize.STRING
       },
       physician_name: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       physician_phone: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       medical_information: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       user_type: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: false
       },
       createdAt: {
-        type: Sequelize.DATE,
-        allowNull: false,
+        type: Sequelize.DATE
       },
       updatedAt: {
-        type: Sequelize.DATE,
-        allowNull: false,
+        type: Sequelize.DATE
       },
+      level: {
+        type: Sequelize.ARRAY(Sequelize.INTEGER)
+      }
     });
   },
 
-  down: async (queryInterface, Sequelize) => {
+  async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('users');
   }
 };

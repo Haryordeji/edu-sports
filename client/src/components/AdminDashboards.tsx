@@ -234,13 +234,12 @@ const AdminDashboard: React.FC = () => {
     navigate(`?tab=${tab}`, { replace: true });
   };
 
-  // Modal functions
-  const handleModalOpen = () => setIsModalOpen(true); // Open modal
-  const handleModalClose = () => setIsModalOpen(false); // Close modal
+  const handleModalOpen = () => setIsModalOpen(true); 
+  const handleModalClose = () => setIsModalOpen(false);
 
   const handleSuccess = () => {
-    fetchUsers(); // Refresh user list after adding a new instructor
-    handleModalClose(); // Close modal
+    fetchUsers();
+    handleModalClose();
   };
 
 
@@ -252,7 +251,7 @@ const AdminDashboard: React.FC = () => {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          padding: "1rem", // optional: adjust padding for spacing
+          padding: "1rem",
         }}
       >
         <div className="logo" onClick={() => handleTabChange("schedule")}>

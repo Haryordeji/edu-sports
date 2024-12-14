@@ -4,6 +4,13 @@ import { models } from '../db';
 import { UUID } from 'crypto';
 import { Op } from 'sequelize';
 
+interface phoneNumber 
+  {
+    areaCode: string;
+    prefix: string;
+    lineNumber: string;
+  }
+
 interface RegisterRequest {
   firstName: string;
   middleInitial: string;
@@ -12,11 +19,7 @@ interface RegisterRequest {
   city: string;
   state: string;
   zipCode: string;
-  Phone: {
-    areaCode: string;
-    prefix: string;
-    lineNumber: string;
-  };
+  Phone: phoneNumber;
   email: string;
   gender: 'male' | 'female' | 'other' | '';
   dateOfBirth: string;
@@ -424,7 +427,7 @@ interface RegisterInstructorRequest {
   lastName: string;
   email: string;
   password: string;
-  phone: string;
+  phone: phoneNumber;
   user_type: string;
   golf_experience: string;
   level: number[];
@@ -462,7 +465,7 @@ export const registerInstructor = async (req: Request<{}, {}, RegisterInstructor
       city: 'N/A',
       state: 'N/A',
       zip_code: '00000',
-      phone:phone,
+      phone: formatPhoneNumber(phone),
       email,
       gender: 'N/A',
       dob: '1900-01-01',

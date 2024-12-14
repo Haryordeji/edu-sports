@@ -1,42 +1,45 @@
 'use strict';
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  async up(queryInterface, Sequelize) {
     await queryInterface.createTable('classes', {
       class_id: {
         type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
+        allowNull: false,
+        defaultValue: Sequelize.UUIDV4
       },
-      name: {
+      title: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: false
       },
-      skill_level: {
-        type: Sequelize.STRING,
-      },
-      start_time: {
+      start: {
         type: Sequelize.DATE,
-        allowNull: false,
+        allowNull: false
       },
-      end_time: {
+      end: {
         type: Sequelize.DATE,
-        allowNull: false,
+        allowNull: false
       },
       location: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
+      },
+      instructor: {
+        type: Sequelize.STRING
+      },
+      level: {
+        type: Sequelize.INTEGER
       },
       createdAt: {
-        type: Sequelize.DATE,
-        allowNull: false,
+        type: Sequelize.DATE
       },
       updatedAt: {
-        type: Sequelize.DATE,
-        allowNull: false,
-      },
+        type: Sequelize.DATE
+      }
     });
   },
-  down: async (queryInterface, Sequelize) => {
+
+  async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('classes');
   }
 };

@@ -33,7 +33,7 @@ export const CommentModelInit = (sequelize: Sequelize) => {
       createdAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
       updatedAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
     },
-    { sequelize, tableName: 'comments', timestamps: false }
+    { sequelize, tableName: 'comments' }
   );
 
   return Comment;

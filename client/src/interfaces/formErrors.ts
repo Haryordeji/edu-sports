@@ -1,4 +1,5 @@
 export interface FormErrors {
+  [key: string]: string | { [key: string]: string } | undefined;
   email?: string;
   password?: string;
   firstName?: string;
@@ -9,7 +10,7 @@ export interface FormErrors {
   city?: string;
   state?: string;
   zipCode?: string;
-  phone?: string;
+  Phone?: string;
   gender?: string;
   height?: string;
   emergencyContact?: {

@@ -5,6 +5,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import DOMPurify from 'dompurify';
 import { validateEmail, validatePassword, validatePhone, validateName } from '../utils/validation';
+import { PhoneNumber } from '../interfaces';
 
 interface NewInstructorModalProps {
   onClose: () => void;
@@ -16,12 +17,8 @@ const NewInstructorModal: React.FC<NewInstructorModalProps> = ({ onClose, onSucc
     first_name: '',
     last_name: '',
     email: '',
-    password: '',
-    phone: {
-      areaCode: '',
-      prefix: '',
-      lineNumber: ''
-    },
+    password: 'Password123',
+    phone: {} as PhoneNumber,
     golf_experience: '',
     level: [] as number []
   });
@@ -133,7 +130,7 @@ const NewInstructorModal: React.FC<NewInstructorModalProps> = ({ onClose, onSucc
     e.preventDefault();
     
     if (!validateForm()) {
-      setError('Please fix the errors before submitting');
+      setError('Please fix all errors before submitting');
       return;
     }
 
@@ -143,7 +140,7 @@ const NewInstructorModal: React.FC<NewInstructorModalProps> = ({ onClose, onSucc
         lastName: formData.last_name,
         email: formData.email,
         password: formData.password,
-        phone: `${formData.phone.areaCode}-${formData.phone.prefix}-${formData.phone.lineNumber}`,
+        phone: formData.phone,
         user_type: 'instructor',  
         golf_experience: formData.golf_experience,
         level: formData.level  
@@ -214,15 +211,14 @@ const NewInstructorModal: React.FC<NewInstructorModalProps> = ({ onClose, onSucc
           </div>
 
           <div className="input-group">
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleInputChange}
-              onBlur={() => handleBlur('password')}
-              required
-            />
+          <input
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleInputChange}
+            required
+            disabled
+          />
             {touched.password && formErrors.password && 
               <p className="error-message" style={{ color: 'red', margin: '0.25rem 0 0 0', fontSize: '0.875rem' }}>
                 {formErrors.password}
