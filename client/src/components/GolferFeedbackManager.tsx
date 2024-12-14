@@ -222,24 +222,6 @@ const GolferFeedbackManager: React.FC = () => {
 
             <div className="comments-section">
               <h3 className="comments-header">Comments</h3>
-              
-              {editingCommentId === null && (
-                <div className="comment-box">
-                  <ReactQuill
-                    className="quill-editor"
-                    placeholder="Add a comment..."
-                    value={commentContent}
-                    onChange={(value) => setCommentContent(DOMPurify.sanitize(value.trim()))}
-                  />
-                  <button 
-                    className="action-btn submit-btn"
-                    onClick={handleAddComment} 
-                    disabled={isLoading}
-                  >
-                    {isLoading ? 'Adding...' : 'Add Comment'}
-                  </button>
-                </div>
-              )}
 
               <div className="comments-list">
                 {comments.map((comment) => (
@@ -298,6 +280,24 @@ const GolferFeedbackManager: React.FC = () => {
                   </div>
                 ))}
               </div>
+
+              {editingCommentId === null && (
+                <div className="comment-box">
+                  <ReactQuill
+                    className="quill-editor"
+                    placeholder="Add a comment..."
+                    value={commentContent}
+                    onChange={(value) => setCommentContent(DOMPurify.sanitize(value.trim()))}
+                  />
+                  <button 
+                    className="action-btn submit-btn"
+                    onClick={handleAddComment} 
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'Adding...' : 'Add Comment'}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

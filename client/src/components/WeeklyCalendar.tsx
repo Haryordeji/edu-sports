@@ -4,6 +4,7 @@ import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import Modal from 'react-modal';
 import instance from '../utils/axios';
+import { GolfLevels } from '../interfaces';
 
 const localizer = momentLocalizer(moment);
 
@@ -166,7 +167,7 @@ const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ levelProp }) => {
               </div>
               <div className="info-row">
                 <span className="info-label">Level:</span>
-                <span>{selectedEvent.level}</span>
+                <span>{GolfLevels[selectedEvent.level]}</span>
               </div>
             </div>
           </div>

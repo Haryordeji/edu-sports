@@ -71,11 +71,12 @@ const EditProfile: React.FC = () => {
     'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
   ];
 
-  // Get stored user type
   const storedUserJson = localStorage.getItem('user');
-  const storedUser = storedUserJson ? JSON.parse(storedUserJson) : null;
-  const userType = storedUser?.user_type || '';
-
+  let storedUserType = '';
+  if (storedUserJson) {
+    const storedUser = JSON.parse(storedUserJson);
+    storedUserType = storedUser.user_type;
+  }
   // Fetch profile data
   useEffect(() => {
     const fetchProfile = async () => {
@@ -301,7 +302,7 @@ const EditProfile: React.FC = () => {
         break;
 
       case 'emergencyContact.phone':
-        if (userType === 'golfer' && formData?.emergencyContact?.phone) { 
+        if (storedUserType === 'golfer' && formData?.emergencyContact?.phone) { 
           if (formData?.emergencyContact?.phone) {
             const emergencyPhoneResult = validation.validatePhone(formData.emergencyContact.phone);
             error = emergencyPhoneResult.message;
@@ -1092,31 +1093,33 @@ const EditProfile: React.FC = () => {
         {/* Golf Information */}
         <div className="section-group">
           <h3 className="section-title">Golf Experience</h3>
-          <div>
+          {storedUserType === "admin" && 
+          (<div>
             <label htmlFor="golf-levels" style={{ fontWeight: 'bold', marginBottom: '0.5rem', display: 'block', color: '#2e362e' }}>
               Levels Teaching:
             </label>
             <div className="checkbox-grid">
-          {Object.entries(GolfLevels)
-            .filter(([key, value]) => isNaN(Number(key)) && Number(value) !== 7)
-            .map(([label, value]) => (
-              <div key={value} className="checkbox-option">
-                <input
-                  type="checkbox"
-                  id={`level-${value}`}
-                  name="level"
-                  value={value}
-                  checked={formData.level.includes(Number(value))}
-                  onChange={(e) => handleCheckboxChange(e, Number(value))}
-                  required
-                />
-                <label htmlFor={`level-${value}`}>
-                  {label}
-                </label>
-              </div>
-            ))}
-        </div>
-          </div>
+              {Object.entries(GolfLevels)
+                .filter(([key, value]) => isNaN(Number(key)) && Number(value) !== 7)
+                .map(([label, value]) => (
+                  <div key={value} className="checkbox-option">
+                    <input
+                      type="checkbox"
+                      id={`level-${value}`}
+                      name="level"
+                      value={value}
+                      checked={formData.level.includes(Number(value))}
+                      onChange={(e) => handleCheckboxChange(e, Number(value))}
+                      required
+                    />
+                    <label htmlFor={`level-${value}`}>
+                      {label}
+                    </label>
+                  </div>
+                ))}
+            </div>
+          </div>)
+        }
           <label htmlFor="golf-levels" style={{ fontWeight: 'bold', marginTop: '0.5rem', marginBottom: '0.5rem', display: 'block', color: '#2e362e' }}>
             Teaching Certification:
           </label>
@@ -1245,6 +1248,7 @@ const EditProfile: React.FC = () => {
                 {/* Instructor Information */}
                 <div className="section-group">
                   <h3 className="section-title">Golf Experience</h3>
+                  {storedUserType === "admin" && (
                   <div>
                     <label htmlFor="golf-levels" style={{ fontWeight: 'bold', marginBottom: '0.5rem', display: 'block', color: '#2e362e' }}>
                       Levels Teaching:
@@ -1269,6 +1273,7 @@ const EditProfile: React.FC = () => {
                       ))}
                   </div>
                   </div>
+                )}
                   
                   <div className="input-group" style={{ marginTop: '1rem' }}>
                     <label htmlFor="golf-levels" style={{ fontWeight: 'bold', marginBottom: '0.5rem', display: 'block', color: '#2e362e' }}>
