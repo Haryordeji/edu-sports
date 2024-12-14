@@ -241,8 +241,10 @@ const EditProfile: React.FC = () => {
         break;
 
       case 'dateOfBirth':
-        const dobResult = validation.validateDateOfBirth(value);
-        error = dobResult.message;
+        if (formData?.user_type == "golfer") {
+          const dobResult = validation.validateDateOfBirth(value);
+          error = dobResult.message;
+        }
         break;
 
       case 'address':
@@ -251,8 +253,11 @@ const EditProfile: React.FC = () => {
         break;
 
       case 'city':
-        const cityResult = validation.validateCity(value);
-        error = cityResult.message;
+        if (formData?.user_type == "golfer") {
+          const cityResult = validation.validateCity(value);
+          error = cityResult.message;          
+        }
+
         break;
 
       case 'zipCode':
@@ -261,24 +266,31 @@ const EditProfile: React.FC = () => {
         break;
 
       case 'emergencyContact.name':
-        if (typeof value === 'string') {
-          const emergencyContactNameResult = validation.validateName(value, 'Emergency contact name');
-          error = emergencyContactNameResult.message;
+        if (formData?.user_type == "golfer") {
+          if (typeof value === 'string') {
+            const emergencyContactNameResult = validation.validateName(value, 'Emergency contact name');
+            error = emergencyContactNameResult.message;
+          }
         }
         break;
 
       case 'emergencyContact.relationship':
-        if (typeof value === 'string') {
-          const relationshipResult = validation.validateRelationship(value);
-          error = relationshipResult.message;
+        if (formData?.user_type == "golfer") {  
+          if (typeof value === 'string') {
+            const relationshipResult = validation.validateRelationship(value);
+            error = relationshipResult.message;
+          }          
         }
         break;
 
       case 'physician.name':
-        if (typeof value === 'string') {
-          const physicianNameResult = validation.validateName(value, 'Physician name');
-          error = physicianNameResult.message;
+        if (formData?.user_type == "golfer") {
+          if (typeof value === 'string') {
+            const physicianNameResult = validation.validateName(value, 'Physician name');
+            error = physicianNameResult.message;
+          }          
         }
+
         break;
 
       case 'Phone':
@@ -289,16 +301,20 @@ const EditProfile: React.FC = () => {
         break;
 
       case 'emergencyContact.phone':
-        if (formData?.emergencyContact?.phone) {
-          const emergencyPhoneResult = validation.validatePhone(formData.emergencyContact.phone);
-          error = emergencyPhoneResult.message;
+        if (userType === 'golfer' && formData?.emergencyContact?.phone) { 
+          if (formData?.emergencyContact?.phone) {
+            const emergencyPhoneResult = validation.validatePhone(formData.emergencyContact.phone);
+            error = emergencyPhoneResult.message;
+          }
         }
         break;
 
       case 'physician.phone':
-        if (formData?.physician?.phone) {
-          const physicianPhoneResult = validation.validatePhone(formData.physician.phone);
-          error = physicianPhoneResult.message;
+        if (formData?.user_type == "golfer") {
+          if (formData?.physician?.phone) {
+            const physicianPhoneResult = validation.validatePhone(formData.physician.phone);
+            error = physicianPhoneResult.message;
+          }
         }
         break;
     }
@@ -355,14 +371,14 @@ const EditProfile: React.FC = () => {
         const fieldValue = getNestedValue(formData, field);
         if (!validateField(field, fieldValue)) {
           isValid = false;
+          console.log('Validation error for field:', field);
         }
       }
     });
 
     // If there are any validation errors, prevent submission
     if (!isValid) {
-      // Optionally show an error message to the user
-      alert('Please fix errors before saving your changes.');
+      alert('Please fix all validation errors before saving.');
       return;
     }
 
