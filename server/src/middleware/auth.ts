@@ -9,10 +9,10 @@ if (!JWT_SECRET) {
   throw new Error('JWT_SECRET must be defined in environment variables');
 }
 
-const JWT_OPTIONS = {
+const JWT_OPTIONS: jwt.SignOptions = {
   expiresIn: '24h',
   algorithm: 'HS256'
-} as const;
+};
 
 // Define user roles for type safety
 export type UserRole = 'admin' | 'instructor' | 'golfer';
@@ -21,6 +21,7 @@ interface TokenPayload {
   user_id: string;
   email: string;
   user_type: UserRole;
+  level?: number[];
   iat?: number;
   exp?: number;
 }
@@ -149,6 +150,6 @@ export const verifyOwnership = (
 
 export const generateResetToken = (email: string) => {
   const payload = { email };
-  const options = { expiresIn: '1h' };
+  const options: jwt.SignOptions = { expiresIn: '1h' };
   return jwt.sign(payload, JWT_SECRET, options);
 };
