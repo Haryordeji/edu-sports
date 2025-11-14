@@ -1,6 +1,3 @@
-require('ts-node/register');
-module.exports = require('./db.config.ts').default;
-
 module.exports = {
     development: {
       username: process.env.DB_USER,
@@ -16,7 +13,7 @@ module.exports = {
         ssl: {
             require: true,
             rejectUnauthorized: false,
-            },
         },
+      },
     },
   };
